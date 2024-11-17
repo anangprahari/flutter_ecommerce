@@ -35,6 +35,11 @@ dependencies:
   intl: ^0.17.0
   font_awesome_flutter: ^9.0.0
   fluttertoast: ^8.2.1
+  lucide_icons: 0.257.0
+  lottie: ^2.7.0
+  timeline_tile: ^2.0.0
+  animate_do: ^3.0.2
+  image_picker: ^1.1.2
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -71,6 +76,8 @@ flutter:
     - images/men fashion/
     - images/jewelry/ 
     - images/icon/ 
+    - images/eletronik/ 
+    - assets/animations/ 
 
   # To add assets to your application, add an assets section, like this:
   # assets:

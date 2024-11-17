@@ -1,31 +1,188 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../Provider/user_provider.dart';
+import '../../Provider/auth_provider.dart';
+import 'edit_profile.dart';
+import 'security_screen.dart';
+import 'notifications_screen.dart';
+import 'help_center_screen.dart';
+import 'chat_screen.dart';
+import 'package:ecommerce_mobile_app/screens/login_screen.dart'; // Add this import
+import 'package:ecommerce_mobile_app/constants.dart';
+import 'dart:io';
 
 class Profile extends StatelessWidget {
   const Profile({Key? key}) : super(key: key);
 
+  void _handleLogout(BuildContext context) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    bool? confirm = await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      barrierColor: Colors.black87,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  spreadRadius: 5,
+                  blurRadius: 15,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: kprimaryColor.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.logout_rounded,
+                    size: 32,
+                    color: kprimaryColor,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Keluar Dari Akun',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Apakah Anda yakin ingin keluar dari Akun?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: BorderSide(
+                              color: kprimaryColor.withOpacity(0.5),
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          'Batal',
+                          style: TextStyle(
+                            color: kprimaryColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: kprimaryColor,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          'Keluar',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (confirm == true) {
+      // Clear all providers that store user data
+      authProvider.logout();
+      Provider.of<UserProvider>(context, listen: false).clearUserData();
+
+      // Navigate to login screen and remove all previous routes
+      if (!context.mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (Route<dynamic> route) => false,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: kprimaryColor,
         elevation: 0,
         title: const Text(
-          "My Profile",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          "Profil Saya",
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings, color: Colors.black),
-            onPressed: () {},
+            icon: const Icon(Icons.settings, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SecurityScreen(),
+                ),
+              );
+            },
           ),
           IconButton(
-            icon: const Icon(Icons.chat_bubble_outline, color: Colors.black),
-            onPressed: () {},
+            icon: const Icon(Icons.chat_bubble_outline, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ChatScreen(),
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -33,59 +190,93 @@ class Profile extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Profile header
+            // Header Profil
             Container(
               padding: const EdgeInsets.all(16),
-              color: Colors.orange,
+              color: kprimaryColor,
               child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundImage: AssetImage("images/profile3.png"),
-                    child: Align(
-                      alignment: Alignment.bottomRight,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 12,
-                        child: Icon(
-                          Icons.edit,
-                          size: 14,
-                          color: Colors.orange,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const EditProfile(),
                         ),
-                      ),
+                      );
+                    },
+                    child: Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 40,
+                          backgroundColor: Colors.grey[200],
+                          backgroundImage: userProvider
+                                  .profileImagePath.isNotEmpty
+                              ? FileImage(File(userProvider.profileImagePath))
+                              : const AssetImage("images/risky.jpg")
+                                  as ImageProvider,
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: kprimaryColor,
+                                width: 2,
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.edit,
+                              size: 14,
+                              color: kprimaryColor,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        "Anang Prahari Fernando",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          userProvider.name.isNotEmpty
+                              ? userProvider.name
+                              : "Nama tidak tersedia",
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        "150 Pengikut  10 Mengikuti",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
+                        const SizedBox(height: 4),
+                        const Text(
+                          "1,7jt Pengikut  10 Mengikuti",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 16),
-            // Greeting text
+
+            // Salam
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                "Hai, Anang",
+                "Hai, ${userProvider.name}",
                 style: Theme.of(context)
                     .textTheme
                     .titleLarge
@@ -93,7 +284,8 @@ class Profile extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            // Profile menu items
+
+            // Daftar Menu Profil
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
@@ -102,25 +294,47 @@ class Profile extends StatelessWidget {
                     icon: Icons.person,
                     text: "Pengaturan Profile",
                     subtitle: "Perbarui dan ubah profil Anda",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const EditProfile(),
+                        ),
+                      );
+                    },
                   ),
                   ProfileMenuItem(
                     icon: Icons.lock,
                     text: "Keamanan",
                     subtitle: "Ubah kata sandi Anda",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SecurityScreen(),
+                        ),
+                      );
+                    },
                   ),
                   ProfileMenuItem(
                     icon: Icons.notifications,
                     text: "Notifikasi",
                     subtitle: "Ubah pengaturan notifikasi Anda",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const NotificationsScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 16),
-            // Help section
+
+            // Bagian Bantuan
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
@@ -138,41 +352,60 @@ class Profile extends StatelessWidget {
                     icon: Icons.help_outline,
                     text: "Pusat Bantuan",
                     subtitle: "",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HelpCenterScreen(),
+                        ),
+                      );
+                    },
                   ),
                   ProfileMenuItem(
                     icon: Icons.chat,
                     text: "Chat Dengan JenShop",
                     subtitle: "",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ChatScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
             ),
+
+            const SizedBox(height: 16),
+
+            // Bagian Logout
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Akun",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ProfileMenuItem(
+                    icon: Icons.logout,
+                    text: "Logout",
+                    subtitle: "Keluar dari akun Anda",
+                    onTap: () => _handleLogout(context),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        onTap: (index) {},
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '',
-          ),
-        ],
       ),
     );
   }
@@ -185,11 +418,12 @@ class ProfileMenuItem extends StatelessWidget {
   final VoidCallback onTap;
 
   const ProfileMenuItem({
+    Key? key,
     required this.icon,
     required this.text,
     required this.subtitle,
     required this.onTap,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +445,7 @@ class ProfileMenuItem extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, color: Colors.orange),
+            Icon(icon, color: kprimaryColor),
             const SizedBox(width: 16),
             Expanded(
               child: Column(

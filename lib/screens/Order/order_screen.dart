@@ -5,8 +5,49 @@ import '../../Provider/order_provider.dart';
 import '../../models/product_model.dart';
 import '../../constants.dart';
 
-class OrderScreen extends StatelessWidget {
+class OrderScreen extends StatefulWidget {
   const OrderScreen({Key? key}) : super(key: key);
+
+  @override
+  State<OrderScreen> createState() => _OrderScreenState();
+}
+
+class _OrderScreenState extends State<OrderScreen> {
+  int currentStep = 2;
+  bool showNotification = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _startStatusUpdates();
+  }
+
+  void _startStatusUpdates() async {
+    // Update to "Dalam Perjalanan" after 5 seconds
+    await Future.delayed(const Duration(seconds: 5));
+    if (mounted) {
+      setState(() {
+        currentStep = 3;
+      });
+    }
+
+    // Update to "Terkirim" after another 5 seconds
+    await Future.delayed(const Duration(seconds: 5));
+    if (mounted) {
+      setState(() {
+        currentStep = 4;
+        showNotification = true;
+      });
+    }
+
+    // Hide notification after 2 seconds
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) {
+      setState(() {
+        showNotification = false;
+      });
+    }
+  }
 
   String formatCurrency(double amount) {
     final formatter = NumberFormat.currency(
@@ -17,139 +58,104 @@ class OrderScreen extends StatelessWidget {
     return formatter.format(amount);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final orderProvider = Provider.of<OrderProvider>(context);
-    final orders = orderProvider.orders;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Pesanan Saya',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: kprimaryColor,
+  Widget _buildOrderCard(
+      Map<String, dynamic> order,
+      List<Product> products,
+      bool discountApplied,
+      double totalPrice,
+      double totalSubtotal,
+      double totalDiscount) {
+    return Card(
+      color: Colors.white,
+      margin: const EdgeInsets.all(8.0),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
       ),
-      backgroundColor: kcontentColor,
-      body: orders.isEmpty
-          ? Container(
-              color: kcontentColor,
-              child: Center(
-                child: Text(
-                  'Tidak ada pesanan',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-            )
-          : ListView.builder(
-              itemCount: orders.length,
-              itemBuilder: (context, index) {
-                var order = orders[index];
-                List<Product> products = order['products'];
-                bool discountApplied = order['discountApplied'] ?? false;
-                double totalPrice = order['totalPriceWithDiscount'];
-                double totalSubtotal = products.fold(
-                    0, (sum, item) => sum + (item.price * item.quantity));
-                double totalDiscount = discountApplied
-                    ? products.fold(
-                        0,
-                        (sum, item) =>
-                            sum +
-                            (item.price *
-                                item.quantity *
-                                (item.discountPercentage ?? 0) /
-                                100))
-                    : 0;
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionTitle('Informasi Pengiriman'),
+            _buildShippingInfo(order),
+            _buildSectionTitle('Detail Pesanan'),
+            _buildOrderDetails(products, discountApplied),
+            _buildSectionTitle('Rincian Harga'),
+            _buildPriceDetails(totalSubtotal, totalDiscount, totalPrice),
+            _buildSectionTitle('Metode Pembayaran'),
+            _buildPaymentMethod(order['paymentMethod']),
+            _buildSectionTitle('Status Pengiriman'),
+            _buildShippingStatus(order['shippingRoute']),
+          ],
+        ),
+      ),
+    );
+  }
 
-                return Card(
-                  color: Colors.white,
-                  margin: const EdgeInsets.all(8.0),
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Informasi Pengiriman
-                        Text(
-                          'Informasi Pengiriman',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        _buildShippingInfo(order),
-                        SizedBox(height: 16),
-
-                        // Detail Pesanan
-                        Text(
-                          'Detail Pesanan',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        _buildOrderDetails(products, discountApplied),
-                        SizedBox(height: 16),
-
-                        // Rincian Harga
-                        Text(
-                          'Rincian Harga',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        _buildPriceDetails(totalSubtotal, totalDiscount,
-                            totalPrice, discountApplied),
-                        SizedBox(height: 16),
-
-                        // Metode Pembayaran
-                        Text(
-                          'Metode Pembayaran',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        _buildPaymentMethod(orderProvider.paymentMethod),
-                        SizedBox(height: 16),
-
-                        // Status Pengiriman
-                        Text(
-                          'Status Pengiriman',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        _buildShippingRoute(),
-                      ],
-                    ),
-                  ),
-                );
-              },
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Container(
+            width: 4,
+            height: 24,
+            decoration: BoxDecoration(
+              color: kprimaryColor,
+              borderRadius: BorderRadius.circular(2),
             ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildShippingInfo(Map<String, dynamic> order) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildInfoRow(Icons.person, 'Nama Penerima', order['name']),
+            const Divider(height: 24),
+            _buildInfoRow(
+                Icons.location_on, 'Alamat Pengiriman', order['address']),
+            const Divider(height: 24),
+            _buildInfoRow(Icons.phone, 'Nomor Telepon', order['phone']),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String label, String value) {
+    return Row(
       children: [
-        Text('Nama: ${order['name']}', style: TextStyle(fontSize: 16)),
-        SizedBox(height: 4),
-        Text('Alamat: ${order['address']}', style: TextStyle(fontSize: 16)),
-        SizedBox(height: 4),
-        Text('No. Telepon: ${order['phone']}', style: TextStyle(fontSize: 16)),
+        Icon(icon, color: kprimaryColor),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label,
+                  style: const TextStyle(color: Colors.grey, fontSize: 14)),
+              const SizedBox(height: 4),
+              Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -157,158 +163,318 @@ class OrderScreen extends StatelessWidget {
   Widget _buildOrderDetails(List<Product> products, bool discountApplied) {
     return Column(
       children: products.map((item) {
-        double subtotalPerItem = item.price * item.quantity;
-        double discountPerItem = discountApplied
-            ? subtotalPerItem * (item.discountPercentage ?? 0) / 100
+        double subtotal = item.price * item.quantity;
+        double discount = discountApplied
+            ? subtotal * (item.discountPercentage ?? 0) / 100
             : 0;
-
-        return Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  height: 50,
-                  width: 50,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(item.image),
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    item.title,
-                    style: TextStyle(fontSize: 14),
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Harga: ${formatCurrency(item.price)} x ${item.quantity}',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    Text(
-                      'Subtotal: ${formatCurrency(subtotalPerItem)}',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    if (discountApplied && discountPerItem > 0)
-                      Text(
-                        'Diskon: - ${formatCurrency(discountPerItem)}',
-                        style: TextStyle(fontSize: 14, color: Colors.red),
-                      ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 8),
-            Divider(),
-          ],
-        );
+        return _buildProductCard(item, subtotal, discount);
       }).toList(),
     );
   }
 
+  Widget _buildProductCard(Product product, double subtotal, double discount) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                product.image,
+                width: 60,
+                height: 60,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(product.title,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text(
+                      '${formatCurrency(product.price)} × ${product.quantity}'),
+                  if (discount > 0)
+                    Text(
+                      'Diskon: -${formatCurrency(discount)}',
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                ],
+              ),
+            ),
+            Text(
+              formatCurrency(subtotal - discount),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildPriceDetails(
-      double subtotal, double discount, double total, bool discountApplied) {
+      double subtotal, double discount, double totalPrice) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Subtotal', style: TextStyle(fontSize: 16)),
-            Text(formatCurrency(subtotal), style: TextStyle(fontSize: 16)),
-          ],
-        ),
-        if (discountApplied && discount > 0)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Diskon', style: TextStyle(fontSize: 16, color: Colors.red)),
-              Text(
-                '- ${formatCurrency(discount)}',
-                style: TextStyle(fontSize: 16, color: Colors.red),
-              ),
-            ],
-          ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Total',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Text(formatCurrency(total),
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          ],
-        ),
+        _buildPriceRow('Subtotal', subtotal),
+        if (discount > 0)
+          _buildPriceRow('Diskon Total', -discount, isRed: true),
+        const Divider(),
+        _buildPriceRow('Total Pembayaran', totalPrice, isBold: true),
+      ],
+    );
+  }
+
+  Widget _buildPriceRow(String label, double value,
+      {bool isBold = false, bool isRed = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label,
+            style: TextStyle(
+                fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
+        Text(formatCurrency(value),
+            style: TextStyle(
+              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+              color: isRed ? Colors.red : null,
+            )),
       ],
     );
   }
 
   Widget _buildPaymentMethod(String paymentMethod) {
-    return Text(
-      paymentMethod,
-      style: TextStyle(fontSize: 16),
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Icon(Icons.payment, color: kprimaryColor),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                paymentMethod,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildShippingRoute() {
-    return Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+  Widget _buildShippingStatus(String shippingRoute) {
+    const steps = [
+      'Pesanan Dikonfirmasi',
+      'Sedang Diproses',
+      'Dalam Perjalanan',
+      'Dalam Pengantaran',
+      'Terkirim'
+    ];
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (var i = 0; i < steps.length; i++) ...[
+              if (i > 0)
+                TweenAnimationBuilder<Color?>(
+                  tween: ColorTween(
+                    begin: Colors.grey.withOpacity(0.3),
+                    end: i <= currentStep
+                        ? kprimaryColor
+                        : Colors.grey.withOpacity(0.3),
+                  ),
+                  duration: const Duration(milliseconds: 500),
+                  builder: (context, color, _) {
+                    return Container(
+                      margin: const EdgeInsets.only(left: 12),
+                      height: 20,
+                      width: 2,
+                      color: color,
+                    );
+                  },
+                ),
+              Row(
+                children: [
+                  TweenAnimationBuilder<Color?>(
+                    tween: ColorTween(
+                      begin: Colors.grey[300],
+                      end: i <= currentStep ? kprimaryColor : Colors.grey[300],
+                    ),
+                    duration: const Duration(milliseconds: 500),
+                    builder: (context, color, _) {
+                      return Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: color,
+                        ),
+                        child: Icon(
+                          i <= currentStep
+                              ? Icons.check
+                              : Icons.circle_outlined,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    steps[i],
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: i <= currentStep ? Colors.black : Colors.grey,
+                      fontWeight: i <= currentStep
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Pesanan Dikonfirmasi', style: TextStyle(fontSize: 14)),
-              Icon(Icons.check_circle, color: Colors.green),
-            ],
+          Icon(
+            Icons.shopping_bag_outlined,
+            size: 100,
+            color: Colors.grey[400],
           ),
-          SizedBox(height: 4),
-          Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Sedang Diproses', style: TextStyle(fontSize: 14)),
-              Icon(Icons.check_circle, color: Colors.green),
-            ],
+          const SizedBox(height: 16),
+          Text(
+            'Belum ada pesanan',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.grey.shade500,
+              fontWeight: FontWeight.w500,
+            ),
           ),
-          SizedBox(height: 4),
-          Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Dalam Perjalanan', style: TextStyle(fontSize: 14)),
-              Icon(Icons.local_shipping, color: kprimaryColor),
-            ],
-          ),
-          SizedBox(height: 4),
-          Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Dalam Pengantaran', style: TextStyle(fontSize: 14)),
-              Icon(Icons.hourglass_bottom, color: Colors.grey),
-            ],
-          ),
-          SizedBox(height: 4),
-          Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Terkirim', style: TextStyle(fontSize: 14)),
-              Icon(Icons.circle_outlined, color: Colors.grey),
-            ],
+          const SizedBox(height: 8),
+          Text(
+            'Mulai belanja sekarang!',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade400,
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final orderProvider = Provider.of<OrderProvider>(context);
+    final orders = orderProvider.orders;
+
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            title: const Text(
+              'Pesanan Saya',
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+            ),
+            backgroundColor: kprimaryColor,
+            centerTitle: true,
+            iconTheme: const IconThemeData(color: Colors.white),
+          ),
+          backgroundColor: kcontentColor,
+          body: orders.isEmpty
+              ? _buildEmptyState()
+              : ListView.builder(
+                  itemCount: orders.length,
+                  itemBuilder: (context, index) {
+                    var order = orders[index];
+                    List<Product> products = order['products'];
+                    bool discountApplied = order['discountApplied'] ?? false;
+                    double totalPrice = order['totalPriceWithDiscount'];
+                    double totalSubtotal = products.fold(
+                        0, (sum, item) => sum + (item.price * item.quantity));
+                    double totalDiscount = discountApplied
+                        ? products.fold(
+                            0,
+                            (sum, item) =>
+                                sum +
+                                (item.price *
+                                    item.quantity *
+                                    (item.discountPercentage ?? 0) /
+                                    100))
+                        : 0;
+
+                    return _buildOrderCard(order, products, discountApplied,
+                        totalPrice, totalSubtotal, totalDiscount);
+                  },
+                ),
+        ),
+        if (showNotification)
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.0, end: 1.0),
+            duration: const Duration(milliseconds: 500),
+            builder: (context, value, child) {
+              return Positioned(
+                top: MediaQuery.of(context).padding.top + 20,
+                left: 20,
+                right: 20,
+                child: Opacity(
+                  opacity: value,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 15),
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.check_circle, color: Colors.white),
+                        SizedBox(width: 10),
+                        Text(
+                          'Pesanan anda sudah diterima',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+      ],
     );
   }
 }

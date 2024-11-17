@@ -9,7 +9,7 @@ import 'package:ecommerce_mobile_app/screens/Detail/Widget/items_details.dart';
 
 class DetailScreen extends StatefulWidget {
   final Product product;
-
+  
   const DetailScreen({Key? key, required this.product}) : super(key: key);
 
   @override
@@ -21,6 +21,7 @@ class _DetailScreenState extends State<DetailScreen> {
   Color? selectedColor;
   String? selectedSize;
   int currentImage = 0;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -30,175 +31,229 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: kcontentColor,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 6,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    margin: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: Column(
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Stack(
                       children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 4, left: 4),
-                            child: DetailAppBar(product: widget.product),
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.45,
+                          decoration: BoxDecoration(
+                            color: kcontentColor,
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(30),
+                              bottomRight: Radius.circular(30),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        MyImageSlider(
-                          image: widget.product.image,
-                          onChange: (index) {
-                            setState(() {
-                              currentImage = index;
-                            });
-                          },
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                child: DetailAppBar(product: widget.product),
+                              ),
+                              Expanded(
+                                // Removed Hero widget and using simple Container
+                                child: Container(
+                                  child: MyImageSlider(
+                                    image: widget.product.image,
+                                    onChange: (index) {
+                                      setState(() {
+                                        currentImage = index;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ItemsDetails(product: widget.product),
-                        const SizedBox(height: 24),
-                        const Text(
-                          'Color',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                  SliverToBoxAdapter(
+                    child: Transform.translate(
+                      offset: const Offset(0, -20),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ItemsDetails(product: widget.product),
+                              const SizedBox(height: 24),
+                              _buildSection(
+                                title: 'Color',
+                                child: _buildColorOptions(),
+                              ),
+                              const SizedBox(height: 24),
+                              _buildSection(
+                                title: 'Size',
+                                child: _buildSizeOptions(),
+                              ),
+                              const SizedBox(height: 24),
+                              _buildSection(
+                                title: 'Description',
+                                child: Description(product: widget.product),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          children: widget.product.colors
-                              .map((color) => _buildColorOption(color))
-                              .toList(),
-                        ),
-                        const SizedBox(height: 24),
-                        const Text(
-                          'Size',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          children: widget.product.sizes
-                              .map((size) => _buildSizeOption(size))
-                              .toList(),
-                        ),
-                        const SizedBox(height: 24),
-                        Description(product: widget.product),
-                      ],
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: kcontentColor,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  spreadRadius: 2,
-                  blurRadius: 8,
-                  offset: const Offset(0, -3),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            margin: const EdgeInsets.only(bottom: 16),
-            child: AddToCart(
-              product: widget.product,
-              onQuantityChanged: (newQuantity) {
-                setState(() {
-                  quantity = newQuantity.clamp(1, 99);
-                });
-              },
-            ),
-          ),
-        ],
+            _buildBottomBar(),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildSection({required String title, required Widget child}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 12),
+        child,
+      ],
+    );
+  }
+
+  Widget _buildColorOptions() {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 8,
+      children: widget.product.colors
+          .map((color) => _buildColorOption(color))
+          .toList(),
     );
   }
 
   Widget _buildColorOption(Color color) {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedColor = color;
-        });
-      },
+      onTap: () => setState(() => selectedColor = color),
       child: Container(
-        width: 28,
-        height: 28,
+        width: 36,
+        height: 36,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: color,
           border: Border.all(
-            color: selectedColor == color ? Colors.blue : Colors.transparent,
-            width: 1.5,
+            color: selectedColor == color ? kprimaryColor : Colors.transparent,
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.3),
+              spreadRadius: 1,
+              blurRadius: 6,
+            ),
+          ],
+        ),
+        child: selectedColor == color
+            ? const Icon(
+                Icons.check,
+                color: Colors.white,
+                size: 20,
+              )
+            : null,
+      ),
+    );
+  }
+
+  Widget _buildSizeOptions() {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 8,
+      children:
+          widget.product.sizes.map((size) => _buildSizeOption(size)).toList(),
+    );
+  }
+
+  Widget _buildSizeOption(String size) {
+    final isSelected = selectedSize == size;
+    return GestureDetector(
+      onTap: () => setState(() => selectedSize = size),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: isSelected ? kprimaryColor : Colors.grey[300]!,
+            width: isSelected ? 2 : 1,
+          ),
+          borderRadius: BorderRadius.circular(8),
+          color: isSelected ? kprimaryColor.withOpacity(0.1) : Colors.white,
+        ),
+        child: Text(
+          size,
+          style: TextStyle(
+            color: isSelected ? kprimaryColor : Colors.black87,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildSizeOption(String size) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedSize = size;
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: selectedSize == size ? Colors.orange : Colors.grey[300]!,
+  Widget _buildBottomBar() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            spreadRadius: 1,
+            blurRadius: 10,
+            offset: const Offset(0, -3),
           ),
-          borderRadius: BorderRadius.circular(4),
-          color: selectedSize == size ? Colors.orange[100] : Colors.white,
-        ),
-        child: Text(
-          size,
-          style: TextStyle(
-            color: selectedSize == size ? Colors.orange : Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        ],
+      ),
+      padding: EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 12,
+        bottom: MediaQuery.of(context).padding.bottom + 12,
+      ),
+      child: AddToCart(
+        product: widget.product,
+        onQuantityChanged: (newQuantity) {
+          setState(() {
+            quantity = newQuantity.clamp(1, 99);
+          });
+        },
       ),
     );
   }

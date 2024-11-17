@@ -1,6 +1,6 @@
-import 'package:ecommerce_mobile_app/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce_mobile_app/models/product_model.dart';
+import 'package:ecommerce_mobile_app/constants.dart';
 
 class Description extends StatefulWidget {
   final Product product;
@@ -11,118 +11,520 @@ class Description extends StatefulWidget {
   State<Description> createState() => _DescriptionState();
 }
 
-class _DescriptionState extends State<Description> {
+class _DescriptionState extends State<Description>
+    with SingleTickerProviderStateMixin {
   int selectedTab = 0;
+  late TabController _tabController;
+  final List<String> _tabs = ["Description", "Specifications", "Shipping"];
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(() {
+      setState(() {
+        selectedTab = _tabController.index;
+      });
+      // Add smooth scroll to top when tab changes
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildTab("Description", 0),
-            _buildTab("Specifications", 1),
-            _buildTab("Shipping", 2),
-          ],
-        ),
-        const SizedBox(height: 16), // Mengurangi height dari SizedBox
-        IndexedStack(
-          index: selectedTab,
-          children: [
-            _buildDescription(),
-            _buildSpecifications(),
-            _buildShipping(),
-          ],
-        ),
-      ],
+    return SingleChildScrollView(
+      controller: _scrollController,
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildCustomTabBar(),
+          const SizedBox(height: 24),
+          _buildTabContent(),
+          const SizedBox(height: 24),
+          if (selectedTab == 0) _buildAdditionalInfo(),
+        ],
+      ),
     );
   }
 
-  Widget _buildTab(String title, int index) {
-    final bool isSelected = selectedTab == index;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedTab = index;
-        });
-      },
-      child: Container(
-        width: 100, // Mengurangi lebar tab agar sesuai dengan layar lebih kecil
-        height: 36, // Mengurangi tinggi tab
-        decoration: BoxDecoration(
-          color: isSelected ? kprimaryColor : Colors.transparent,
-          borderRadius: BorderRadius.circular(18),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: isSelected ? Colors.white : Colors.black,
-            fontSize: 14, // Mengurangi ukuran font
+  Widget _buildCustomTabBar() {
+    return Container(
+      height: 56,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
+        ],
+      ),
+      child: TabBar(
+        controller: _tabController,
+        indicator: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          gradient: LinearGradient(
+            colors: [
+              kprimaryColor,
+              kprimaryColor.withOpacity(0.8),
+            ],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: kprimaryColor.withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        labelColor: Colors.white,
+        unselectedLabelColor: Colors.black54,
+        labelStyle: const TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 15,
+          letterSpacing: 0.5,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 14,
+        ),
+        tabs: _tabs.map((tab) => _buildTab(tab)).toList(),
+      ),
+    );
+  }
+
+  Widget _buildTab(String text) {
+    return Tab(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );
   }
 
+  Widget _buildTabContent() {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 400),
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.05, 0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          ),
+        );
+      },
+      child: Container(
+        key: ValueKey<int>(selectedTab),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        child: _buildSelectedContent(),
+      ),
+    );
+  }
+
+  Widget _buildSelectedContent() {
+    switch (selectedTab) {
+      case 0:
+        return _buildDescription();
+      case 1:
+        return _buildSpecifications();
+      case 2:
+        return _buildShipping();
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
   Widget _buildDescription() {
-    return Text(
-      widget.product.description,
-      style: const TextStyle(
-        fontSize: 14, // Mengurangi ukuran font
-        color: Colors.grey,
-        height: 1.4,
+    return _buildContentCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: kprimaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.description_outlined,
+                  color: kprimaryColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                "Product Overview",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Text(
+            widget.product.description,
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.black87,
+              height: 1.6,
+              letterSpacing: 0.3,
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildSpecifications() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: widget.product.specifications.map((spec) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(
-              vertical: 2), // Mengurangi padding vertikal
-          child: Row(
+    return _buildContentCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              const Icon(Icons.check_circle,
-                  size: 14, color: Colors.blue), // Mengurangi ukuran ikon
-              const SizedBox(width: 6), // Mengurangi jarak antar elemen
-              Text(
-                spec,
-                style: const TextStyle(fontSize: 14), // Mengurangi ukuran font
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: kprimaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.assignment_outlined,
+                  color: kprimaryColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                "Product Specifications",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
             ],
           ),
+          const SizedBox(height: 20),
+          ...widget.product.specifications.asMap().entries.map(
+                (entry) => _buildSpecificationItem(
+                  entry.value,
+                  entry.key,
+                ),
+              ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSpecificationItem(String spec, int index) {
+    return TweenAnimationBuilder<double>(
+      duration: Duration(milliseconds: 400 + (index * 100)),
+      tween: Tween(begin: 0.0, end: 1.0),
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 20 * (1 - value)),
+          child: Opacity(
+            opacity: value,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: kprimaryColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.check_circle_outline,
+                      size: 18,
+                      color: kprimaryColor,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      spec,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.black87,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         );
-      }).toList(),
+      },
     );
   }
 
   Widget _buildShipping() {
-    return Column(
-      children: [
-        if (widget.product.freeShipping)
-          const ListTile(
-            leading: Icon(Icons.local_shipping,
-                color: Colors.blue, size: 20), // Mengurangi ukuran ikon
-            title: Text('Free Shipping',
-                style: TextStyle(fontSize: 14)), // Mengurangi ukuran font
+    return _buildContentCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: kprimaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.local_shipping_outlined,
+                  color: kprimaryColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                "Shipping Information",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
           ),
-        if (widget.product.returns30Days)
-          const ListTile(
-            leading: Icon(Icons.refresh, color: Colors.blue, size: 20),
-            title: Text('30-Day Returns', style: TextStyle(fontSize: 14)),
+          const SizedBox(height: 20),
+          if (widget.product.freeShipping)
+            _buildShippingFeature(
+              icon: Icons.local_shipping_outlined,
+              title: 'Free Express Shipping',
+              subtitle: 'Delivered within 2-3 business days',
+              color: Colors.blue,
+            ),
+          if (widget.product.returns30Days)
+            _buildShippingFeature(
+              icon: Icons.refresh_outlined,
+              title: '30-Day Returns',
+              subtitle: 'Hassle-free returns with full refund',
+              color: Colors.green,
+            ),
+          if (widget.product.warranty)
+            _buildShippingFeature(
+              icon: Icons.security_outlined,
+              title: '2-Year Warranty',
+              subtitle: 'Extended coverage for your peace of mind',
+              color: Colors.orange,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShippingFeature({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: color.withOpacity(0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-        if (widget.product.warranty)
-          const ListTile(
-            leading: Icon(Icons.security, color: Colors.blue, size: 20),
-            title: Text('2-Year Warranty', style: TextStyle(fontSize: 14)),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 24),
           ),
-      ],
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: color,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: color.withOpacity(0.8),
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContentCard({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  Widget _buildAdditionalInfo() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Additional Information",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildInfoCard(
+            icon: Icons.shopping_bag_outlined,
+            title: "In Stock",
+            subtitle: "Ready to ship",
+            color: Colors.green,
+          ),
+          _buildInfoCard(
+            icon: Icons.verified_outlined,
+            title: "Authentic Product",
+            subtitle: "100% genuine product",
+            color: Colors.blue,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

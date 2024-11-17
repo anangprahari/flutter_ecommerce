@@ -1,5 +1,4 @@
 import 'package:ecommerce_mobile_app/Provider/add_to_cart_provider.dart';
-import 'package:ecommerce_mobile_app/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce_mobile_app/screens/Cart/checkout_screen.dart';
 import 'package:intl/intl.dart';
@@ -28,10 +27,10 @@ class _CheckOutBoxState extends State<CheckOutBox> {
     double subtotal = 0;
     double discountAmount = 0;
     double total = 0;
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = screenSize.width <= 375; // iPhone SE width
 
-    // Menghitung subtotal dan diskon per produk
-    List<Map<String, dynamic>> productDetails =
-        []; // Menyimpan rincian per produk
+    List<Map<String, dynamic>> productDetails = [];
     for (var product in provider.cart) {
       double productSubtotal = product.price * product.quantity;
       double productDiscountAmount = 0;
@@ -47,7 +46,6 @@ class _CheckOutBoxState extends State<CheckOutBox> {
       subtotal += productSubtotal;
       total += (productSubtotal - productDiscountAmount);
 
-      // Menambahkan rincian per produk ke list productDetails
       productDetails.add({
         'name': product.title,
         'price': product.price,
@@ -57,183 +55,290 @@ class _CheckOutBoxState extends State<CheckOutBox> {
       });
     }
 
-    return Expanded(
-      child: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(30),
-            bottomLeft: Radius.circular(30),
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              TextField(
-                controller: _discountController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 5,
-                    horizontal: 15,
-                  ),
-                  filled: true,
-                  fillColor: kcontentColor,
-                  hintText: "Masukkan Kode Diskon",
-                  hintStyle: const TextStyle(
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                  suffixIcon: TextButton(
-                    onPressed: _applyDiscount,
-                    child: const Text(
-                      "Apply",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: kprimaryColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(
+          horizontal: isSmallScreen ? 12 : 16,
+          vertical: isSmallScreen ? 12 : 16,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Discount Input Section
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: EdgeInsets.symmetric(
+                horizontal: isSmallScreen ? 8 : 12,
+                vertical: 6,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _discountController,
+                      style: TextStyle(fontSize: isSmallScreen ? 13 : 14),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Masukkan Kode Diskon",
+                        hintStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: isSmallScreen ? 13 : 14,
+                        ),
+                        contentPadding: EdgeInsets.zero,
                       ),
                     ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: _applyDiscount,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepOrange,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isSmallScreen ? 12 : 16,
+                        vertical: isSmallScreen ? 8 : 10,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      "Aktifkan",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: isSmallScreen ? 13 : 14,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
+            ),
+            const SizedBox(height: 16),
 
-              // Rincian per produk
-              ...productDetails.map((product) => Column(
+            // Product List Section
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: productDetails.length,
+              itemBuilder: (context, index) {
+                final product = productDetails[index];
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50],
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.grey.shade200),
+                  ),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        product['name'],
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              product['name'],
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: isSmallScreen ? 13 : 14,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '${product['quantity']}x',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: isSmallScreen ? 13 : 14,
+                            ),
+                          ),
+                        ],
                       ),
+                      const SizedBox(height: 4),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Harga: Rp. ${NumberFormat.decimalPattern('id').format(product['price'])} x ${product['quantity']}',
-                            style: const TextStyle(color: Colors.grey),
+                            NumberFormat.currency(
+                              locale: 'id',
+                              symbol: 'Rp ',
+                              decimalDigits: 0,
+                            ).format(product['price']),
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: isSmallScreen ? 12 : 13,
+                            ),
                           ),
                           Text(
-                            'Subtotal: Rp. ${NumberFormat.decimalPattern('id').format(product['subtotal'])}',
-                            style: const TextStyle(color: Colors.grey),
+                            NumberFormat.currency(
+                              locale: 'id',
+                              symbol: 'Rp ',
+                              decimalDigits: 0,
+                            ).format(product['subtotal']),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: isSmallScreen ? 13 : 14,
+                            ),
                           ),
                         ],
                       ),
-                      if (_isDiscountApplied)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              "Diskon:",
-                              style: TextStyle(color: Colors.red),
-                            ),
-                            Text(
-                              "- Rp. ${NumberFormat.decimalPattern('id').format(product['discount'])}",
-                              style: const TextStyle(color: Colors.red),
-                            ),
-                          ],
-                        ),
-                      const SizedBox(height: 10),
-                    ],
-                  )),
-              const Divider(),
-
-              // Tampilkan Subtotal
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Subtotal",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Text(
-                    NumberFormat.currency(
-                            locale: 'id', symbol: 'Rp. ', decimalDigits: 0)
-                        .format(subtotal),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-
-              // Tampilkan Diskon Total jika sudah diapply
-              if (_isDiscountApplied)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Diskon Total",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red,
-                        fontSize: 16,
-                      ),
-                    ),
-                    Text(
-                      "- " +
-                          NumberFormat.currency(
+                      if (_isDiscountApplied && product['discount'] > 0)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "- ${NumberFormat.currency(
                                   locale: 'id',
-                                  symbol: 'Rp. ',
-                                  decimalDigits: 0)
-                              .format(discountAmount),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.red,
+                                  symbol: 'Rp ',
+                                  decimalDigits: 0,
+                                ).format(product['discount'])}",
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: isSmallScreen ? 12 : 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
+
+            // Summary Section
+            Container(
+              margin: const EdgeInsets.only(top: 8),
+              padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Subtotal",
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: isSmallScreen ? 13 : 14,
+                        ),
                       ),
+                      Text(
+                        NumberFormat.currency(
+                          locale: 'id',
+                          symbol: 'Rp ',
+                          decimalDigits: 0,
+                        ).format(subtotal),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: isSmallScreen ? 13 : 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (_isDiscountApplied) ...[
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Total Diskon",
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: isSmallScreen ? 13 : 14,
+                          ),
+                        ),
+                        Text(
+                          "- ${NumberFormat.currency(
+                            locale: 'id',
+                            symbol: 'Rp ',
+                            decimalDigits: 0,
+                          ).format(discountAmount)}",
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.w500,
+                            fontSize: isSmallScreen ? 13 : 14,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
-                ),
-              const SizedBox(height: 10),
-              const Divider(),
-              const SizedBox(height: 10),
-
-              // Tampilkan Total Pembayaran
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Total Pembayaran",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Divider(color: Colors.grey[300]),
                   ),
-                  Text(
-                    NumberFormat.currency(
-                            locale: 'id', symbol: 'Rp. ', decimalDigits: 0)
-                        .format(total),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Total Pembayaran",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Text(
+                        NumberFormat.currency(
+                          locale: 'id',
+                          symbol: 'Rp ',
+                          decimalDigits: 0,
+                        ).format(total),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.deepOrange,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+            ),
 
-              // Tombol Check Out
-              ElevatedButton(
+            // Checkout Button
+            Container(
+              margin: EdgeInsets.only(
+                top: 16,
+                bottom: 16,
+              ),
+              width: double.infinity,
+              child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: kprimaryColor,
-                  minimumSize: const Size(double.infinity, 55),
+                  backgroundColor: Colors.deepOrange,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                    vertical: isSmallScreen ? 12 : 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
                 ),
                 onPressed: () {
                   Navigator.push(
@@ -247,17 +352,16 @@ class _CheckOutBoxState extends State<CheckOutBox> {
                     ),
                   );
                 },
-                child: const Text(
-                  "Check Out",
+                child: Text(
+                  "Checkout Sekarang",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.white,
+                    fontSize: isSmallScreen ? 14 : 16,
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

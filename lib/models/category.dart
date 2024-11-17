@@ -22,7 +22,7 @@ final List<Category> categoriesList = [
     image: "images/beauty.png",
   ),
   Category(
-    title: "Pakaian\nWanita",
+    title: "Pakaian Wanita",
     image: "images/image1.png",
   ),
   Category(

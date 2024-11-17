@@ -58,18 +58,18 @@ class Product {
 
 final List<Product> all = [
   Product(
-    title: "Premium Wireless Headphones with Noise Cancellation",
+    title:
+        "Aitu Q36 Open Ear Bone Conduction Wireless Bluetooth 5.3 Earphone head",
     description:
-        "Experience premium sound quality with our wireless headphones featuring advanced noise cancellation technology. Perfect for music enthusiasts and professionals alike. These headphones deliver crystal-clear audio and exceptional comfort for extended listening sessions.",
+        "Produk harus disimpan di ruangan yang kering dan berventilasi untuk menghindari kontak dengan zat korosif dan jauh dari api dan sumber panas. Produk perlu diisi dayanya setiap 3 bulan selama penyimpanan. Operasional: 0~40℃, penyimpanan: -10~45℃, kelembaban saat bekerja : kurang dari 70%",
     image: "images/all/wireless.png",
-    price: 199.99,
-    originalPrice: 249.99,
-    discountPercentage: 20,
+    price: 83000,
+    originalPrice: 300000,
+    discountPercentage: 70,
     seller: "Skullcandy",
-    colors: [Colors.black, Colors.blue, Colors.red],
-    sizes: ["S", "M", "L", "XL"],
+    colors: [Colors.black, Colors.orange, Colors.white],
     category: "Electronics",
-    review: "(20 reviews)",
+    review: "(5 reviews)",
     rate: 4.5,
     reviewCount: 2100,
     quantity: 1,
@@ -77,125 +77,102 @@ final List<Product> all = [
     returns30Days: true,
     warranty: true,
     specifications: [
-      "Active Noise Cancellation",
-      "40mm Dynamic Drivers",
-      "Up to 30 Hours Battery Life",
-      "Bluetooth 5.0 Connectivity",
-      "Built-in Microphone",
-      "Touch Controls",
-      "Fast Charging Support",
-      "Foldable Design",
+      "Jenis Produk: WWS Speaker Bluetooth"
+          "Sistem Trek: Stereo"
+          "Mode Kontrol: Tombol Sentuh"
+          "Aktif Pasif: Aktif"
+          "Solusi Bluetooth: 6983D2"
+          "Versi Bluetooth: V5.3"
+          "Jarak Bluetooth: ≥10 m"
+          "Jarak Terbaik < 10 m"
+          "Daya Maksimum Headset: 5mW"
+          "Jenis Speaker: ∮16mm, 21Ω speaker film komposit magnetik besar"
+          "Baterai: Baterai Headphone 3,7V/ 501020 70mAh, Baterai Kompartemen Pengisian 3,7V/ 602040 350mAh"
+          "Waktu Putar Musik: Sekitar 6-8 jam (volume 80%)"
+          "Input Pengisian: Type-c, DC5V-300mA"
+          "Waktu Pengisian: Sekitar 1,5 jam"
     ],
     reviews: [
       Review(
-          username: "John Doe",
+          username: "Rizky",
           content:
-              "Great headphones with amazing sound quality! The noise cancellation is impressive and battery life is excellent.",
+              "mantab, walau masih merk yg kurang dikenal, kualitas bagus dan berfungsi dengan baik, suara balance dan cukup, gak over, pengiriman cepat...moga2 awet dan gak ada masalah nanti",
           rating: 5.0),
       Review(
-          username: "Alice Smith",
-          content:
-              "Very comfortable and effective noise cancellation. Perfect for long listening sessions.",
+          username: "Samid",
+          content: "Packing aman, barang berfungsi normal, pengiriman cepat",
           rating: 4.5),
       Review(
-          username: "Mike Johnson",
-          content:
-              "Good value for money. Sound quality is top-notch but the app could be better.",
+          username: "rahmat dwi",
+          content: "Sesuai sama di foto prodak dan barang sangat istimewa",
           rating: 4.0),
+      Review(
+          username: "isan",
+          content:
+              "Barang berfungsi dg baik kualitas barang sesuai dengan harga",
+          rating: 4.5),
+      Review(
+          username: "Anang",
+          content:
+              "sesuai lah guys dengan harga segitu, tpi sngat cool dan nyaman di kuping",
+          rating: 3.0),
     ],
   ),
   Product(
-    title: "Woman Sweater",
+    title: "Blouse asimetrisdez",
     description: "Baju berkualitas tinggi dan nyaman untuk dipakai sehari-hari",
     image: "images/all/sweet.png",
-    price: 70000,
-    originalPrice: 100000,
-    discountPercentage: 30,
-    seller: "Joy Store",
-    colors: [Colors.brown, Colors.deepPurple, Colors.pink],
+    price: 180000,
+    originalPrice: 190000,
+    discountPercentage: 10,
+    seller: "Ozaniesgallery",
+    colors: [Colors.black, Colors.brown, Colors.white],
     sizes: ["S", "M", "L", "XL"],
     category: "Woman Fashion",
-    review: "(32 Reviews)",
-    rate: 4.5,
+    review: "(4 Reviews)",
+    rate: 4.8,
     reviewCount: 32,
     quantity: 1,
     freeShipping: true,
-    returns30Days: true,
+    returns30Days: false,
     warranty: true,
     specifications: [
-      "Material: High-quality cotton",
-      "Available in multiple colors",
-      "Suitable for casual wear",
-      "Machine washable",
-      "Lightweight and comfortable",
+      "Bahan: polister",
+      "ukuran: 58*54cm",
+      "Transisi: 1cm = 10mm = 0.39inci",
     ],
     reviews: [
       Review(
-          username: "Lisa White",
-          content: "Very comfortable and perfect for chilly weather.",
+          username: "Lisa",
+          content: "Bagus, nyaman kainnya dingin.",
+          rating: 5.0),
+      Review(
+          username: "Syahla",
+          content: "Bagus banget cuma salah ngambil ukurannya, hihi😒",
+          rating: 4.0),
+      Review(
+          username: "Salma",
+          content: "Bagus banget lupa fotoin soalnya udah langsung dicuci😂🤣",
           rating: 4.5),
       Review(
-          username: "Mary Johnson",
-          content: "Soft material, fits well!",
-          rating: 4.0),
+          username: "isana saraswati",
+          content: "Bagus banget Masyaallah😍",
+          rating: 5.0),
     ],
   ),
   Product(
-    title: "Smart Watch",
-    description:
-        "CATATAN: Tali silikon ini dapat dipasang pada Miband 3 dan Miband 4!! "
-        "Sorotan: "
-        "- Dirancang khusus untuk Xiaomi Mi band 3 / MI Band 4 Tracker "
-        "- Panjang tali: 155MM-210MM "
-        "- Bahan: silikon "
-        "- Satu ukuran cocok untuk kebanyakan orang "
-        "nyaman dipakai. Fleksibel dan dapat disesuaikan.",
+    title: "Mi Smart band 5",
+    description: "Fitur-Fiturnya:"
+        "Pengambilan foto jarak jauh, pemutaran musik, cari ponsel, mengheningkan ponsel, membuka kunci ponsel, notifikasi panggilan masuk, jangan ganggu, notifikasi WhatsApp, peringatan pesan aplikasi, pengingat kalender, pengingat acara, ramalan cuaca, timer, stopwatch, alarm, siaran Bluetooth, panggilan online, panggilan khusus, panggilan cepat, penguncian layar, tampilan proses pengisian daya, pilihan metode pemakaian, pembaruan via OTA.",
     image: "images/all/miband.jpg",
-    price: 120000,
-    originalPrice: 150000,
-    discountPercentage: 20,
-    seller: "Dinghanda",
-    colors: [Colors.black, Colors.amber, Colors.purple],
+    price: 550000,
+    originalPrice: 650000,
+    discountPercentage: 10,
+    seller: "Gadgetilicious",
+    colors: [Colors.black, Colors.brown, Colors.green],
     sizes: ["S", "M", "L"],
     category: "Electronics",
-    review: "(20 Reviews)",
-    rate: 4.0,
-    reviewCount: 20,
-    quantity: 1,
-    freeShipping: true,
-    returns30Days: true,
-    warranty: true,
-    specifications: [
-      "Silikon yang nyaman",
-      "Kesesuaian sempurna untuk Xiaomi Mi Band 3 & 4",
-      "Desain fleksibel dan dapat disesuaikan",
-      "Tersedia dalam berbagai warna",
-      "Kekuatan tali hingga 210mm panjang",
-    ],
-    reviews: [
-      Review(
-          username: "Ahmad",
-          content: "Nyaman dan bagus untuk Mi Band saya.",
-          rating: 4.5),
-      Review(
-          username: "Siti",
-          content: "Cocok dengan deskripsi, kualitas bagus.",
-          rating: 4.0),
-    ],
-  ),
-  Product(
-    title: "Mens Jacket",
-    description:
-        "TEBAL LEMBUT, BISA MEMBUAT HANGAT, TIDAK AKAN MEMBUAT ANDA GERAH...",
-    image: "images/all/jacket.png",
-    price: 125000,
-    originalPrice: 175000,
-    discountPercentage: 28,
-    seller: "Style Jacket",
-    colors: [Colors.blueAccent, Colors.orange, Colors.green],
-    sizes: ["M", "L", "XL"],
-    category: "Men Fashion",
-    review: "(20 Reviews)",
+    review: "(6 Reviews)",
     rate: 5.0,
     reviewCount: 20,
     quantity: 1,
@@ -203,11 +180,70 @@ final List<Product> all = [
     returns30Days: true,
     warranty: true,
     specifications: [
-      "Material tebal dan lembut",
-      "Desain yang nyaman dipakai",
-      "Ideal untuk cuaca dingin",
-      "Tidak menimbulkan rasa gerah",
-      "Tersedia dalam berbagai warna",
+      "Layar : AMOLED 1.1",
+      "Resolusi layar 126*294",
+      "Kedalaman warna layar：16 bit",
+      "Lampu latar layar：Kecerahan maksimum ≥ 450 nits, dapat disetel",
+      "Tampilan tombol：Satu tombol sentuh (membangunkan layar, kembali)",
+      "Sensor：Akselerometer 3 sumbu dan giroskop 3 sumbu konsumsi daya rendah, Sensor detak jantung PPG",
+      "Metode pengisian daya：Pengisian daya magnetis",
+      "Durasi pengisian daya：< 2 jam",
+      "Masa baterai：≥ 14 hari",
+    ],
+    reviews: [
+      Review(
+          username: "Ahmad",
+          content: "Nyaman dan bagus sekali Mi Smart Band 5 nya.",
+          rating: 4.5),
+      Review(
+          username: "Siti janah",
+          content:
+              "Sayang Banget salah ngambil warna padahal bagus banget😢😢.",
+          rating: 4.0),
+      Review(
+          username: "silvia",
+          content: "Suka banget lucu juga bentuknya😍.",
+          rating: 5.0),
+      Review(username: "Melyna", content: "Sellernya good👌.", rating: 4.5),
+      Review(
+          username: "Putriana",
+          content:
+              "Kondisi produk sangat baik dan pembungkus yang diberikan pengamannya sangat baik juga.",
+          rating: 5.0),
+      Review(
+          username: "Murtika antana",
+          content: "Ga nyangka sampenya cepet banget.",
+          rating: 4.5),
+    ],
+  ),
+  Product(
+    title: "Jaket Jeans Pria Trucker Sherpa Bulu jaket tebal",
+    description:
+        "Jaket jeans bulu pria, Jaket jeans Denim Sakura 14 Ozz, Bahan jeans tebal dan lembut",
+    image: "images/all/jacket.png",
+    price: 150000,
+    originalPrice: 300000,
+    discountPercentage: 50,
+    seller: "clay_collection",
+    colors: [Colors.blueAccent, Colors.black, Colors.blue],
+    sizes: ["M", "L", "XL"],
+    category: "Men Fashion",
+    review: "(4 Reviews)",
+    rate: 5.0,
+    reviewCount: 20,
+    quantity: 1,
+    freeShipping: true,
+    returns30Days: false,
+    warranty: true,
+    specifications: [
+      "-Kancing ori",
+      "-Hanteg full",
+      "-Laken Merk Tembus",
+      "-Ada saku di dalam nya Bisa pakai nyimpan HP",
+      "Detail Ukuran",
+      "M: Bahu 43 cm, Lebar dada 50 Cm, Tinggi badan 61 Cm, Panjang Lengan 60 Cm",
+      "L: Bahu 45 Cm, Lebar dada 53 Cm, Tinggi badan 63 Cm, panjang lengan 62 Cm",
+      "Xl: Bahu 47 Cm, Lebar dada 56 Cm, Tinggi badan 65 Cm, Panjang lengan 64 Cm",
     ],
     reviews: [
       Review(
@@ -215,28 +251,37 @@ final List<Product> all = [
           content: "Hangat dan nyaman dipakai sehari-hari.",
           rating: 5.0),
       Review(
-          username: "Dewi",
+          username: "baldy putra",
           content: "Kualitas bagus, sesuai dengan deskripsi.",
-          rating: 5.0),
+          rating: 4.0),
+      Review(
+          username: "Abdi muhammad",
+          content: "Pengirimannya cepat, bahannya tebal banget.",
+          rating: 4.5),
+      Review(
+          username: "Rizky",
+          content: "Bagus Bahannya tebal sayangnnya salah pilih warna😢.",
+          rating: 4.0),
     ],
   ),
   Product(
-    title: "Watch",
-    description: "Temukan keanggunan berani dari jam tangan Titan Regalia...",
+    title: "Titan Bandhan Green Dial Multi Stainless Steel Strap Watch",
+    description:
+        "Titan telah berkembang pesat sejak tahun 1984 ketika kami memulai dengan satu kategori produk. Saat ini, dengan lebih dari 8.000 karyawan dan sekitar 38.000 orang di seluruh ekosistem Titan, 16 merek, dan lebih dari 2.000 toko ritel, kami berkomitmen untuk memberikan pertumbuhan yang menguntungkan dan bertanggung jawab.",
     image: "images/men fashion/watch.png",
-    price: 600000,
-    originalPrice: 700000,
-    discountPercentage: 17,
+    price: 800000,
+    originalPrice: 900000,
+    discountPercentage: 10,
     seller: "Memento Titan",
-    colors: [Colors.lightBlue, Colors.orange, Colors.purple],
+    colors: [Colors.brown, Colors.green, Colors.black],
     sizes: ["One Size"],
     category: "Men Fashion",
-    review: "(100 Reviews)",
+    review: "(4 Reviews)",
     rate: 5.0,
     reviewCount: 100,
     quantity: 1,
     freeShipping: true,
-    returns30Days: true,
+    returns30Days: false,
     warranty: true,
     specifications: [
       "Tampilan klasik dengan desain modern",
@@ -247,13 +292,21 @@ final List<Product> all = [
     ],
     reviews: [
       Review(
-          username: "Andi",
-          content: "Jam tangannya sangat bagus dan mewah.",
+          username: "Antoko",
+          content: "bagus dan mewah sesuai sama harganya😂.",
+          rating: 4.5),
+      Review(
+          username: "Brian antaka",
+          content: "Pengiriman cepat dan bagus banget modelnya.",
           rating: 5.0),
       Review(
-          username: "Sari",
-          content: "Sangat puas dengan kualitasnya.",
-          rating: 5.0),
+          username: "andreansyah",
+          content: "Lumayanlah untuk harga segini.",
+          rating: 4.5),
+      Review(
+          username: "Ferdi nando",
+          content: "Salah beli warnanya yang dibeli kurang cocok😢.",
+          rating: 4.0),
     ],
   ),
   Product(
@@ -261,19 +314,19 @@ final List<Product> all = [
     description:
         "Kenyamanan adalah yang utama, tetapi bukan berarti Anda harus mengorbankan gaya...",
     image: "images/shoes/Air Jordan.png",
-    price: 940000,
-    originalPrice: 990000,
-    discountPercentage: 10,
+    price: 850000,
+    originalPrice: 900000,
+    discountPercentage: 5,
     seller: "Nike",
-    colors: [Colors.grey, Colors.amber, Colors.purple],
+    colors: [Colors.grey, Colors.brown, Colors.white],
     sizes: ["40", "42", "44"],
     category: "Shoes",
-    review: "(55 Reviews)",
+    review: "(6 Reviews)",
     rate: 5.0,
     reviewCount: 55,
     quantity: 1,
     freeShipping: true,
-    returns30Days: true,
+    returns30Days: false,
     warranty: true,
     specifications: [
       "Desain klasik dari AJ1 dan AJ5",
@@ -285,116 +338,167 @@ final List<Product> all = [
     reviews: [
       Review(
           username: "Rafi",
-          content: "Kualitas top, sangat nyaman.",
+          content: "Kualitas mantap, sangat nyaman.",
           rating: 5.0),
       Review(
           username: "Fajar",
           content: "Sangat puas, desain dan kenyamanan luar biasa.",
+          rating: 4.0),
+      Review(
+          username: "budi utomo",
+          content: "Desain simpel jadi kalo dipake pede😍.",
           rating: 5.0),
+      Review(
+          username: "M rizky",
+          content: "Nyaman dipake buat joging😁",
+          rating: 4.5),
+      Review(
+          username: "Andra",
+          content: "Worth it buat harga segini sih",
+          rating: 4.0),
+      Review(username: "agung ugo", content: "Mantap abiezzzzz.", rating: 5.0),
     ],
   ),
   Product(
-    title: "Super Perfume",
+    title: "Parfum Secret garden Eau de Parfum",
     description:
-        "Parfum ini menawarkan aroma blackcurrant dan nektar yang unggul...",
+        "Produk mudah terbakar, jauhkan dari api dan di tempat teduh, jangan kontak dengan mata, jauhkan dari jangkauan anak-anak",
     image: "images/beauty/perfume.png",
-    price: 155000,
-    originalPrice: 180000,
-    discountPercentage: 14,
+    price: 130000,
+    originalPrice: 160000,
+    discountPercentage: 30,
     seller: "Love Seller",
-    colors: [Colors.purpleAccent, Colors.pinkAccent, Colors.green],
+    colors: [Colors.purpleAccent],
     sizes: ["100ml"],
     category: "Beauty",
-    review: "(99 Reviews)",
+    review: "(4 Reviews)",
     rate: 4.7,
     reviewCount: 99,
     quantity: 1,
     freeShipping: true,
-    returns30Days: true,
+    returns30Days: false,
     warranty: true,
     specifications: [
-      "Aroma blackcurrant yang tahan lama",
+      "Aroma yang sangat sensual",
       "Desain botol elegan",
       "100ml ukuran yang pas untuk sehari-hari",
-      "Nektar eksotis",
-      "Bahan alami dan aman",
+      "tahan 6-8 jam",
     ],
     reviews: [
       Review(
-          username: "Lina",
-          content: "Wangi yang elegan dan tahan lama.",
+          username: "Cindy",
+          content:
+              "Pas banget liat di mall pulangnya cek disini ada stocknya. Wangi enak banget. Diawal mirip wangi grapefruit, pas sudah lamaan manis dan bunga lembut juga musk yg muncul",
           rating: 5.0),
       Review(
-          username: "Amira", content: "Cocok untuk sehari-hari.", rating: 4.5),
+          username: "Binti",
+          content:
+              "Udah Beli tapi Trus Dapet Kado sama Kalau Ada Yang Mau Gantiin Bisa Chat Ke Akun shopee q ya 125K aja nih Masih Baru bgt, Wanginya Enakkk Bgt Gak Bikin Pusing segerrrr dan tahan lamaaaaa.",
+          rating: 4.5),
+      Review(
+          username: "Kanaya",
+          content:
+              "biasanya pake yang British Pear EDP limited edition karena udah nyantol banget sama yang satu itu tapi pengen sekali-kali coba yang lain. setelah kucoba ternyata ku tetap suka yang british pear 😂 tapiiii ini enak juga, wanginya sesuai namanya, Secret Garden 🌿 fresh and flowery 🌺 botolnya juga cantik sekaliiii.",
+          rating: 4.5),
+      Review(
+          username: "nindia",
+          content:
+              "Cocok sama wanginya. Harganya juga masuk akal banget, jadi ditinggal di kantor gak masalah",
+          rating: 4.5),
     ],
   ),
   Product(
-    title: "Wedding Ring",
+    title: "Cincin solitaire rosegold",
     description:
-        "XUPING JEWELRY adalah Perhiasan Kualitas import berbahan dasar Cooper Alloy...",
+        "UNTUK MENJAGA WARNA PERHIASAN AGAR TETAP AWET DISARANKAN TIDAK TERKENA ALKOHOL, AIR ASIN, KERINGAT YANG BERLEBIHAN DAN BAHAN KIMIA LAINNYA.",
     image: "images/jewelry/wedding ring.png",
-    price: 522000,
-    originalPrice: 600000,
-    discountPercentage: 13,
+    price: 2500000,
+    originalPrice: 3000000,
+    discountPercentage: 5,
     seller: "Jewelry Shop",
     colors: [Colors.brown, Colors.purpleAccent, Colors.blueGrey],
     sizes: ["S", "M", "L"],
     category: "Jewelry",
-    review: "(80 Reviews)",
+    review: "(5 Reviews)",
     rate: 4.5,
     reviewCount: 80,
     quantity: 1,
     freeShipping: true,
-    returns30Days: true,
+    returns30Days: false,
     warranty: true,
     specifications: [
-      "Material copper alloy kualitas tinggi",
-      "Desain elegan untuk pernikahan",
-      "Tersedia dalam beberapa ukuran",
-      "Anti karat dan tahan lama",
-      "Harga terjangkau dengan kualitas import",
+      "Cincin solitaire pmt",
+      "Berat : 1,80 gram",
+      "Size : 15",
+      "Kadar: 750 17K",
     ],
     reviews: [
       Review(
-          username: "Ika",
-          content: "Cincin yang cantik dan elegan.",
+          username: "Ika", content: "Cincin nya cantik banget.", rating: 4.5),
+      Review(
+          username: "Reza",
+          content: "bagus, ngadoin buat doi hehe😁.",
           rating: 4.5),
       Review(
-          username: "Reza", content: "Kualitasnya sangat bagus.", rating: 4.0),
+          username: "Cantika",
+          content: "lucu bangettt harganya juga ga mahal.",
+          rating: 5.0),
+      Review(
+          username: "Nabila",
+          content: "Worth it buat harga segini lucu banget hihi.",
+          rating: 4.5),
     ],
   ),
   Product(
-    title: "Pants",
-    description: "Katun Polyester dengan serat Twill premium...",
+    title: "Oro pants",
+    description:
+        "Celana kerja Oro Pant/Loose Pant wanita adalah produk yang tersedia untuk Anda yang membutuhkan celana kerja yang nyaman dan fleksibel. Celana ini terbuat dari bahan knit premium yang memberikan kenyamanan saat digunakan dan tahan lama.",
     image: "images/women fashion/pants.png",
-    price: 105000,
-    originalPrice: 130000,
-    discountPercentage: 19,
+    price: 50000,
+    originalPrice: 80000,
+    discountPercentage: 30,
     seller: "PK Store",
-    colors: [Colors.lightGreen, Colors.blueGrey, Colors.deepPurple],
+    colors: [Colors.brown, Colors.black, Colors.white],
     sizes: ["S", "M", "L", "XL"],
     category: "Women Fashion",
-    review: "(55 Reviews)",
-    rate: 5.0,
+    review: "(5 Reviews)",
+    rate: 4.5,
     reviewCount: 55,
     quantity: 1,
     freeShipping: true,
-    returns30Days: true,
+    returns30Days: false,
     warranty: true,
     specifications: [
-      "Material Katun dan Polyester",
-      "Kualitas serat twill premium",
-      "Nyaman untuk pemakaian sehari-hari",
-      "Tersedia berbagai ukuran",
-      "Desain stylish dan cocok untuk casual",
+      "S/M: Pinggang : 66 - 88 cm, Paha : 60 cm, Panjang : 100 cm, BB : 40 - 55 kg",
+      "L: Pinggang : 72 - 94 cm, Paha : 64 cm, Panjang : 100 cm, BB : 55 - 65 kg",
+      "XL: Pinggang : 78 - 100 cm, Paha : 68 cm, Panjang : 100 cm, BB : 65-75 kg",
     ],
     reviews: [
       Review(
-          username: "Tina", content: "Bahan sangat nyaman, suka!", rating: 5.0),
+          username: "Tina",
+          content:
+              "Celana nya pas banget di aku,warna nya cocok juga,sangat nyaman dipake nya,desain sangat menarik,sangat bagus dan juga memuaskan next aku bakal order lagi,seller sangat ramah pengiriman cepat",
+          rating: 5.0),
       Review(
-          username: "Eka",
-          content: "Celana ini bagus sekali dipakai.",
+          username: "Eka kasini",
+          content:
+              "sudah sampe, celananya emang sebagus ini, langsung ta pake dan Yap bener pas, bahannya bagus dengan harga segini, udah worth it sekali ini beb, pokoknya overall bagus puas sama produk dan sellernya",
           rating: 4.5),
+      Review(
+          username: "Charli pratama",
+          content:
+              "Baguss banget celana nya , cocok buat di pake nongky , ootd , sukaaa sekali .. warna sesuai bahan nya juga bagus nyaman banget di pake , next bakal order lagi warna lainnya..",
+          rating: 5.0),
+      Review(
+          username: "Yuni winata",
+          content:
+              "Bagus banget recommended deh belanja disini amanah banget, seller nya juga amanah dan gercep banget buat ngirim barang nya Puas banget belanja disini Thnks ya kak",
+          rating: 4.5),
+      Review(
+          username: "Cindi",
+          content:
+              "Alhamdulillah akhirnya mendarat dgn slmt , bahannya super lembut, halus , tebal , nyaman dipakai, pas banget dibadan, pengiriman cepat, paking aman , seller ramah dan amanah",
+          rating: 4.0),
     ],
   ),
 ];
@@ -403,21 +507,21 @@ final List<Product> shoes = [
   Product(
     title: "Air Jordan",
     description:
-        "Kenyamanan adalah yang utama, tetapi bukan berarti Anda harus mengorbankan gaya. Terinspirasi dari desain AJ1 dan AJ5, Stadium 90 siap dikenakan setiap hari. Bagian atasnya terbuat dari kulit dan tenunan yang lembut, sehingga Anda mendapatkan sirkulasi udara dan daya tahan, dan bantalan Nike Air di solnya menjaga setiap langkah Anda tetap ringan dan nyaman.",
+        "100% Original Authentic. Kenyamanan adalah yang utama, tetapi bukan berarti Anda harus mengorbankan gaya. Terinspirasi dari desain AJ1 dan AJ5, Stadium 90 siap dikenakan setiap hari. Bagian atasnya terbuat dari kulit dan tenunan yang lembut, sehingga Anda mendapatkan sirkulasi udara dan daya tahan, dan bantalan Nike Air di solnya menjaga setiap langkah Anda tetap ringan dan nyaman.",
     image: "images/shoes/Air Jordan.png",
-    price: 940000,
-    originalPrice: 990000,
+    price: 2199000,
+    originalPrice: 2299000,
     discountPercentage: 10,
     seller: "Nike",
-    colors: [Colors.grey, Colors.amber, Colors.purple],
-    sizes: ["S", "M", "L", "XL"],
+    colors: [Colors.grey],
+    sizes: ["40", "41", "42", "43", "44"],
     category: "Shoes",
     review: "(55 Reviews)",
     rate: 5.0,
     reviewCount: 55,
     quantity: 1,
     freeShipping: true,
-    returns30Days: true,
+    returns30Days: false,
     warranty: true,
     specifications: [
       "Material kulit dan tenunan berkualitas",
@@ -434,6 +538,10 @@ final List<Product> shoes = [
           username: "Aldo",
           content: "Gaya dan kualitas luar biasa.",
           rating: 5.0),
+      Review(
+          username: "sintia",
+          content: "produk ori, barang sampai dengan cepat.",
+          rating: 5.0),
     ],
   ),
   Product(
@@ -445,25 +553,29 @@ final List<Product> shoes = [
     originalPrice: 600000,
     discountPercentage: 16,
     seller: "VANS",
-    colors: [Colors.blueAccent, Colors.blueGrey, Colors.green],
-    sizes: ["S", "M", "L", "XL"],
+    colors: [
+      Colors.black,
+    ],
+    sizes: ["36", "36.5", "37", "38"],
     category: "Shoes",
     review: "(200 Reviews)",
-    rate: 5.0,
+    rate: 4.9,
     reviewCount: 200,
     quantity: 1,
     freeShipping: false,
     returns30Days: true,
     warranty: true,
     specifications: [
-      "Desain klasik dan sederhana",
+      "Merek: vans",
+      "Tipe pengikat: Tali",
       "Kenyamanan dan daya tahan tinggi",
       "Cocok untuk berbagai gaya dan kesempatan",
     ],
     reviews: [
       Review(
-          username: "Bagus",
-          content: "Keren dan cocok untuk gaya kasual.",
+          username: "deni",
+          content:
+              "Barang original, packing rapih dan aman dan pengiriman cepat.",
           rating: 5.0),
       Review(
           username: "Tiara",
@@ -476,19 +588,26 @@ final List<Product> shoes = [
     description:
         "Sepatu Casual Flat slip on Wanita.. cocok untuk bergaya santai tapi tetap feminin barang berkualitas, ringan kuat dan tahan lama dengan bahan Sintetis pilihan",
     image: "images/shoes/women-shoes.png",
-    price: 140000,
-    originalPrice: 200000,
+    price: 690318,
+    originalPrice: 660318,
     discountPercentage: 30,
     seller: "G2.Store",
-    colors: [Colors.red, Colors.orange, Colors.greenAccent],
-    sizes: ["S", "M", "L", "XL"],
+    colors: [Colors.brown, Colors.black, Colors.blue],
+    sizes: [
+      "23",
+      "24",
+      "25",
+      "26" "27",
+      "28",
+      "29",
+    ],
     category: "Shoes",
-    review: "(10 Reviews)",
+    review: "(50 Reviews)",
     rate: 4.8,
     reviewCount: 10,
     quantity: 1,
     freeShipping: true,
-    returns30Days: true,
+    returns30Days: false,
     warranty: true,
     specifications: [
       "Material sintetis berkualitas",
@@ -511,15 +630,15 @@ final List<Product> shoes = [
     originalPrice: 400000,
     discountPercentage: 19,
     seller: "Jacksone Shoes",
-    colors: [Colors.deepPurpleAccent, Colors.orange, Colors.green],
-    sizes: ["S", "M", "L", "XL"],
+    colors: [Colors.deepPurpleAccent, Colors.orange, Colors.blue],
+    sizes: ["39", "40", "41", "42"],
     category: "Shoes",
     review: "(60 Reviews)",
     rate: 3.0,
     reviewCount: 60,
     quantity: 1,
     freeShipping: false,
-    returns30Days: true,
+    returns30Days: false,
     warranty: true,
     specifications: [
       "Desain minimalis dan berkelas",
@@ -529,39 +648,50 @@ final List<Product> shoes = [
     reviews: [
       Review(
           username: "Joko",
-          content: "Desain simpel dan nyaman dipakai.",
+          content: "Desain simpel dan nyaman dipakai 😍😍.",
           rating: 3.0),
       Review(
           username: "Lina",
-          content: "Kualitas oke, tetapi agak berat.",
+          content: "Kualitas oke, tetapi agak berat 👍.",
           rating: 3.5),
     ],
   ),
   Product(
     title: "White Sneaker",
     description:
-        "Sepatu yang kami jual dijamin secara kualitas, ketahanan, dan elastisitasnya. Judul Produk yang tertera FREE BOX akan mendapatkan Dus/Box Sepatu secara gratis. Untuk produk yang tidak mendapatkan free box, toko kami juga menjual BOX Sepatu secara retail! Foto yang tertera merupakan foto real 100%.",
+        "Sepatu yang kami jual dijamin secara kualitas, ketahanan, dan elastisitasnya. Judul Produk yang tertera FREE BOX akan mendapatkan Dus/Box Sepatu secara gratis.",
     image: "images/shoes/white sneaker.png",
-    price: 120000,
-    originalPrice: 150000,
+    price: 125000,
+    originalPrice: 130000,
     discountPercentage: 20,
-    seller: "Jacket Store",
-    colors: [Colors.blueAccent, Colors.orange, Colors.green],
-    sizes: ["S", "M", "L", "XL"],
+    seller: "PVN",
+    colors: [Colors.white, Colors.black],
+    sizes: ["37", "38", "39", "40", "41", "42", "43"],
     category: "Shoes",
-    review: "(0 Reviews)",
-    rate: 0.0,
-    reviewCount: 0,
+    review: "(116 Reviews)",
+    rate: 4.9,
+    reviewCount: 116,
     quantity: 1,
     freeShipping: true,
     returns30Days: true,
     warranty: true,
     specifications: [
-      "Material elastis dan tahan lama",
-      "Dijual dengan box sepatu",
-      "Kualitas dijamin",
+      "Tinggi sol : 3.5 cm",
+      "Material : High quality kualitas sintesis",
+      "Material sole : karet non slip",
     ],
-    reviews: [],
+    reviews: [
+      Review(
+          username: "silvia",
+          content:
+              "keren banget, bagusss sekali, produknya original, harga nya terjangkau dan gak mahal, ga bakal nyesel belinya sih🫶.",
+          rating: 5.5),
+      Review(
+          username: "kanaya",
+          content:
+              "Bagus & awet bangettt, dua kali beli disini tidak pernah kecewa karena sebagus itu dan harganya juga terjangkau huhu sukses terus admin!!!.",
+          rating: 5.5),
+    ],
   ),
 ];
 
@@ -674,13 +804,13 @@ final List<Product> womenFashion = [
   Product(
     title: "Women Kurta",
     description:
-        "Gaun ini memiliki nuansa yang indah dan motif yang indah di sekeliling pakaian...",
+        "segarkan lemari pakaian anda dengan kurta sederhana namun elegan. kurta ini adalah pasangan yang sempurna untuk dikenakan di kantor atau sebagai pakaian sehari-hari yang kasual dan terasa nyaman sepanjang hari",
     image: "images/women fashion/kurta.png",
     price: 199000,
     originalPrice: 250000,
     discountPercentage: 20,
     seller: "Sila Store",
-    colors: [Colors.grey, Colors.black54, Colors.purple],
+    colors: [Colors.grey, Colors.green, Colors.purple],
     sizes: ["S", "M", "L", "XL"],
     category: "WomenFashion",
     review: "(25 Reviews)",
@@ -691,58 +821,60 @@ final List<Product> womenFashion = [
     returns30Days: true,
     warranty: true,
     specifications: [
-      "Bahan berkualitas tinggi",
-      "Motif menarik di sekeliling",
-      "Nyaman dipakai sepanjang hari",
+      "pola : Bergaris",
+      "Jenis : Lurus",
+      "kain : campuran katun",
     ],
     reviews: [
       Review(
-          username: "Tari", content: "Sangat nyaman dan cantik.", rating: 5.0),
-      Review(username: "Sari", content: "Motifnya sangat indah.", rating: 5.0),
+          username: "dea",
+          content: "Sangat nyaman untuk di pakai sehari hari deh 👍.",
+          rating: 5.0),
+      Review(
+          username: "rani",
+          content: "Motifnya sangat simplen dan elegan.",
+          rating: 5.0),
     ],
   ),
   Product(
     title: "Dress",
-    description: "Bahan produk sesuai keterangan di deskripsi pendek...",
+    description:
+        "Bahan brukat furing belakang pinggan karet bungkus tali pita saten nempel bisa ikat LD90cm PJ85cm",
     image: "images/women fashion/lehenga.png",
     price: 150000,
     originalPrice: 180000,
     discountPercentage: 17,
-    seller: "My Store",
+    seller: "bungdedeshop",
     colors: [
       Colors.black,
       Colors.orange,
       Colors.green,
     ],
-    sizes: ["S", "M", "L", "XL"],
+    sizes: [
+      "S",
+      "M",
+    ],
     category: "WomenFashion",
-    review: "(100 Reviews)",
-    rate: 4.0,
-    reviewCount: 100,
+    review: "(0 Reviews)",
+    rate: 3.0,
+    reviewCount: 0,
     quantity: 1,
     freeShipping: false,
     returns30Days: true,
     warranty: true,
     specifications: [
-      "Bahan berkualitas tinggi",
-      "Desain elegan dan nyaman",
+      "MOdel Dress : Fit &  flare/skater",
+      "Panjang dress : Mini",
       "Cocok untuk acara formal",
     ],
-    reviews: [
-      Review(
-          username: "Dina",
-          content: "Pas dipakai dan sesuai ekspektasi.",
-          rating: 4.0),
-      Review(
-          username: "Nita", content: "Bahannya bagus dan lembut.", rating: 4.5),
-    ],
+    reviews: [],
   ),
   Product(
     title: "T-Shirt",
     description: "BAHAN TEBAL DAN TIDAK PANAS...",
     image: "images/women fashion/t-shert.png",
-    price: 100000,
-    originalPrice: 130000,
+    price: 50000,
+    originalPrice: 30000,
     discountPercentage: 23,
     seller: "Love Store",
     colors: [
@@ -751,7 +883,7 @@ final List<Product> womenFashion = [
       Colors.deepOrangeAccent,
     ],
     sizes: ["S", "M", "L", "XL"],
-    category: "Electronics",
+    category: "womenFashion",
     review: "(20 Reviews)",
     rate: 5.0,
     reviewCount: 20,
@@ -762,10 +894,12 @@ final List<Product> womenFashion = [
     specifications: [
       "Material berkualitas tinggi, tidak mudah panas",
       "Nyaman dipakai seharian",
-      "Desain kasual untuk sehari-hari",
     ],
     reviews: [
-      Review(username: "Budi", content: "Sangat nyaman dan adem.", rating: 5.0),
+      Review(
+          username: "salma",
+          content: "Sangat nyaman dan adem banget.",
+          rating: 5.0),
       Review(
           username: "Agus",
           content: "Bagus untuk pemakaian harian.",
@@ -776,98 +910,111 @@ final List<Product> womenFashion = [
     title: "Pants",
     description: "Katun Polyester dengan serat Twill premium...",
     image: "images/women fashion/pants.png",
-    price: 105000,
-    originalPrice: 150000,
+    price: 150000,
+    originalPrice: 170000,
     discountPercentage: 30,
-    seller: "PK Store",
+    seller: "yeona",
     colors: [
-      Colors.orangeAccent,
-      Colors.blueAccent,
-      Colors.pinkAccent,
+      Colors.black,
+      Colors.brown,
+      Colors.grey,
+      Colors.white,
     ],
-    sizes: ["S", "M", "L", "XL"],
+    sizes: ["L", "XL", "XXL"],
     category: "WomenFashion",
-    review: "(90 Reviews)",
-    rate: 4.8,
-    reviewCount: 90,
+    review: "(132 Reviews)",
+    rate: 5.0,
+    reviewCount: 132,
     quantity: 1,
     freeShipping: true,
     returns30Days: true,
     warranty: true,
     specifications: [
-      "Katun polyester berkualitas tinggi",
-      "Nyaman dan ringan",
-      "Cocok untuk berbagai aktivitas",
+      "Tinggi Pinggang : High waist",
+      "Model Celana : Kulot",
+      "Bahan : semi wall",
     ],
     reviews: [
       Review(
-          username: "Ira",
-          content: "Nyaman dipakai sepanjang hari.",
-          rating: 4.8),
+          username: "afisyah ",
+          content:
+              "kualitas dan warna nya bagus,  baru kali ini pesan dan semoga bisa jadi langganan saya hehe .",
+          rating: 4.9),
       Review(
-          username: "Rani",
-          content: "Sangat puas dengan produk ini.",
+          username: "salma",
+          content:
+              "worth it banget sihh, nyaman di pakai adem bahanya. buat Tb 165 BB 46 ukuran s pas banget, pengiriman nya cepat juga.",
           rating: 5.0),
     ],
   ),
 ];
 final List<Product> jewelry = [
   Product(
-    title: "Earrings",
+    title: "Evaline Earrings",
     description:
-        "Anting adalah salah satu aksesoris pemberikan dampak signifikan pada sebuah busana. GLAMIRA menawarkan macam gaya anting mulai dari anting klasik hingga studs, hoops, drops, threads, mutiara, dan lainnya",
+        "Anting adalah salah satu aksesoris yang memerikan dampak signifikan pada sebuah penampilan. GAZALI menawarkan macam gaya anting mulai dari anting klasik hingga studs, hoops, drops, threads, mutiara, dan lainnya",
     image: "images/jewelry/earrings.png",
     price: 850000,
     originalPrice: 900000,
     discountPercentage: 20,
-    seller: "Glamira",
+    seller: "Gazali",
     colors: [
-      Colors.amber,
-      Colors.deepPurple,
+      const Color.fromRGBO(255, 193, 7, 1),
+      Colors.grey,
       Colors.pink,
     ],
-    sizes: ["S", "M", "L", "XL"],
+    sizes: ["8mm", "10mm", "12mm", "14mm"],
     category: "Jewelry",
-    review: "(32 Reviews)",
-    rate: 4.5,
+    review: "(25 Reviews)",
+    rate: 4.8,
     reviewCount: 32,
     quantity: 1,
     freeShipping: true,
-    returns30Days: true,
+    returns30Days: false,
     warranty: true,
     specifications: [
-      "Material: Gold plated",
-      "Type: Drop Earrings",
-      "Weight: 15 grams"
+      "Bahan: Gold plated",
+      "Tipe: Drop Earrings",
+      "Berat: 15 grams"
     ],
     reviews: [
       Review(
-          username: "Siti",
-          content: "Produk berkualitas, sangat indah dipakai.",
-          rating: 4.5),
-      Review(
-          username: "Nina",
-          content: "Warna dan desainnya sangat menarik.",
+          username: "Sintya",
+          content: "Produk berkualitas, sesuai dengan foto produknya .",
           rating: 4.7),
       Review(
-          username: "Ani",
+          username: "lala",
+          content: "Warnanya banyak pilihan dan desainnya sangat elegan.",
+          rating: 4.8),
+      Review(
+          username: "nita",
           content: "Pengiriman cepat, kualitas sesuai dengan harga.",
           rating: 4.8),
+      Review(
+          username: "ani",
+          content:
+              "desain yang kekinian membuat penampilan semakin menarik, serta kualitas sesuai dengan harga.",
+          rating: 4.6),
+      Review(
+          username: "anisa",
+          content:
+              "sesuai dengan yang sayang ekspetasiin. bakal mau order lagi sih",
+          rating: 4.7),
     ],
   ),
   Product(
-    title: "Jewelry-Box",
+    title: "Box Perhiasan Heartbeat Bludru",
     description:
-        "Kotak perhiasan Heartbeat, tempat menyimpan berbagai macam aksesorismu seperti cincin, gelang, dan kalung agar terhindar dari debu sehingga tersimpan awet tanpa takut rusak dan lecet. Dengan beragam pilihan warna untuk mewarnai hari-harimu",
+        "Kotak perhiasan berbentuk Heartbeat, tempat menyimpan berbagai macam aksesorismu seperti cincin, gelang, dan kalung agar terhindar dari debu sehingga tersimpan awet tanpa takut rusak dan lecet. Dengan beragam pilihan warna untuk mewarnai hari-harimu",
     image: "images/jewelry/jewelry-box.png",
-    price: 210000,
+    price: 15000,
     originalPrice: 250000,
     discountPercentage: 16,
-    seller: "Panlandwoo Shop",
+    seller: "Tigadisplay",
     colors: [
-      Colors.pink,
-      Colors.orange,
-      Colors.redAccent,
+      Colors.red,
+      Colors.black,
+      Colors.blue,
     ],
     sizes: ["S", "M", "L", "XL"],
     category: "Jewelry",
@@ -876,71 +1023,88 @@ final List<Product> jewelry = [
     reviewCount: 100,
     quantity: 1,
     freeShipping: true,
-    returns30Days: true,
+    returns30Days: false,
     warranty: true,
     specifications: [
-      "Material: Wood and velvet",
-      "Color: Pink, Orange, Red",
-      "Capacity: Holds up to 50 pieces of jewelry"
+      "Bahan: Bludru halus dan Kulit sintetis",
+      "Warna: Merah, Hitam, Biru",
+      "Kapasitas: Menampung beberapa perhiasan sesuai dengan ukuran yang anda ambil. perkiraan 5-30 perhiasan"
     ],
     reviews: [
       Review(
           username: "Alya",
           content:
-              "Sangat membantu untuk menyimpan perhiasan saya dengan aman.",
+              "Sangat membantu untuk menyimpan perhiasan saya dengan rapih dan aman💕👍.",
           rating: 5.0),
       Review(
           username: "Nadia",
-          content: "Bahan dan kualitas finishingnya bagus sekali.",
+          content:
+              "Bahan yang berkualitas sehingga nyaman digunakan untuk menyimpan perhiasan saya😍😍.",
           rating: 4.9),
       Review(
           username: "Rina",
-          content: "Warna-warnanya cerah dan cantik.",
+          content: "Bagus,Cantik,Rapih pas untuk kalung,cincin dan gelang.",
+          rating: 4.8),
+      Review(
+          username: "Tania",
+          content: "Harganya murah kualitas lumayan oke.",
+          rating: 4.7),
+      Review(
+          username: "Rina",
+          content:
+              "Mantep banget harga murah tapi kualitas bener bener oke👍👍.",
           rating: 4.8),
     ],
   ),
   Product(
-    title: "Wedding Ring",
+    title: "Lanmi Jewelry",
     description:
-        "Perhiasan Diamond & Co berasal dari Eropa dan dirancang dengan desain terbaik yang akan membuat kamu lebih berkilau dan percaya diri. Menggunakan natural diamond (berlian asli), bukan synthetic diamond yang berkualitas near colorless dan VS clarity.",
+        "Cincin Titanium Steel Zircon Untuk Lapis Emas Anti Karat Dan Anti Luntur. Wanita Aksessoris Fashion",
     image: "images/jewelry/wedding ring.png",
-    price: 450000,
-    originalPrice: 500000,
+    price: 50000,
+    originalPrice: 65000,
     discountPercentage: 10,
-    seller: "Diamond & Co Shop",
+    seller: "LANMI JEWELRY Official Shop",
     colors: [
-      Colors.brown,
-      Colors.purpleAccent,
-      Colors.blueGrey,
+      Colors.yellow,
+      Colors.black,
+      Colors.grey,
     ],
-    sizes: ["S", "M", "L", "XL"],
+    sizes: [
+      "6",
+      "7",
+      "8",
+      "9",
+    ],
     category: "Jewelry",
     review: "(80 Reviews)",
-    rate: 4.5,
+    rate: 4.7,
     reviewCount: 80,
     quantity: 1,
     freeShipping: true,
-    returns30Days: true,
-    warranty: true,
+    returns30Days: false,
+    warranty: false,
     specifications: [
-      "Material: 18K Gold",
-      "Stone: Natural Diamond",
-      "Clarity: VS",
-      "Color Grade: Near Colorless"
+      "Material: Cooper Alloy",
+      "Kategori Model : Fashion Style",
+      "Detail Items : Ada Zircon dan Permata"
+          "Premium Quality & Tahan Lama",
     ],
     reviews: [
       Review(
-          username: "Arman",
-          content: "Sangat berkelas dan elegan.",
-          rating: 4.5),
-      Review(
-          username: "Lina",
-          content: "Diamondnya terlihat sangat bersinar, kualitas bagus.",
+          username: "tina",
+          content:
+              "Sangat anggun saat dipakai pas acara formal atau non formal.",
           rating: 4.7),
+      Review(username: "Ina", content: "Desainnya Elegan.", rating: 4.7),
       Review(
-          username: "Budi",
+          username: "Kina",
           content: "Desainnya modern dan simple.",
-          rating: 4.6),
+          rating: 4.8),
+      Review(
+          username: "viona",
+          content: "Harga terjangkau, Kualitasnya oke tidak cepat berkarat.",
+          rating: 4.7),
     ],
   ),
   Product(
@@ -953,14 +1117,14 @@ final List<Product> jewelry = [
     discountPercentage: 21,
     seller: "Celest official Shop",
     colors: [
-      Colors.blueAccent,
+      Colors.yellow,
       Colors.orange,
-      Colors.green,
+      Colors.grey,
     ],
-    sizes: ["S", "M", "L", "XL"],
+    sizes: ["45cm", "50cm", "55cm", "60cm"],
     category: "Jewelry",
     review: "(22 Reviews)",
-    rate: 3.5,
+    rate: 3.7,
     reviewCount: 22,
     quantity: 1,
     freeShipping: true,
@@ -969,133 +1133,144 @@ final List<Product> jewelry = [
     specifications: [
       "Material: Rose Gold 18K",
       "Gemstone: Pink Clover-shaped",
-      "Length: 45 cm"
+      "Length: 45 cm, 50cm, 55cm, 60cm"
     ],
     reviews: [
       Review(
           username: "Fina",
           content: "Desainnya unik dan cocok untuk acara formal.",
-          rating: 3.5),
+          rating: 3.7),
       Review(
           username: "Dina",
           content: "Pewarnaannya sangat cantik.",
-          rating: 3.6),
+          rating: 3.7),
       Review(
           username: "Lia",
           content: "Harganya sebanding dengan kualitasnya.",
-          rating: 3.4),
+          rating: 3.8),
     ],
   ),
 ];
 final List<Product> menFashion = [
   Product(
-    title: "Man Jacket",
+    title: "Jaket Pria Katun Drill Impor",
     description:
-        "Darren Denim Jacket is not just an ordinary jacket, it's the essence of effortless cool and modern style...",
+        "Jaket Pria Katun Keren Terbaru Katun Drill Impor Kualitas Terbaik",
     image: "images/men fashion/man jacket.png",
-    price: 150000,
-    originalPrice: 180000,
+    price: 135000,
+    originalPrice: 160000,
     discountPercentage: 17,
     seller: "Cutoff Store",
     colors: [
       Colors.brown,
-      Colors.orange,
-      Colors.blueGrey,
+      Colors.black,
     ],
-    sizes: ["S", "M", "L", "XL"],
+    sizes: ["M", "L", "XL", "XXL"],
     category: "MenFashion",
-    review: "(90 Reviews)",
-    rate: 5.0,
+    review: "(50 Reviews)",
+    rate: 4.9,
     reviewCount: 90,
     quantity: 1,
     freeShipping: true,
-    returns30Days: true,
-    warranty: true,
+    returns30Days: false,
+    warranty: false,
     specifications: [
-      "Material: Denim",
-      "Fit: Regular",
-      "Care Instructions: Machine wash"
+      "Material Luar:Katun Drill Impor ",
+      "Material dalam : Dormil Kotak Kontak"
+          "Memiliki 3 Kantong saku, 2 bagian luar dan 1 bagian dalam sebelah kiri",
+      "Menggunakan resleting dan aksesoris kualitas premium",
+      "Jahitan setiap sisi kuat dan rapih"
     ],
     reviews: [
       Review(
           username: "Aditya",
-          content: "Jaket ini sangat nyaman dipakai.",
-          rating: 5.0),
+          content: "Jaket ini sangat nyaman dipakai.👍",
+          rating: 4.9),
       Review(
           username: "Rizky",
-          content: "Desainnya stylish dan modern.",
+          content:
+              "Desainnya stylish dan modern. cocok di acara formal ataupun nonformal😊",
           rating: 4.9),
       Review(
           username: "Fajar",
-          content: "Kualitas jahitan sangat baik.",
-          rating: 5.0),
+          content: "Kualitas jahitan sangat baik dan rapih👍👍👍",
+          rating: 4.9),
+      Review(
+          username: "Fajar",
+          content: "bahannya adem, kualitas oke dengan harga terjangkau❤",
+          rating: 4.9),
     ],
   ),
   Product(
-    title: "Men Pants",
+    title: "Celana Pria Chino",
     description:
-        "Jeans ini bisa kamu pasangin sama kemeja berlengan panjang buat bergaya semi-formal...",
+        "Celana ini Slim fit Panjang Kerja Kantor Santai Liburan Cowok Gentle Boy ",
     image: "images/men fashion/pants.png",
-    price: 150000,
-    originalPrice: 200000,
+    price: 50000,
+    originalPrice: 70000,
     discountPercentage: 25,
     seller: "Fairgood Shop",
     colors: [
       Colors.black54,
-      Colors.orange,
-      Colors.green,
+      Colors.brown,
+      Colors.white,
+      Colors.grey,
     ],
     sizes: ["S", "M", "L", "XL"],
     category: "MenFashion",
-    review: "(50 Reviews)",
-    rate: 4.5,
+    review: "(100 Reviews)",
+    rate: 4.8,
     reviewCount: 50,
     quantity: 1,
     freeShipping: true,
-    returns30Days: true,
+    returns30Days: false,
     warranty: true,
     specifications: [
-      "Material: Cotton blend",
+      "Material: Katun twill Strech",
       "Fit: Slim",
-      "Care Instructions: Hand wash recommended"
+      "Motif: Polos"
     ],
     reviews: [
       Review(
-          username: "Dewi",
+          username: "Baldy",
           content: "Pants ini sangat nyaman dan stylish.",
-          rating: 4.5),
+          rating: 4.8),
       Review(
-          username: "Rini",
-          content: "Cocok untuk acara formal maupun kasual.",
-          rating: 4.6),
+          username: "Dani",
+          content: "Cocok untuk acara formal maupun dibuat untuk kerja.",
+          rating: 4.8),
       Review(
           username: "Bobby",
           content: "Bahan berkualitas, tidak mudah pudar.",
-          rating: 4.7),
+          rating: 4.8),
+      Review(
+          username: "Bobby",
+          content: "Sangat pas untuk di pakai pergi pergi.",
+          rating: 4.8),
     ],
   ),
   Product(
-    title: "Men Shirt",
+    title: "Kemeja Harley Man Tangan Panjang",
     description:
-        "Kemeja relax lengan panjang dari Hooligans dengan material rayon yang lembut...",
+        "Kemeja relax lengan panjang dari Hooligans dengan material rayon yang lembut",
     image: "images/men fashion/shert.png",
-    price: 180000,
-    originalPrice: 230000,
+    price: 130000,
+    originalPrice: 150000,
     discountPercentage: 22,
-    seller: "Hooligans Store",
+    seller: "Harell Official Shop",
     colors: [
-      Colors.pink,
-      Colors.amber,
-      Colors.green,
+      Colors.red,
+      Colors.brown,
+      Colors.black,
     ],
-    sizes: ["S", "M", "L", "XL"],
+    sizes: ["M", "L", "XL"],
     category: "MenFashion",
-    review: "(200 Reviews)",
-    rate: 3.0,
+    review: "(516 Reviews)",
+    rate: 3.5,
     reviewCount: 200,
     quantity: 1,
     freeShipping: true,
-    returns30Days: true,
+    returns30Days: false,
     warranty: true,
     specifications: [
       "Material: Rayon",
@@ -1105,40 +1280,41 @@ final List<Product> menFashion = [
     reviews: [
       Review(
           username: "Bayu",
-          content: "Sangat nyaman dipakai sehari-hari.",
-          rating: 3.0),
+          content: "Sangat nyaman dipakai kuliah.",
+          rating: 3.5),
       Review(
           username: "Indra",
-          content: "Motif yang stylish dan kekinian.",
+          content: "Motif Polos yang stylish dan kekinian.",
           rating: 3.5),
       Review(
           username: "Rina",
-          content: "Ukuran sesuai dengan deskripsi.",
-          rating: 3.2),
+          content: "Ukuran sesuai dengan deskripsi sangan fit dibadan.",
+          rating: 3.5),
     ],
   ),
   Product(
-    title: "T-Shirt",
-    description:
-        "Hammer menjadi salah satu produk Lokal dengan kualitas terbaik...",
+    title: "KALE Jovan",
+    description: "Kaos Pria Basic Polos Cotton/Lengan Pendek",
     image: "images/men fashion/t-shirt.png",
     price: 150000,
     originalPrice: 180000,
     discountPercentage: 17,
-    seller: "Hammer",
+    seller: "KALE CLOTHING Official Store",
     colors: [
       Colors.brown,
-      Colors.orange,
-      Colors.blue,
+      Colors.pink,
+      Colors.black,
+      Colors.purple,
+      Colors.grey,
     ],
-    sizes: ["S", "M", "L", "XL"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
     category: "MenFashion",
     review: "(1k Reviews)",
     rate: 5.0,
     reviewCount: 1000,
     quantity: 1,
     freeShipping: true,
-    returns30Days: true,
+    returns30Days: false,
     warranty: true,
     specifications: [
       "Material: 100% Cotton",
@@ -1161,51 +1337,58 @@ final List<Product> menFashion = [
     ],
   ),
   Product(
-    title: "Watch",
-    description: "Temukan keanggunan berani dari jam tangan Titan Regalia...",
+    title: "Titan Bandhan Green Dial Multi Stainless Steel Strap Watch",
+    description:
+        "Titan telah berkembang pesat sejak tahun 1984 ketika kami memulai dengan satu kategori produk. Saat ini, dengan lebih dari 8.000 karyawan dan sekitar 38.000 orang di seluruh ekosistem Titan, 16 merek, dan lebih dari 2.000 toko ritel, kami berkomitmen untuk memberikan pertumbuhan yang menguntungkan dan bertanggung jawab.",
     image: "images/men fashion/watch.png",
-    price: 600000,
-    originalPrice: 700000,
-    discountPercentage: 23,
-    seller: "Titan",
+    price: 800000,
+    originalPrice: 900000,
+    discountPercentage: 10,
+    seller: "Memento Titan",
     colors: [
-      Colors.lightBlue,
-      Colors.orange,
-      Colors.purple,
+      Colors.brown,
+      Colors.green,
+      Colors.black,
     ],
-    sizes: ["S", "M", "L", "XL"],
-    category: "MenFashion",
-    review: "(100 Reviews)",
+    sizes: ["One Size"],
+    category: "Men Fashion",
+    review: "(4 Reviews)",
     rate: 5.0,
     reviewCount: 100,
     quantity: 1,
     freeShipping: true,
-    returns30Days: true,
+    returns30Days: false,
     warranty: true,
     specifications: [
-      "Material: Stainless Steel",
-      "Water Resistance: 50 meters",
-      "Warranty: 2 years"
+      "Tampilan klasik dengan desain modern",
+      "Strap kulit yang elegan",
+      "Water-resistant",
+      "Fitur penunjuk tanggal",
+      "Mekanisme yang tahan lama",
     ],
     reviews: [
       Review(
-          username: "Dimas",
-          content: "Jam tangan ini sangat elegan.",
+          username: "Antoko",
+          content: "bagus dan mewah sesuai sama harganya😂.",
+          rating: 4.5),
+      Review(
+          username: "Brian antaka",
+          content: "Pengiriman cepat dan bagus banget modelnya.",
           rating: 5.0),
       Review(
-          username: "Angga",
-          content: "Kualitas luar biasa, sangat tahan lama.",
-          rating: 4.9),
+          username: "andreansyah",
+          content: "Lumayanlah untuk harga segini.",
+          rating: 4.5),
       Review(
-          username: "Citra",
-          content: "Cocok untuk berbagai acara formal.",
-          rating: 5.0),
+          username: "Ferdi nando",
+          content: "Salah beli warnanya yang dibeli kurang cocok😢.",
+          rating: 4.0),
     ],
   ),
 ];
 final List<Product> eletronik = [
   Product(
-    title: "Headphone Nirkabel",
+    title: "Earphone",
     description:
         "Skullcandy headphone TWS aktif, earbud luar ruangan pengurangan kebisingan...",
     image: "images/all/wireless.png",
@@ -1218,7 +1401,6 @@ final List<Product> eletronik = [
       Colors.blue,
       Colors.orange,
     ],
-    sizes: ["S", "M", "L", "XL"],
     category: "Electronics",
     review: "(20 Reviews)",
     rate: 4.8,
@@ -1245,6 +1427,56 @@ final List<Product> eletronik = [
           username: "Fina",
           content: "Pengurangan suara latar belakang yang efektif.",
           rating: 4.9),
+    ],
+  ),
+  Product(
+    title: "Headphone",
+    description:
+        "Headphone dengan bentuk simple dan ringan, mudah di sesuaikan dengan ukuran kepala masing-masing, Terdapat tombol pada headphone dengan banyak kegunaanya. suara bagus dan jelas, bisa untuk telepon, penyesuaian volume, mendengarkan musik jeda/putar, mendengarkan menggunakan kabel, tombol  untuk play/musik selanjutnya atau sebelumnya",
+    image: "images/eletronik/headphone.png",
+    price: 94000,
+    originalPrice: 165000,
+    discountPercentage: 20,
+    seller: "AVVIC",
+    colors: [
+      const Color.fromARGB(255, 255, 205, 187),
+      Colors.white,
+      Colors.pink,
+    ],
+    category: "Electronics",
+    review: "(500 Reviews)",
+    rate: 4.8,
+    reviewCount: 500,
+    quantity: 1,
+    freeShipping: true,
+    returns30Days: true,
+    warranty: true,
+    specifications: [
+      "Tipe koneksi : wireless",
+      "Tipe Headphone : On ear",
+      "kesesuaian Audio : Handphone, komputer & laptop",
+      "Maksimum Frekuensi : 20000Hz",
+      "Minimum Frekuensi : 45Hz",
+      "peringkat sensitivitas : 90dB",
+      "Masa garansi : 1 Bulan",
+      "Jenis garansi : garansi supplier,"
+    ],
+    reviews: [
+      Review(
+          username: "Baldy",
+          content:
+              "Untuk harga segitu sih worth it yaa, suaranya ga bikin telinga sakit, ukurannya juga udah bisa diatur sendiri, WORTH TO BUY🙌.",
+          rating: 5.0),
+      Review(
+          username: "febri",
+          content:
+              "Barang sangat bagus dan packingnya juga rapi, bagian connecting juga cepat dan mudah digunakan.",
+          rating: 4.9),
+      Review(
+          username: "Kanaya",
+          content:
+              "Mashaallah bagus sekali headphonenya, warnanya bagus dan spon ditelinga juga empuk. jadi kalo dengar music kelamaan ga asakit telinga kita. pesannya ppas flash sale jadinya lebih murahh.",
+          rating: 4.2),
     ],
   ),
   Product(
@@ -1288,6 +1520,94 @@ final List<Product> eletronik = [
           username: "Sari",
           content: "Tampilan layarnya jernih dan tajam.",
           rating: 4.2),
+    ],
+  ),
+  Product(
+    title: "Apple iphone 15 128GB, Pink",
+    description:
+        "Iphone 15 menghadirkan Dynamic Island, kamera utama 48 MP, dan USB-C - semuanya dalam desain aluminium dan kaca berwarna yang tangguh.",
+    image: "images/eletronik/hp.png",
+    price: 13999000,
+    originalPrice: 16499000,
+    discountPercentage: 18,
+    seller: "iBox Official Shop",
+    colors: [
+      Colors.pink,
+    ],
+    category: "Electronics",
+    review: "(1000Reviews)",
+    rate: 4.9,
+    reviewCount: 1000,
+    quantity: 1,
+    freeShipping: true,
+    returns30Days: false,
+    warranty: true,
+    specifications: [
+      "Merk : Apple ",
+      "kapasitas penyimpanan : 128GB",
+      "Masa garansi : 12 bulan",
+      "Jenis garansi : Garansi Resmi",
+      "Ukuran layar : 6.1 inches",
+    ],
+    reviews: [
+      Review(
+          username: "Agung",
+          content:
+              "Packaging aman, barang sampai dengan tepat waktu di hari pertama pre order. iphone juga dalam kondisi yang baik tidak ada cacat sedikitpun.",
+          rating: 5.0),
+      Review(
+          username: "recca",
+          content:
+              "Bagusss banget warna suka bangetttt Mate jadi ga bikin sidik jari nempel, kameranya berasa jauh banget dari 14🥺🫶.",
+          rating: 4.9),
+      Review(
+          username: "Praf",
+          content:
+              "Awalnya ragu beli online tapi serius pembelian online pertama ini gak bikim kecewa, dan dapat juga kwintasi pembeliannya.",
+          rating: 4.9),
+    ],
+  ),
+  Product(
+    title: "Laptop ASUS TUF",
+    description:
+        "ASUS TUF A15 FA506NCR RYZEN 7 7435HS RTX3050 4GB/ 16/GB 512GB W11+OHS 15.6FHD 144HZ IPS RGB BLK-R735B6-O",
+    image: "images/eletronik/laptop.png",
+    price: 11348000,
+    originalPrice: 18000000,
+    discountPercentage: 18,
+    seller: "AMD official Store",
+    colors: [
+      Colors.black,
+    ],
+    category: "Electronics",
+    review: "(128 Reviews)",
+    rate: 4.9,
+    reviewCount: 128,
+    quantity: 1,
+    freeShipping: true,
+    returns30Days: false,
+    warranty: true,
+    specifications: [
+      "Merk : ASUS ",
+      "Ukuran layar Laptop  : > 15inci",
+      "Tipe Laptop : Gaming",
+      "Masa Garansi : 24 Bulan",
+    ],
+    reviews: [
+      Review(
+          username: "antila",
+          content: "mantap sekali, sudah dapat tas nya juga🔥🔥🔥.",
+          rating: 5.0),
+      Review(
+          username: "Saputra",
+          content:
+              "Laptop gaming terbaik, pengemasan baik barang diterima dengan baik ada bonus juga.",
+          rating: 4.9),
+      Review(
+          username: "Yogi",
+          content:
+              "Overall good, barang ori, sesuai dengan spek yang tertera di deskripsi, cuma sayang di pengiriman dari pihak kurir di cancel padahal paling instant.",
+          rating: 4.9),
     ],
   ),
 ];

@@ -4,12 +4,12 @@ import '../models/product_model.dart';
 class OrderProvider with ChangeNotifier {
   List<Map<String, dynamic>> _orders = [];
 
-  // Properti untuk menyimpan informasi pengiriman dan metode pembayaran
+  // Properties for shipping information and payment method
   String _shippingName = '';
   String _shippingAddress = '';
   String _shippingPhone = '';
   String _shippingRoute = '';
-  String _paymentMethod = 'Bayar di Tempat'; // Default ke 'Bayar di Tempat'
+  String _paymentMethod = 'Cash on Delivery';
 
   List<Map<String, dynamic>> get orders => _orders;
   String get shippingName => _shippingName;
@@ -25,14 +25,18 @@ class OrderProvider with ChangeNotifier {
 
   void addOrder(
     List<Product> products,
-    String name,
-    String address,
-    String phone,
+    String? name,
+    String? address,
+    String? phone,
     double totalPriceWithDiscount, {
     bool discountApplied = false,
-    String paymentMethod = 'Bayar di Tempat',
+    required String paymentMethod, // Require paymentMethod here
   }) {
-    // Membuat salinan produk untuk pesanan
+    // Ensure safe defaults for null values
+    String safeName = name ?? 'Nama tidak tersedia';
+    String safeAddress = address ?? 'Alamat tidak tersedia';
+    String safePhone = phone ?? 'Nomor telepon tidak tersedia';
+
     List<Product> productCopies = products.map((product) {
       return Product(
         title: product.title,
@@ -51,19 +55,19 @@ class OrderProvider with ChangeNotifier {
 
     _orders.add({
       'products': productCopies,
-      'name': name,
-      'address': address,
-      'phone': phone,
+      'name': safeName,
+      'address': safeAddress,
+      'phone': safePhone,
       'totalPriceWithDiscount': totalPriceWithDiscount,
       'shippingRoute': 'Order Confirmed > Processing > On the Way',
       'discountApplied': discountApplied,
-      'paymentMethod': paymentMethod,
+      'paymentMethod': paymentMethod, // Correctly set payment method
     });
 
-    // Update informasi pengiriman dan metode pembayaran
-    _shippingName = name;
-    _shippingAddress = address;
-    _shippingPhone = phone;
+    // Update provider-level properties
+    _shippingName = safeName;
+    _shippingAddress = safeAddress;
+    _shippingPhone = safePhone;
     _paymentMethod = paymentMethod;
 
     notifyListeners();
