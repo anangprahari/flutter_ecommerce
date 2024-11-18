@@ -125,7 +125,7 @@ class DetailAppBar extends StatelessWidget {
                           const SizedBox(height: 24),
                           // Preview Section
                           Text(
-                            'Preview',
+                            'Pratinjau',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -304,7 +304,7 @@ class DetailAppBar extends StatelessWidget {
                     if (product.seller.isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Text(
-                        'Seller: ${product.seller}',
+                        'Penjual: ${product.seller}',
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 13,

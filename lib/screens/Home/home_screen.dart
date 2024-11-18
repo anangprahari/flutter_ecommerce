@@ -2,9 +2,9 @@ import 'package:ecommerce_mobile_app/models/product_model.dart';
 import 'package:ecommerce_mobile_app/screens/Home/Widget/product_cart.dart';
 import 'package:ecommerce_mobile_app/screens/Home/Widget/search_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Tambahkan intl untuk format harga
+import 'package:intl/intl.dart';
 import '../../../constants.dart';
-import '../../models/category.dart'; // Untuk mengambil kategori
+import '../../models/category.dart';
 import 'Widget/home_app_bar.dart';
 import 'Widget/image_slider.dart';
 
@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             size: 60, color: Colors.grey),
                         SizedBox(height: 16),
                         Text(
-                          "Tidak ditemukan",
+                          "Tidak Ditemukan",
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,

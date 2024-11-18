@@ -99,7 +99,7 @@ class _MandiriVirtualAccountScreenState
               ),
             ),
             Text(
-              'Order ID: ${widget.orderNumber}',
+              'ID Pesanan: ${widget.orderNumber}',
               style: TextStyle(
                 color: Colors.grey,
                 fontSize: 12,

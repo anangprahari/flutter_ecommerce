@@ -292,7 +292,7 @@ class Profile extends StatelessWidget {
                 children: [
                   ProfileMenuItem(
                     icon: Icons.person,
-                    text: "Pengaturan Profile",
+                    text: "Pengaturan Profil",
                     subtitle: "Perbarui dan ubah profil Anda",
                     onTap: () {
                       Navigator.push(
@@ -396,7 +396,7 @@ class Profile extends StatelessWidget {
                   const SizedBox(height: 8),
                   ProfileMenuItem(
                     icon: Icons.logout,
-                    text: "Logout",
+                    text: "Keluar",
                     subtitle: "Keluar dari akun Anda",
                     onTap: () => _handleLogout(context),
                   ),

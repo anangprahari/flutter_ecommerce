@@ -690,7 +690,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSectionTitle('Ringkasan Order'),
+                _buildSectionTitle('Detail Pesanan'),
                 _buildOrderSummary(cartItems, cartProvider),
                 _buildSectionTitle('Informasi Pengiriman'),
                 _buildShippingInfo(),

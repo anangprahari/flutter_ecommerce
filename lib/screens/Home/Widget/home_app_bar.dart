@@ -93,7 +93,7 @@ class CustomAppBar extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: const Text(
-                        "35",
+                        "9",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 10,

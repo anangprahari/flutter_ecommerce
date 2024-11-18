@@ -303,7 +303,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
         ),
         const SizedBox(height: 4),
         Text(
-          'Kekuatan Password: $_passwordStrengthText',
+          'Kekuatan Kata Sandi: $_passwordStrengthText',
           style: TextStyle(
             color: _passwordStrengthColor,
             fontSize: 12,

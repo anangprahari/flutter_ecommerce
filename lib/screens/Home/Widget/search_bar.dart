@@ -109,7 +109,12 @@ class _MySearchBARState extends State<MySearchBAR>
                   const SizedBox(height: 24),
                   _buildFilterSection(
                     "Pengiriman",
-                    ["Semua", "Gratis Ongkir", "Same Day", "Next Day"],
+                    [
+                      "Semua",
+                      "Gratis Ongkir",
+                      "Hari yang Sama",
+                      "Hari Berikutnya"
+                    ],
                   ),
                   const SizedBox(height: 24),
                   _buildPriceRangeFilter(),
@@ -222,7 +227,7 @@ class _MySearchBARState extends State<MySearchBAR>
             Expanded(
               child: TextField(
                 decoration: InputDecoration(
-                  hintText: "Max",
+                  hintText: "Maks",
                   prefixText: "Rp ",
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,

@@ -13,7 +13,7 @@ class ReviewsScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         title: const Text(
-          'Customer Reviews',
+          'Ulasan Pelanggan',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -84,7 +84,7 @@ class ReviewsScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${reviews.length} reviews',
+                    '${reviews.length} Ulasan',
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 14,
@@ -204,7 +204,7 @@ class ReviewsScreen extends StatelessWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            '2 days ago',
+                            '2 hari yang lalu',
                             style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 12,
@@ -237,12 +237,12 @@ class ReviewsScreen extends StatelessWidget {
               children: [
                 _buildReactionButton(
                   icon: Icons.thumb_up_outlined,
-                  label: 'Helpful (24)',
+                  label: 'Bermanfaat (24)',
                 ),
                 const SizedBox(width: 16),
                 _buildReactionButton(
                   icon: Icons.comment_outlined,
-                  label: 'Comment (3)',
+                  label: 'Komentar (3)',
                 ),
               ],
             ),

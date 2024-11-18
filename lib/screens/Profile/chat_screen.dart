@@ -88,7 +88,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
             const Text(
-              'Admin Jennifer',
+              'Admin Anang Prahari Fernando',
               style: TextStyle(
                 color: Colors.white70,
                 fontSize: 12,

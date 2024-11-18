@@ -34,7 +34,7 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      print('Registration error: $e');
+      print('Kesalahan pendaftaran: $e');
       return false;
     }
   }
@@ -55,7 +55,7 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      print('Login error: $e');
+      print('Kesalahan masuk: $e');
       return false;
     }
   }

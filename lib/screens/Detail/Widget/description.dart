@@ -15,7 +15,7 @@ class _DescriptionState extends State<Description>
     with SingleTickerProviderStateMixin {
   int selectedTab = 0;
   late TabController _tabController;
-  final List<String> _tabs = ["Description", "Specifications", "Shipping"];
+  final List<String> _tabs = ["Deskripsi", "Spesifikasi", "Pengiriman"];
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -182,7 +182,7 @@ class _DescriptionState extends State<Description>
               ),
               const SizedBox(width: 12),
               const Text(
-                "Product Overview",
+                "Deskripsi Produk",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -227,7 +227,7 @@ class _DescriptionState extends State<Description>
               ),
               const SizedBox(width: 12),
               const Text(
-                "Product Specifications",
+                "Spesifikasi Produk",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -314,7 +314,7 @@ class _DescriptionState extends State<Description>
               ),
               const SizedBox(width: 12),
               const Text(
-                "Shipping Information",
+                "Informasi Pengiriman",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -327,22 +327,23 @@ class _DescriptionState extends State<Description>
           if (widget.product.freeShipping)
             _buildShippingFeature(
               icon: Icons.local_shipping_outlined,
-              title: 'Free Express Shipping',
-              subtitle: 'Delivered within 2-3 business days',
+              title: 'Pengiriman Ekspres Gratis',
+              subtitle: 'Dikirim dalam 2-3 hari kerja',
               color: Colors.blue,
             ),
           if (widget.product.returns30Days)
             _buildShippingFeature(
               icon: Icons.refresh_outlined,
-              title: '30-Day Returns',
-              subtitle: 'Hassle-free returns with full refund',
+              title: 'Pengembalian 30 Hari',
+              subtitle: 'Pengembalian Mudah dengan Dana Kembali Penuh',
               color: Colors.green,
             ),
           if (widget.product.warranty)
             _buildShippingFeature(
               icon: Icons.security_outlined,
-              title: '2-Year Warranty',
-              subtitle: 'Extended coverage for your peace of mind',
+              title: 'Garansi 2 Tahun',
+              subtitle:
+                  'Perlindungan yang Diperluas untuk Menjamin Ketenangan Anda',
               color: Colors.orange,
             ),
         ],
@@ -441,7 +442,7 @@ class _DescriptionState extends State<Description>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            "Additional Information",
+            "Informasi Tambahan",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -451,14 +452,14 @@ class _DescriptionState extends State<Description>
           const SizedBox(height: 16),
           _buildInfoCard(
             icon: Icons.shopping_bag_outlined,
-            title: "In Stock",
-            subtitle: "Ready to ship",
+            title: "Tersedia",
+            subtitle: "Siap dikirim",
             color: Colors.green,
           ),
           _buildInfoCard(
             icon: Icons.verified_outlined,
-            title: "Authentic Product",
-            subtitle: "100% genuine product",
+            title: "Produk Asli",
+            subtitle: "100% produk asli",
             color: Colors.blue,
           ),
         ],

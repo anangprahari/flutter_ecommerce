@@ -34,7 +34,7 @@ class ItemsDetails extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'by ${product.seller}',
+              'Penjual: ${product.seller}',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[600],
@@ -70,7 +70,7 @@ class ItemsDetails extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Price',
+                'Harga',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey[600],
@@ -93,7 +93,7 @@ class ItemsDetails extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Original Price',
+                  'Harga Asli',
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[600],
@@ -184,7 +184,7 @@ class ItemsDetails extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${product.reviewCount} Reviews',
+                    '${product.reviewCount} Ulasan',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -192,7 +192,7 @@ class ItemsDetails extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Tap to read all reviews',
+                    'Ketuk untuk membaca semua ulasan',
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 12,
@@ -251,16 +251,16 @@ class ItemsDetails extends StatelessWidget {
           if (product.freeShipping)
             _buildInfoRow(
               icon: Icons.local_shipping_outlined,
-              title: 'Free Delivery',
-              subtitle: 'Orders over Rp. 200.000',
+              title: 'Pengiriman Gratis',
+              subtitle: 'Pesanan di atas Rp. 200.000',
             ),
           if (product.freeShipping && product.returns30Days)
             const SizedBox(height: 12),
           if (product.returns30Days)
             _buildInfoRow(
               icon: Icons.replay_outlined,
-              title: '30 Days Return',
-              subtitle: 'Return or exchange within 30 days',
+              title: 'Pengembalian 30 Hari',
+              subtitle: 'Pengembalian atau penukaran dalam waktu 30 hari',
             ),
           if ((product.freeShipping || product.returns30Days) &&
               product.warranty)
@@ -268,8 +268,8 @@ class ItemsDetails extends StatelessWidget {
           if (product.warranty)
             _buildInfoRow(
               icon: Icons.verified_user_outlined,
-              title: 'Warranty Included',
-              subtitle: 'One year manufacturer warranty',
+              title: 'Termasuk Garansi',
+              subtitle: 'Garansi produk satu tahun',
             ),
         ],
       ),

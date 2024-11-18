@@ -725,7 +725,7 @@ Catatan Penting:
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Hubungi Customer Service',
+                        'Hubungi Layanan Pelanggan',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
@@ -765,7 +765,7 @@ Catatan Penting:
           children: [
             ListTile(
               leading: const Icon(Icons.chat),
-              title: const Text('Live Chat'),
+              title: const Text('Obrolan Langsung'),
               subtitle: const Text('Respon cepat 24/7'),
               onTap: () {
                 Navigator.pop(context);

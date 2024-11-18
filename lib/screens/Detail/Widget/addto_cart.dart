@@ -41,7 +41,6 @@ class _AddToCartState extends State<AddToCart>
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
 
-    // Auto-animate the container sliding up
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _animationController.forward();
     });
@@ -86,7 +85,7 @@ class _AddToCartState extends State<AddToCart>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "Added to Cart",
+                      "Ditambahkan ke Keranjang",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -95,7 +94,7 @@ class _AddToCartState extends State<AddToCart>
                     ),
                     SizedBox(height: 4),
                     Text(
-                      "Item successfully added to your cart",
+                      "Produk berhasil ditambahkan ke keranjang Anda",
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.white70,
@@ -139,6 +138,8 @@ class _AddToCartState extends State<AddToCart>
         ),
       ),
       child: Row(
+        mainAxisSize:
+            MainAxisSize.min, // Add this to make controls more compact
         children: [
           _buildControlButton(
             icon: Icons.remove,
@@ -153,15 +154,15 @@ class _AddToCartState extends State<AddToCart>
             },
             isEnabled: currentIndex > 1,
           ),
-          Container(
-            width: 40,
-            alignment: Alignment.center,
+          SizedBox(
+            width: 32, // Reduced from 40
             child: Text(
               currentIndex.toString(),
+              textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: 18,
+                fontSize: 16, // Reduced from 18
                 letterSpacing: 0.5,
               ),
             ),
@@ -197,13 +198,13 @@ class _AddToCartState extends State<AddToCart>
         onTap: isEnabled ? onPressed : null,
         customBorder: const CircleBorder(),
         child: Container(
-          width: 40,
-          height: 40,
+          width: 32, // Reduced from 40
+          height: 32, // Reduced from 40
           alignment: Alignment.center,
           child: Icon(
             icon,
             color: isEnabled ? Colors.white : Colors.white38,
-            size: 20,
+            size: 18, // Reduced from 20
           ),
         ),
       ),
@@ -215,6 +216,10 @@ class _AddToCartState extends State<AddToCart>
     final provider = CartProvider.of(context);
     final screenSize = MediaQuery.of(context).size;
 
+    // Calculate adaptive text size
+    final double textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    final double adaptiveTextSize = (14 / textScaleFactor).clamp(12.0, 16.0);
+
     return AnimatedBuilder(
       animation: _slideAnimation,
       builder: (context, child) {
@@ -222,8 +227,8 @@ class _AddToCartState extends State<AddToCart>
           offset: Offset(0, _slideAnimation.value),
           child: Container(
             padding: EdgeInsets.symmetric(
-              horizontal: screenSize.width * 0.04,
-              vertical: screenSize.height * 0.015,
+              horizontal: screenSize.width * 0.03, // Reduced from 0.04
+              vertical: screenSize.height * 0.01, // Reduced from 0.015
             ),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -238,11 +243,11 @@ class _AddToCartState extends State<AddToCart>
             child: SafeArea(
               child: Container(
                 padding: EdgeInsets.symmetric(
-                  horizontal: screenSize.width * 0.04,
-                  vertical: screenSize.height * 0.015,
+                  horizontal: screenSize.width * 0.03, // Reduced from 0.04
+                  vertical: screenSize.height * 0.01, // Reduced from 0.015
                 ),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
@@ -262,7 +267,8 @@ class _AddToCartState extends State<AddToCart>
                 child: Row(
                   children: [
                     _buildQuantityControls(),
-                    SizedBox(width: screenSize.width * 0.04),
+                    SizedBox(
+                        width: screenSize.width * 0.02), // Reduced from 0.04
                     Expanded(
                       child: ScaleTransition(
                         scale: _scaleAnimation,
@@ -282,31 +288,37 @@ class _AddToCartState extends State<AddToCart>
                             backgroundColor: kprimaryColor,
                             foregroundColor: Colors.white,
                             padding: EdgeInsets.symmetric(
-                              vertical: screenSize.height * 0.02,
+                              vertical: screenSize.height *
+                                  0.015, // Reduced from 0.02
                             ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(25),
                             ),
                             elevation: 4,
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.shopping_cart_outlined,
-                                size: 22,
-                              ),
-                              SizedBox(width: screenSize.width * 0.02),
-                              const Text(
-                                'Add to Cart',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.5,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.shopping_cart_outlined,
+                                  size: adaptiveTextSize + 4,
                                 ),
-                              ),
-                            ],
+                                SizedBox(
+                                    width: screenSize.width *
+                                        0.01), // Reduced from 0.02
+                                Text(
+                                  'Tambah Ke Keranjang',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: adaptiveTextSize,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

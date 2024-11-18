@@ -9,7 +9,7 @@ import 'package:ecommerce_mobile_app/screens/Detail/Widget/items_details.dart';
 
 class DetailScreen extends StatefulWidget {
   final Product product;
-  
+
   const DetailScreen({Key? key, required this.product}) : super(key: key);
 
   @override
@@ -103,17 +103,17 @@ class _DetailScreenState extends State<DetailScreen> {
                               ItemsDetails(product: widget.product),
                               const SizedBox(height: 24),
                               _buildSection(
-                                title: 'Color',
+                                title: 'Warna',
                                 child: _buildColorOptions(),
                               ),
                               const SizedBox(height: 24),
                               _buildSection(
-                                title: 'Size',
+                                title: 'Ukuran',
                                 child: _buildSizeOptions(),
                               ),
                               const SizedBox(height: 24),
                               _buildSection(
-                                title: 'Description',
+                                title: 'Keterangan',
                                 child: Description(product: widget.product),
                               ),
                             ],
