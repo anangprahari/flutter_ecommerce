@@ -73,7 +73,7 @@ final List<Product> all = [
     rate: 4.5,
     reviewCount: 2100,
     quantity: 1,
-    freeShipping: true,
+    freeShipping: false,
     returns30Days: true,
     warranty: true,
     specifications: [

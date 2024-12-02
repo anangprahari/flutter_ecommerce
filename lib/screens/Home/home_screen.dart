@@ -22,21 +22,30 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Product> filteredProducts = all;
   final ScrollController _scrollController = ScrollController();
 
+  // Filter state variables
+  String selectedCategory = "Semua";
+  String selectedShipping = "Semua";
+  List<String> selectedFeatures = [];
+  int? minPrice;
+  int? maxPrice;
+
+  // Define comprehensive product lists
   List<List<Product>> selectcategories = [
-    all,
-    shoes,
-    beauty,
-    womenFashion,
-    jewelry,
-    menFashion,
-    eletronik
+    all, // Semua
+    shoes, // Sepatu
+    beauty, // Kecantikan
+    womenFashion, // Pakaian Wanita
+    jewelry, // Perhiasan
+    menFashion, // Pakaian Pria
+    eletronik // Elektronik
   ];
 
   void _searchProduct(String query) {
     setState(() {
       filteredProducts = all
           .where((product) =>
-              product.title.toLowerCase().contains(query.toLowerCase()))
+              product.title.toLowerCase().contains(query.toLowerCase()) ||
+              product.description.toLowerCase().contains(query.toLowerCase()))
           .toList();
 
       if (filteredProducts.isEmpty) {
@@ -54,6 +63,58 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _applyFilters(Map<String, dynamic> filters) {
+    setState(() {
+      filteredProducts = all.where((product) {
+        // Comprehensive Category Matching
+        bool categoryMatch = filters['category'] == "Semua" ||
+            product.category.toLowerCase() ==
+                filters['category'].toLowerCase() ||
+            (filters['category'] == "Pakaian Wanita" &&
+                product.category.toLowerCase().contains("woman")) ||
+            (filters['category'] == "Pakaian Pria" &&
+                product.category.toLowerCase().contains("men")) ||
+            (filters['category'] == "Elektronik" &&
+                product.category.toLowerCase().contains("electronics"));
+
+        // Shipping Filter with More Detailed Options
+        bool shippingMatch = filters['shipping'] == "Semua" ||
+            (filters['shipping'] == "Gratis Ongkir" && product.freeShipping) ||
+            (filters['shipping'] == "Pengembalian 30 Hari" &&
+                product.returns30Days);
+
+        // Features Filter with Enhanced Logic
+        bool featuresMatch = filters['features'] == null ||
+            filters['features'].isEmpty ||
+            filters['features'].every((feature) {
+              switch (feature) {
+                case 'Garansi':
+                  return product.warranty;
+                case 'Spesifikasi Tinggi':
+                  return product.specifications.isNotEmpty;
+                default:
+                  return false;
+              }
+            });
+
+        // Price Range Filter with Null Safety
+        bool priceMatch = (filters['minPrice'] == null ||
+                product.price >= (filters['minPrice'] ?? 0)) &&
+            (filters['maxPrice'] == null ||
+                product.price <= (filters['maxPrice'] ?? double.infinity));
+
+        return categoryMatch && shippingMatch && featuresMatch && priceMatch;
+      }).toList();
+
+      // Update selected filters for UI
+      selectedCategory = filters['category'] ?? "Semua";
+      selectedShipping = filters['shipping'] ?? "Semua";
+      selectedFeatures = filters['features'] ?? [];
+      minPrice = filters['minPrice'];
+      maxPrice = filters['maxPrice'];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,11 +122,15 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
-            // Implement refresh logic here
             await Future.delayed(const Duration(seconds: 1));
             setState(() {
               filteredProducts = all;
               selectedIndex = 0;
+              selectedCategory = "Semua";
+              selectedShipping = "Semua";
+              selectedFeatures = [];
+              minPrice = null;
+              maxPrice = null;
             });
           },
           child: CustomScrollView(
@@ -79,7 +144,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       const CustomAppBar(),
                       const SizedBox(height: 20),
-                      MySearchBAR(onSearch: _searchProduct),
+                      MySearchBAR(
+                        onSearch: _searchProduct,
+                        onApplyFilters: _applyFilters,
+                        initialFilters: {
+                          "category": selectedCategory,
+                          "shipping": selectedShipping,
+                          "features": selectedFeatures,
+                          "minPrice": minPrice,
+                          "maxPrice": maxPrice,
+                        },
+                      ),
                       const SizedBox(height: 20),
                       ImageSlider(
                         currentSlide: currentSlider,

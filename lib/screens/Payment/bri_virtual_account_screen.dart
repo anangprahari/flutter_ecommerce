@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 import '../../constants.dart';
 
 class BRIVirtualAccountScreen extends StatefulWidget {
@@ -22,7 +25,46 @@ class BRIVirtualAccountScreen extends StatefulWidget {
 
 class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
   bool isExpanded = false;
-  final vaNumber = "8077 7000 1282 4775";
+  final String vaNumber = "8077 7000 1282 4775";
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _logTransaction();
+  }
+
+  Future<void> _logTransaction() async {
+    try {
+      await firestore.collection('transactions').add({
+        'orderNumber': widget.orderNumber,
+        'amount': widget.amount,
+        'vaNumber': vaNumber,
+        'status': 'pending',
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      debugPrint("Transaction logged successfully!");
+    } catch (e) {
+      debugPrint("Failed to log transaction: $e");
+    }
+  }
+
+  Future<void> _sendPaymentNotification() async {
+    try {
+      await messaging.sendMessage(
+        to: '/topics/payments',
+        data: {
+          'orderNumber': widget.orderNumber,
+          'amount': widget.amount.toString(),
+          'status': 'completed',
+        },
+      );
+      debugPrint("Payment notification sent successfully!");
+    } catch (e) {
+      debugPrint("Failed to send payment notification: $e");
+    }
+  }
 
   String formatCurrency(double amount) {
     final formatter = NumberFormat.currency(
@@ -34,7 +76,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
   }
 
   String getPaymentDeadline() {
-    final deadline = DateTime.now().add(Duration(hours: 24));
+    final deadline = DateTime.now().add(const Duration(hours: 24));
     return DateFormat('HH:mm, d MMM yyyy').format(deadline);
   }
 
@@ -44,26 +86,46 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.check_circle, color: Colors.white),
-            SizedBox(width: 8),
-            Text('Nomor VA berhasil disalin'),
+            const Icon(Icons.check_circle, color: Colors.white),
+            const SizedBox(width: 8),
+            const Text('Nomor VA berhasil disalin'),
           ],
         ),
         backgroundColor: Colors.green,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: EdgeInsets.all(16),
-        duration: Duration(seconds: 1),
+        margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 1),
       ),
     );
 
     // Simulate payment success
-    Future.delayed(Duration(seconds: 10), () {
+    Future.delayed(const Duration(seconds: 10), () {
+      if (mounted) {
+        _markPaymentSuccess();
+      }
+    });
+  }
+
+  Future<void> _markPaymentSuccess() async {
+    try {
+      await firestore
+          .collection('transactions')
+          .where('orderNumber', isEqualTo: widget.orderNumber)
+          .get()
+          .then((snapshot) {
+        for (var doc in snapshot.docs) {
+          doc.reference.update({'status': 'completed'});
+        }
+      });
+
+      _sendPaymentNotification();
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
-              children: [
+              children: const [
                 Icon(Icons.check_circle, color: Colors.white),
                 SizedBox(width: 8),
                 Text('Pembayaran berhasil'),
@@ -73,23 +135,25 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
             behavior: SnackBarBehavior.floating,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            margin: EdgeInsets.all(16),
-            duration: Duration(seconds: 2),
+            margin: const EdgeInsets.all(16),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
-    });
+    } catch (e) {
+      debugPrint("Failed to mark payment success: $e");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF5F5F5),
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Menunggu Pembayaran',
               style: TextStyle(
                 color: Colors.black87,
@@ -99,7 +163,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
             ),
             Text(
               'ID Pesanan: ${widget.orderNumber}',
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.grey,
                 fontSize: 12,
               ),
@@ -110,7 +174,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
         centerTitle: true,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black87),
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -118,11 +182,11 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
         child: Column(
           children: [
             _buildAmountSection(),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             _buildVirtualAccountSection(),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             _buildPaymentInstructions(),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildSupportSection(),
           ],
         ),

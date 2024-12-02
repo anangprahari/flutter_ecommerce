@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 import '../../constants.dart';
 
 class MandiriVirtualAccountScreen extends StatefulWidget {
@@ -24,6 +27,45 @@ class _MandiriVirtualAccountScreenState
     extends State<MandiriVirtualAccountScreen> {
   bool isExpanded = false;
   final vaNumber = "8810 7000 1234 5678";
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _logTransaction();
+  }
+
+  Future<void> _logTransaction() async {
+    try {
+      await firestore.collection('transactions').add({
+        'orderNumber': widget.orderNumber,
+        'amount': widget.amount,
+        'vaNumber': vaNumber,
+        'status': 'pending',
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      debugPrint("Transaction logged successfully!");
+    } catch (e) {
+      debugPrint("Failed to log transaction: $e");
+    }
+  }
+
+  Future<void> _sendPaymentNotification() async {
+    try {
+      await messaging.sendMessage(
+        to: '/topics/payments',
+        data: {
+          'orderNumber': widget.orderNumber,
+          'amount': widget.amount.toString(),
+          'status': 'completed',
+        },
+      );
+      debugPrint("Payment notification sent successfully!");
+    } catch (e) {
+      debugPrint("Failed to send payment notification: $e");
+    }
+  }
 
   String formatCurrency(double amount) {
     final formatter = NumberFormat.currency(
@@ -61,6 +103,26 @@ class _MandiriVirtualAccountScreenState
     // Simulate payment success
     Future.delayed(Duration(seconds: 10), () {
       if (mounted) {
+        _markPaymentSuccess();
+      }
+    });
+  }
+
+  Future<void> _markPaymentSuccess() async {
+    try {
+      await firestore
+          .collection('transactions')
+          .where('orderNumber', isEqualTo: widget.orderNumber)
+          .get()
+          .then((snapshot) {
+        for (var doc in snapshot.docs) {
+          doc.reference.update({'status': 'completed'});
+        }
+      });
+
+      _sendPaymentNotification();
+
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
@@ -79,7 +141,9 @@ class _MandiriVirtualAccountScreenState
           ),
         );
       }
-    });
+    } catch (e) {
+      debugPrint("Failed to mark payment success: $e");
+    }
   }
 
   @override
@@ -131,7 +195,6 @@ class _MandiriVirtualAccountScreenState
       bottomNavigationBar: _buildBottomBar(),
     );
   }
-
   Widget _buildAmountSection() {
     return Container(
       color: Colors.white,

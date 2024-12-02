@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'login_screen.dart';
+import 'profile_entry_screen.dart';
 import '../Provider/auth_provider.dart';
 import '../constants.dart';
 
@@ -258,14 +259,54 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             width: 24,
                           ),
                           label: const Text(
-                            "Daftar dengan Google",
+                            "Masuk dengan Google",
                             style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13),
                           ),
-                          onPressed: () {
-                            // Implement Google Sign In
+                          onPressed: () async {
+                            if (_isLoading) return;
+
+                            setState(() => _isLoading = true);
+
+                            try {
+                              final success = await Provider.of<AuthProvider>(
+                                      context,
+                                      listen: false)
+                                  .signInWithGoogle();
+
+                              if (success) {
+                                if (!mounted) return;
+
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ProfileEntryScreen()),
+                                );
+                              } else {
+                                if (!mounted) return;
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text('Pendaftaran dengan Google gagal'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Gagal mendaftar dengan Google: ${e.toString()}'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            } finally {
+                              if (mounted) setState(() => _isLoading = false);
+                            }
                           },
                         ),
                       ),
@@ -363,7 +404,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Email sudah terdaftar'),
+            content: Text('Pendaftaran gagal. Email mungkin sudah terdaftar.'),
             backgroundColor: Colors.red,
           ),
         );

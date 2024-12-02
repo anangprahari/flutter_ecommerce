@@ -203,8 +203,48 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fontWeight: FontWeight.bold,
                                   fontSize: 13),
                             ),
-                            onPressed: () {
-                              // Implement Google Sign In
+                            onPressed: () async {
+                              if (_isLoading) return;
+
+                              setState(() => _isLoading = true);
+
+                              try {
+                                final success = await Provider.of<AuthProvider>(
+                                        context,
+                                        listen: false)
+                                    .signInWithGoogle();
+
+                                if (success) {
+                                  if (!mounted) return;
+
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProfileEntryScreen()),
+                                  );
+                                } else {
+                                  if (!mounted) return;
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content:
+                                          Text('Masuk dengan Google gagal'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'Gagal masuk dengan Google: ${e.toString()}'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              } finally {
+                                if (mounted) setState(() => _isLoading = false);
+                              }
                             },
                           ),
                         ),
