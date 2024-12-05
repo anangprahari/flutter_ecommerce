@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
+
 import '../../Provider/user_provider.dart';
 import '../../constants.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({Key? key}) : super(key: key);
@@ -117,18 +120,36 @@ class _EditProfileState extends State<EditProfile> {
     }
   }
 
-  void _saveChanges() {
+  void _saveChanges() async {
     if (_formKey.currentState!.validate()) {
-      Provider.of<UserProvider>(context, listen: false).setUserData(
-        name: _nameController.text,
-        address: _addressController.text,
-        bio: _bioController.text,
-        gender: _selectedGender,
-        birthDate: _birthDateController.text,
-        phoneNumber: _phoneNumberController.text,
-        email: _emailController.text,
-        profileImagePath: _profileImagePath, // Add this line
-      );
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        try {
+          // Save user data to Firestore
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .update({
+            'name': _nameController.text,
+            'address': _addressController.text,
+            'bio': _bioController.text,
+            'gender': _selectedGender,
+            'birthDate': _birthDateController.text,
+            'phoneNumber': _phoneNumberController.text,
+            'email': _emailController.text,
+          });
+
+          // Update UserProvider
+          Provider.of<UserProvider>(context, listen: false).setUserData(
+            name: _nameController.text,
+            address: _addressController.text,
+            bio: _bioController.text,
+            gender: _selectedGender,
+            birthDate: _birthDateController.text,
+            phoneNumber: _phoneNumberController.text,
+            email: _emailController.text,
+            profileImagePath: _profileImagePath,
+          );
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -137,11 +158,21 @@ class _EditProfileState extends State<EditProfile> {
         ),
       );
 
-      Navigator.pop(context);
+       Navigator.pop(context);
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Gagal memperbarui profil: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     }
   }
 
-  @override
+
+ @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
@@ -179,7 +210,6 @@ class _EditProfileState extends State<EditProfile> {
       ),
     );
   }
-
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       title: const Text(
@@ -472,7 +502,7 @@ class _EditProfileState extends State<EditProfile> {
           return 'Format email tidak valid';
         }
         return null;
-      },
+      },  
     );
   }
 

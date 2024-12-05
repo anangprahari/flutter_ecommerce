@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../Provider/user_provider.dart';
 import 'nav_bar_screen.dart';
 import '../constants.dart';
@@ -28,7 +30,34 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
   @override
   void initState() {
     super.initState();
+    _loadExistingUserData();
     _setupFormValidation();
+  }
+
+   Future<void> _loadExistingUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final userData = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        if (userData.exists) {
+          setState(() {
+            _nameController.text = userData.get('name') ?? '';
+            _addressController.text = userData.get('address') ?? '';
+            _bioController.text = userData.get('bio') ?? '';
+            _birthDateController.text = userData.get('birthDate') ?? '';
+            _phoneNumberController.text = userData.get('phoneNumber') ?? '';
+            _emailController.text = userData.get('email') ?? '';
+            _selectedGender = userData.get('gender') ?? '';
+          });
+        }
+      } catch (e) {
+        print('Error loading user data: $e');
+      }
+    }
   }
 
   void _setupFormValidation() {
@@ -375,24 +404,51 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
           elevation: 2,
         ),
         onPressed: _isFormValid
-            ? () {
+            ? () async {
                 if (_formKey.currentState!.validate()) {
-                  Provider.of<UserProvider>(context, listen: false).setUserData(
-                    name: _nameController.text,
-                    address: _addressController.text,
-                    bio: _bioController.text,
-                    gender: _selectedGender,
-                    birthDate: _birthDateController.text,
-                    phoneNumber: _phoneNumberController.text,
-                    email: _emailController.text,
-                  );
+                  final user = FirebaseAuth.instance.currentUser;
+                  if (user != null) {
+                    try {
+                      // Save user data to Firestore
+                      await FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(user.uid)
+                          .set({
+                        'name': _nameController.text,
+                        'address': _addressController.text,
+                        'bio': _bioController.text,
+                        'gender': _selectedGender,
+                        'birthDate': _birthDateController.text,
+                        'phoneNumber': _phoneNumberController.text,
+                        'email': _emailController.text,
+                      }, SetOptions(merge: true));
 
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const BottomNavBar()),
-                    (route) => false, // This removes all previous routes
-                  );
+                      // Update UserProvider
+                      Provider.of<UserProvider>(context, listen: false)
+                          .setUserData(
+                        name: _nameController.text,
+                        address: _addressController.text,
+                        bio: _bioController.text,
+                        gender: _selectedGender,
+                        birthDate: _birthDateController.text,
+                        phoneNumber: _phoneNumberController.text,
+                        email: _emailController.text,
+                      );
+
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const BottomNavBar()),
+                        (route) => false,
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content:
+                                Text('Error saving profile: ${e.toString()}')),
+                      );
+                    }
+                  }
                 }
               }
             : null,
