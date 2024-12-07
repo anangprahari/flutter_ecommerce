@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../Provider/order_provider.dart';
 import '../../models/product_model.dart';
 import '../../constants.dart';
@@ -15,37 +16,74 @@ class OrderScreen extends StatefulWidget {
 class _OrderScreenState extends State<OrderScreen> {
   int currentStep = 2;
   bool showNotification = false;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _startStatusUpdates();
+    _fetchOrdersAndInitializeStatus();
   }
 
-  void _startStatusUpdates() async {
-    // Update to "Dalam Perjalanan" after 5 seconds
-    await Future.delayed(const Duration(seconds: 5));
-    if (mounted) {
+  Future<void> _fetchOrdersAndInitializeStatus() async {
+    try {
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        // Fetch orders
+        await Provider.of<OrderProvider>(context, listen: false)
+            .fetchUserOrders();
+
+        // Retrieve last known shipping step
+        final orderProvider =
+            Provider.of<OrderProvider>(context, listen: false);
+        int lastStep = await orderProvider.retrieveLastShippingStep();
+
+        setState(() {
+          currentStep = lastStep;
+          _isLoading = false;
+        });
+
+        // If the last step is not the final step, start automatic updates
+        if (currentStep < 5) {
+          _startStatusUpdates(initialStep: currentStep);
+        }
+      }
+    } catch (e) {
+      print('Error fetching orders and status: $e');
       setState(() {
-        currentStep = 3;
+        _isLoading = false;
       });
     }
+  }
 
-    // Update to "Terkirim" after another 5 seconds
-    await Future.delayed(const Duration(seconds: 5));
-    if (mounted) {
-      setState(() {
-        currentStep = 4;
-        showNotification = true;
-      });
-    }
+  void _startStatusUpdates({int initialStep = 0}) async {
+    final orderProvider = Provider.of<OrderProvider>(context, listen: false);
 
-    // Hide notification after 2 seconds
-    await Future.delayed(const Duration(seconds: 2));
-    if (mounted) {
+    // Start from the last known step
+    for (int step = initialStep; step < 5; step++) {
+      await Future.delayed(const Duration(seconds: 2));
+      if (!mounted) return;
+
       setState(() {
-        showNotification = false;
+        currentStep = step;
       });
+
+      // Save the current step
+      await orderProvider.saveShippingStep(currentStep);
+
+      // Show notification on the final step
+      if (step == 4) {
+        setState(() {
+          showNotification = true;
+        });
+
+        // Hide notification after 2 seconds
+        await Future.delayed(const Duration(seconds: 2));
+        if (mounted) {
+          setState(() {
+            showNotification = false;
+          });
+        }
+      }
     }
   }
 
@@ -199,9 +237,10 @@ class _OrderScreenState extends State<OrderScreen> {
                           fontWeight: FontWeight.bold, fontSize: 16)),
                   Text(
                       '${formatCurrency(product.price)} × ${product.quantity}'),
-                  if (discount > 0)
+                  if (product.discountPercentage != null &&
+                      product.discountPercentage! > 0)
                     Text(
-                      'Diskon: -${formatCurrency(discount)}',
+                      'Diskon: ${product.discountPercentage}%',
                       style: const TextStyle(color: Colors.red),
                     ),
                 ],
@@ -403,32 +442,60 @@ class _OrderScreenState extends State<OrderScreen> {
             iconTheme: const IconThemeData(color: Colors.white),
           ),
           backgroundColor: kcontentColor,
-          body: orders.isEmpty
-              ? _buildEmptyState()
-              : ListView.builder(
-                  itemCount: orders.length,
-                  itemBuilder: (context, index) {
-                    var order = orders[index];
-                    List<Product> products = order['products'];
-                    bool discountApplied = order['discountApplied'] ?? false;
-                    double totalPrice = order['totalPriceWithDiscount'];
-                    double totalSubtotal = products.fold(
-                        0, (sum, item) => sum + (item.price * item.quantity));
-                    double totalDiscount = discountApplied
-                        ? products.fold(
-                            0,
-                            (sum, item) =>
-                                sum +
-                                (item.price *
-                                    item.quantity *
-                                    (item.discountPercentage ?? 0) /
-                                    100))
-                        : 0;
+          body: _isLoading
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: kprimaryColor,
+                  ),
+                )
+              : orders.isEmpty
+                  ? _buildEmptyState()
+                  : ListView.builder(
+                      itemCount: orders.length,
+                      itemBuilder: (context, index) {
+                        var order = orders[index];
+                        // Convert products from Firebase map to Product objects
+                        List<Product> products = (order['products'] as List)
+                            .map((productMap) => Product(
+                                  title: productMap['title'] ?? '',
+                                  review: productMap['review'] ?? '',
+                                  description: productMap['description'] ?? '',
+                                  image: productMap['image'] ?? '',
+                                  price:
+                                      (productMap['price'] ?? 0.0).toDouble(),
+                                  seller: productMap['seller'] ?? '',
+                                  colors: productMap['colors'] is List
+                                      ? (productMap['colors'] as List)
+                                          .map((color) => Color(color))
+                                          .toList()
+                                      : [],
+                                  category: productMap['category'] ?? '',
+                                  rate: (productMap['rate'] ?? 0.0).toDouble(),
+                                  quantity: productMap['quantity'] ?? 1,
+                                ))
+                            .toList();
 
-                    return _buildOrderCard(order, products, discountApplied,
-                        totalPrice, totalSubtotal, totalDiscount);
-                  },
-                ),
+                        bool discountApplied =
+                            order['discountApplied'] ?? false;
+                        double totalPrice =
+                            order['totalPriceWithDiscount'].toDouble();
+                        double totalSubtotal = products.fold(0,
+                            (sum, item) => sum + (item.price * item.quantity));
+                        double totalDiscount = discountApplied
+                            ? products.fold(
+                                0,
+                                (sum, item) =>
+                                    sum +
+                                    (item.price *
+                                        item.quantity *
+                                        (item.discountPercentage ?? 0) /
+                                        100))
+                            : 0;
+
+                        return _buildOrderCard(order, products, discountApplied,
+                            totalPrice, totalSubtotal, totalDiscount);
+                      },
+                    ),
         ),
         if (showNotification)
           TweenAnimationBuilder<double>(

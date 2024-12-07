@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:ecommerce_mobile_app/models/product_model.dart';
 import 'package:ecommerce_mobile_app/screens/nav_bar_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../Provider/order_provider.dart';
 import '../../constants.dart';
 import '../../Provider/add_to_cart_provider.dart';
@@ -93,6 +95,8 @@ class ShippingDetailsScreen extends StatelessWidget {
                 _buildPaymentInfo(),
                 _buildSectionTitle('Status Pengiriman'),
                 _buildShippingStatus(),
+                _buildSectionTitle('Status Autentikasi'),
+                _buildAuthenticationStatus(),
                 const SizedBox(height: 32),
               ],
             ),
@@ -439,6 +443,86 @@ class ShippingDetailsScreen extends StatelessWidget {
     );
   }
 
+// Method baru untuk menampilkan status autentikasi dengan Firebase
+  Widget _buildAuthenticationStatus() {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            User? currentUser = snapshot.data;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      currentUser != null
+                          ? Icons.verified
+                          : Icons.error_outline,
+                      color: currentUser != null ? Colors.green : Colors.red,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      currentUser != null ? 'Terautentikasi' : 'Belum Masuk',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: currentUser != null ? Colors.green : Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+                if (currentUser != null) ...[
+                  const SizedBox(height: 8),
+                  FutureBuilder<DocumentSnapshot>(
+                    future: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(currentUser.uid)
+                        .get(),
+                    builder: (context, userSnapshot) {
+                      if (userSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      }
+
+                      Map<String, dynamic>? userData =
+                          userSnapshot.data?.data() as Map<String, dynamic>?;
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Email: ${currentUser.email ?? "Tidak tersedia"}',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          Text(
+                            'UID: ${currentUser.uid}',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          if (userData != null) ...[
+                            Text(
+                              'Nama: ${userData['name'] ?? "Tidak tersedia"}',
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ]
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  // Method untuk tombol kembali berbelanja dengan Firebase
   Widget _buildReturnToShoppingButton(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -454,21 +538,48 @@ class ShippingDetailsScreen extends StatelessWidget {
         ],
       ),
       child: ElevatedButton(
-        onPressed: () {
-          Provider.of<OrderProvider>(context, listen: false).addOrder(
-            cartItems,
-            name,
-            address,
-            phone,
-            totalPrice,
-            paymentMethod: paymentMethod,
-          );
-          Provider.of<CartProvider>(context, listen: false).clearCart();
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const BottomNavBar()),
-            (route) => false,
-          );
+        onPressed: () async {
+          try {
+            // Tambahkan pesanan ke Firebase
+            await Provider.of<OrderProvider>(context, listen: false).addOrder(
+              cartItems,
+              name,
+              address,
+              phone,
+              totalPrice,
+              paymentMethod: paymentMethod,
+              discountApplied: discountApplied,
+            );
+
+            // Hapus keranjang di Firebase
+            User? currentUser = FirebaseAuth.instance.currentUser;
+            if (currentUser != null) {
+              await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(currentUser.uid)
+                  .collection('cart')
+                  .get()
+                  .then((snapshot) {
+                for (DocumentSnapshot doc in snapshot.docs) {
+                  doc.reference.delete();
+                }
+              });
+            }
+
+            // Bersihkan keranjang lokal
+            Provider.of<CartProvider>(context, listen: false).clearCart();
+
+            // Navigasi ke halaman utama
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const BottomNavBar()),
+              (route) => false,
+            );
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Gagal menyelesaikan pesanan: $e')),
+            );
+          }
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: kprimaryColor,

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Review {
@@ -10,9 +11,26 @@ class Review {
     required this.content,
     required this.rating,
   });
+
+  factory Review.fromMap(Map<String, dynamic> map) {
+    return Review(
+      username: map['username'] ?? '',
+      content: map['content'] ?? '',
+      rating: (map['rating'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'username': username,
+      'content': content,
+      'rating': rating,
+    };
+  }
 }
 
 class Product {
+  final String id;
   final String title;
   final String description;
   final String image;
@@ -34,6 +52,7 @@ class Product {
   final List<Review> reviews;
 
   Product({
+    this.id = '',
     required this.title,
     required this.review,
     required this.description,
@@ -54,12 +73,58 @@ class Product {
     this.specifications = const [],
     this.reviews = const [],
   });
+
+  // Metode untuk mengonversi dari Firestore
+  factory Product.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return Product(
+      id: doc.id,
+      title: data['title'] ?? '',
+      description: data['description'] ?? '',
+      image: data['image'] ?? '',
+      price: (data['price'] as num?)?.toDouble() ?? 0.0,
+      originalPrice: (data['originalPrice'] as num?)?.toDouble(),
+      discountPercentage: data['discountPercentage'],
+      seller: data['seller'] ?? '',
+      colors:
+          (data['colors'] as List?)?.map((color) => Color(color)).toList() ??
+              [],
+      category: data['category'] ?? '',
+      review: data['review'] ?? '',
+      rate: (data['rate'] as num?)?.toDouble() ?? 0.0,
+      reviewCount: data['reviewCount'] ?? 0,
+      quantity: data['quantity'] ?? 1,
+      reviews: (data['reviews'] as List?)
+              ?.map((reviewMap) => Review.fromMap(reviewMap))
+              .toList() ??
+          [],
+    );
+  }
+
+  // Metode untuk mengonversi ke Map untuk Firestore
+  Map<String, dynamic> toFirestore() {
+    return {
+      'title': title,
+      'description': description,
+      'image': image,
+      'price': price,
+      'originalPrice': originalPrice,
+      'discountPercentage': discountPercentage,
+      'seller': seller,
+      'colors': colors.map((color) => color.value).toList(),
+      'category': category,
+      'review': review,
+      'rate': rate,
+      'reviewCount': reviewCount,
+      'quantity': quantity,
+      'reviews': reviews.map((review) => review.toMap()).toList(),
+    };
+  }
 }
 
 final List<Product> all = [
   Product(
-    title:
-        "Aitu Q36 Open Ear Bone Conduction Wireless Bluetooth 5.3 Earphone head",
+    title: "Wireless Bluetooth 5.3 Earphone head",
     description:
         "Produk harus disimpan di ruangan yang kering dan berventilasi untuk menghindari kontak dengan zat korosif dan jauh dari api dan sumber panas. Produk perlu diisi dayanya setiap 3 bulan selama penyimpanan. Operasional: 0~40℃, penyimpanan: -10~45℃, kelembaban saat bekerja : kurang dari 70%",
     image: "images/all/wireless.png",
@@ -217,7 +282,7 @@ final List<Product> all = [
     ],
   ),
   Product(
-    title: "Jaket Jeans Pria Trucker Sherpa Bulu jaket tebal",
+    title: "Jaket Jeans Pria",
     description:
         "Jaket jeans bulu pria, Jaket jeans Denim Sakura 14 Ozz, Bahan jeans tebal dan lembut",
     image: "images/all/jacket.png",
@@ -232,7 +297,7 @@ final List<Product> all = [
     rate: 5.0,
     reviewCount: 20,
     quantity: 1,
-    freeShipping: true,
+    freeShipping: false,
     returns30Days: false,
     warranty: true,
     specifications: [
@@ -265,7 +330,7 @@ final List<Product> all = [
     ],
   ),
   Product(
-    title: "Titan Bandhan Green Dial Multi Stainless Steel Strap Watch",
+    title: "Titan Bandhan Green",
     description:
         "Titan telah berkembang pesat sejak tahun 1984 ketika kami memulai dengan satu kategori produk. Saat ini, dengan lebih dari 8.000 karyawan dan sekitar 38.000 orang di seluruh ekosistem Titan, 16 merek, dan lebih dari 2.000 toko ritel, kami berkomitmen untuk memberikan pertumbuhan yang menguntungkan dan bertanggung jawab.",
     image: "images/men fashion/watch.png",
@@ -360,7 +425,7 @@ final List<Product> all = [
     ],
   ),
   Product(
-    title: "Parfum Secret garden Eau de Parfum",
+    title: "Parfum Secret garden",
     description:
         "Produk mudah terbakar, jauhkan dari api dan di tempat teduh, jangan kontak dengan mata, jauhkan dari jangkauan anak-anak",
     image: "images/beauty/perfume.png",
@@ -408,12 +473,12 @@ final List<Product> all = [
     ],
   ),
   Product(
-    title: "Cincin solitaire rosegold",
+    title: "Cincin solitaire",
     description:
         "UNTUK MENJAGA WARNA PERHIASAN AGAR TETAP AWET DISARANKAN TIDAK TERKENA ALKOHOL, AIR ASIN, KERINGAT YANG BERLEBIHAN DAN BAHAN KIMIA LAINNYA.",
     image: "images/jewelry/wedding ring.png",
-    price: 2500000,
-    originalPrice: 3000000,
+    price: 250000,
+    originalPrice: 300000,
     discountPercentage: 5,
     seller: "Jewelry Shop",
     colors: [Colors.brown, Colors.purpleAccent, Colors.blueGrey],
@@ -424,7 +489,7 @@ final List<Product> all = [
     reviewCount: 80,
     quantity: 1,
     freeShipping: true,
-    returns30Days: false,
+    returns30Days: true,
     warranty: true,
     specifications: [
       "Cincin solitaire pmt",
@@ -509,8 +574,8 @@ final List<Product> shoes = [
     description:
         "100% Original Authentic. Kenyamanan adalah yang utama, tetapi bukan berarti Anda harus mengorbankan gaya. Terinspirasi dari desain AJ1 dan AJ5, Stadium 90 siap dikenakan setiap hari. Bagian atasnya terbuat dari kulit dan tenunan yang lembut, sehingga Anda mendapatkan sirkulasi udara dan daya tahan, dan bantalan Nike Air di solnya menjaga setiap langkah Anda tetap ringan dan nyaman.",
     image: "images/shoes/Air Jordan.png",
-    price: 2199000,
-    originalPrice: 2299000,
+    price: 850000,
+    originalPrice: 900000,
     discountPercentage: 10,
     seller: "Nike",
     colors: [Colors.grey],
@@ -1003,7 +1068,7 @@ final List<Product> jewelry = [
     ],
   ),
   Product(
-    title: "Box Perhiasan Heartbeat Bludru",
+    title: "Heartbeat Bludru",
     description:
         "Kotak perhiasan berbentuk Heartbeat, tempat menyimpan berbagai macam aksesorismu seperti cincin, gelang, dan kalung agar terhindar dari debu sehingga tersimpan awet tanpa takut rusak dan lecet. Dengan beragam pilihan warna untuk mewarnai hari-harimu",
     image: "images/jewelry/jewelry-box.png",
@@ -1064,7 +1129,7 @@ final List<Product> jewelry = [
     price: 50000,
     originalPrice: 65000,
     discountPercentage: 10,
-    seller: "LANMI JEWELRY Official Shop",
+    seller: "LANMI JEWELRY",
     colors: [
       Colors.yellow,
       Colors.black,
@@ -1299,7 +1364,7 @@ final List<Product> menFashion = [
     price: 150000,
     originalPrice: 180000,
     discountPercentage: 17,
-    seller: "KALE CLOTHING Official Store",
+    seller: "KALE CLOTHING",
     colors: [
       Colors.brown,
       Colors.pink,
@@ -1337,7 +1402,7 @@ final List<Product> menFashion = [
     ],
   ),
   Product(
-    title: "Titan Bandhan Green Dial Multi Stainless Steel Strap Watch",
+    title: "Titan Bandhan Green",
     description:
         "Titan telah berkembang pesat sejak tahun 1984 ketika kami memulai dengan satu kategori produk. Saat ini, dengan lebih dari 8.000 karyawan dan sekitar 38.000 orang di seluruh ekosistem Titan, 16 merek, dan lebih dari 2.000 toko ritel, kami berkomitmen untuk memberikan pertumbuhan yang menguntungkan dan bertanggung jawab.",
     image: "images/men fashion/watch.png",
@@ -1523,12 +1588,12 @@ final List<Product> eletronik = [
     ],
   ),
   Product(
-    title: "Apple iphone 15 128GB, Pink",
+    title: "Apple iphone 15",
     description:
         "Iphone 15 menghadirkan Dynamic Island, kamera utama 48 MP, dan USB-C - semuanya dalam desain aluminium dan kaca berwarna yang tangguh.",
     image: "images/eletronik/hp.png",
-    price: 13999000,
-    originalPrice: 16499000,
+    price: 99000,
+    originalPrice: 99000,
     discountPercentage: 18,
     seller: "iBox Official Shop",
     colors: [
@@ -1572,8 +1637,8 @@ final List<Product> eletronik = [
     description:
         "ASUS TUF A15 FA506NCR RYZEN 7 7435HS RTX3050 4GB/ 16/GB 512GB W11+OHS 15.6FHD 144HZ IPS RGB BLK-R735B6-O",
     image: "images/eletronik/laptop.png",
-    price: 11348000,
-    originalPrice: 18000000,
+    price: 950000,
+    originalPrice: 999000,
     discountPercentage: 18,
     seller: "AMD official Store",
     colors: [
