@@ -6,6 +6,7 @@ import '../../Provider/order_provider.dart';
 import '../../models/product_model.dart';
 import '../../constants.dart';
 
+// Layar pesanan yang menampilkan detail dan status pesanan pengguna
 class OrderScreen extends StatefulWidget {
   const OrderScreen({Key? key}) : super(key: key);
 
@@ -14,69 +15,79 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
+  // Variabel untuk melacak tahap pengiriman saat ini
   int currentStep = 2;
+  // Flag untuk menampilkan notifikasi
   bool showNotification = false;
+  // Flag untuk menunjukkan proses loading
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    // Ambil pesanan dan inisialisasi status saat layar pertama kali dimuat
     _fetchOrdersAndInitializeStatus();
   }
 
+  // Metode untuk mengambil pesanan pengguna dan mengatur status awal
   Future<void> _fetchOrdersAndInitializeStatus() async {
     try {
+      // Dapatkan pengguna saat ini yang sudah login
       User? currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
-        // Fetch orders
+        // Ambil pesanan pengguna menggunakan provider
         await Provider.of<OrderProvider>(context, listen: false)
             .fetchUserOrders();
 
-        // Retrieve last known shipping step
+        // Ambil tahap pengiriman terakhir yang diketahui
         final orderProvider =
             Provider.of<OrderProvider>(context, listen: false);
         int lastStep = await orderProvider.retrieveLastShippingStep();
 
+        // Perbarui state dengan tahap terakhir
         setState(() {
           currentStep = lastStep;
           _isLoading = false;
         });
 
-        // If the last step is not the final step, start automatic updates
+        // Jika tahap belum mencapai tahap terakhir, mulai pembaruan otomatis
         if (currentStep < 5) {
           _startStatusUpdates(initialStep: currentStep);
         }
       }
     } catch (e) {
-      print('Error fetching orders and status: $e');
+      print('Error mengambil pesanan dan status: $e');
       setState(() {
         _isLoading = false;
       });
     }
   }
 
+  // Metode untuk memulai pembaruan status pengiriman secara otomatis
   void _startStatusUpdates({int initialStep = 0}) async {
     final orderProvider = Provider.of<OrderProvider>(context, listen: false);
 
-    // Start from the last known step
+    // Mulai dari tahap terakhir yang diketahui
     for (int step = initialStep; step < 5; step++) {
+      // Jeda singkat antara setiap tahap
       await Future.delayed(const Duration(seconds: 2));
       if (!mounted) return;
 
+      // Perbarui tahap saat ini
       setState(() {
         currentStep = step;
       });
 
-      // Save the current step
+      // Simpan tahap pengiriman saat ini
       await orderProvider.saveShippingStep(currentStep);
 
-      // Show notification on the final step
+      // Tampilkan notifikasi pada tahap terakhir
       if (step == 4) {
         setState(() {
           showNotification = true;
         });
 
-        // Hide notification after 2 seconds
+        // Sembunyikan notifikasi setelah 2 detik
         await Future.delayed(const Duration(seconds: 2));
         if (mounted) {
           setState(() {
@@ -87,6 +98,7 @@ class _OrderScreenState extends State<OrderScreen> {
     }
   }
 
+  // Metode untuk memformat mata uang dalam Rupiah
   String formatCurrency(double amount) {
     final formatter = NumberFormat.currency(
       locale: 'id_ID',
@@ -96,6 +108,7 @@ class _OrderScreenState extends State<OrderScreen> {
     return formatter.format(amount);
   }
 
+  // Widget untuk membangun kartu pesanan dengan detail lengkap
   Widget _buildOrderCard(
       Map<String, dynamic> order,
       List<Product> products,
@@ -115,6 +128,7 @@ class _OrderScreenState extends State<OrderScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Bagian-bagian detail pesanan
             _buildSectionTitle('Informasi Pengiriman'),
             _buildShippingInfo(order),
             _buildSectionTitle('Detail Pesanan'),
@@ -131,11 +145,13 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
+  // Widget untuk membuat judul bagian dengan garis samping berwarna
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
+          // Garis samping berwarna
           Container(
             width: 4,
             height: 24,
@@ -157,6 +173,7 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
+  // Widget untuk menampilkan informasi pengiriman
   Widget _buildShippingInfo(Map<String, dynamic> order) {
     return Card(
       elevation: 2,
@@ -166,6 +183,7 @@ class _OrderScreenState extends State<OrderScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Detail penerima, alamat, dan nomor telepon
             _buildInfoRow(Icons.person, 'Nama Penerima', order['name']),
             const Divider(height: 24),
             _buildInfoRow(
@@ -178,6 +196,7 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
+  // Widget untuk membuat baris informasi dengan ikon
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Row(
       children: [
@@ -198,9 +217,11 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
+  // Widget untuk menampilkan detail produk dalam pesanan
   Widget _buildOrderDetails(List<Product> products, bool discountApplied) {
     return Column(
       children: products.map((item) {
+        // Hitung subtotal dan diskon untuk setiap produk
         double subtotal = item.price * item.quantity;
         double discount = discountApplied
             ? subtotal * (item.discountPercentage ?? 0) / 100
@@ -210,6 +231,7 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
+  // Widget untuk membuat kartu produk individual
   Widget _buildProductCard(Product product, double subtotal, double discount) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -218,6 +240,7 @@ class _OrderScreenState extends State<OrderScreen> {
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
+            // Gambar produk
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.asset(
@@ -232,6 +255,7 @@ class _OrderScreenState extends State<OrderScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Detail produk
                   Text(product.title,
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16)),
@@ -246,6 +270,7 @@ class _OrderScreenState extends State<OrderScreen> {
                 ],
               ),
             ),
+            // Total harga setelah diskon
             Text(
               formatCurrency(subtotal - discount),
               style: const TextStyle(fontWeight: FontWeight.bold),
@@ -256,6 +281,7 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
+  // Widget untuk menampilkan rincian harga
   Widget _buildPriceDetails(
       double subtotal, double discount, double totalPrice) {
     return Column(
@@ -269,6 +295,7 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
+  // Widget untuk membuat baris harga dengan format khusus
   Widget _buildPriceRow(String label, double value,
       {bool isBold = false, bool isRed = false}) {
     return Row(
@@ -286,6 +313,7 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
+  // Widget untuk menampilkan metode pembayaran
   Widget _buildPaymentMethod(String paymentMethod) {
     return Card(
       elevation: 2,
@@ -309,6 +337,7 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
+  // Widget untuk menampilkan status pengiriman dengan animasi
   Widget _buildShippingStatus(String shippingRoute) {
     const steps = [
       'Pesanan Dikonfirmasi',
@@ -326,6 +355,7 @@ class _OrderScreenState extends State<OrderScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Tampilkan setiap tahap dengan animasi progres
             for (var i = 0; i < steps.length; i++) ...[
               if (i > 0)
                 TweenAnimationBuilder<Color?>(
@@ -347,6 +377,7 @@ class _OrderScreenState extends State<OrderScreen> {
                 ),
               Row(
                 children: [
+                  // Animasi perubahan warna untuk setiap tahap
                   TweenAnimationBuilder<Color?>(
                     tween: ColorTween(
                       begin: Colors.grey[300],
@@ -362,6 +393,7 @@ class _OrderScreenState extends State<OrderScreen> {
                           color: color,
                         ),
                         child: Icon(
+                          // Tampilkan ikon centang atau lingkaran kosong
                           i <= currentStep
                               ? Icons.check
                               : Icons.circle_outlined,
@@ -391,6 +423,7 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
+  // Widget untuk menampilkan keadaan kosong ketika tidak ada pesanan
   Widget _buildEmptyState() {
     return Center(
       child: Column(
@@ -425,36 +458,42 @@ class _OrderScreenState extends State<OrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Mengambil data dari OrderProvider untuk mendapatkan daftar pesanan
     final orderProvider = Provider.of<OrderProvider>(context);
     final orders = orderProvider.orders;
 
     return Stack(
       children: [
+        // Struktur utama halaman menggunakan Scaffold
         Scaffold(
+          // Membuat AppBar dengan judul "Pesanan Saya"
           appBar: AppBar(
             title: const Text(
               'Pesanan Saya',
               style:
                   TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
             ),
-            backgroundColor: kprimaryColor,
-            centerTitle: true,
+            backgroundColor: kprimaryColor, // Warna latar AppBar
+            centerTitle: true, // Menempatkan judul di tengah
             iconTheme: const IconThemeData(color: Colors.white),
           ),
-          backgroundColor: kcontentColor,
+          backgroundColor: kcontentColor, // Warna latar belakang halaman
           body: _isLoading
               ? Center(
+                  // Menampilkan indikator loading jika sedang memuat data
                   child: CircularProgressIndicator(
                     color: kprimaryColor,
                   ),
                 )
               : orders.isEmpty
-                  ? _buildEmptyState()
+                  ? _buildEmptyState() // Menampilkan state kosong jika tidak ada pesanan
                   : ListView.builder(
+                      // Membuat daftar pesanan
                       itemCount: orders.length,
                       itemBuilder: (context, index) {
                         var order = orders[index];
-                        // Convert products from Firebase map to Product objects
+
+                        // Mengonversi data produk dari Firebase menjadi objek Product
                         List<Product> products = (order['products'] as List)
                             .map((productMap) => Product(
                                   title: productMap['title'] ?? '',
@@ -475,12 +514,19 @@ class _OrderScreenState extends State<OrderScreen> {
                                 ))
                             .toList();
 
+                        // Mengecek apakah diskon sudah diterapkan
                         bool discountApplied =
                             order['discountApplied'] ?? false;
+
+                        // Menghitung total harga pesanan setelah diskon
                         double totalPrice =
                             order['totalPriceWithDiscount'].toDouble();
+
+                        // Menghitung subtotal (harga sebelum diskon)
                         double totalSubtotal = products.fold(0,
                             (sum, item) => sum + (item.price * item.quantity));
+
+                        // Menghitung total diskon yang diberikan
                         double totalDiscount = discountApplied
                             ? products.fold(
                                 0,
@@ -492,27 +538,33 @@ class _OrderScreenState extends State<OrderScreen> {
                                         100))
                             : 0;
 
+                        // Membuat kartu untuk setiap pesanan
                         return _buildOrderCard(order, products, discountApplied,
                             totalPrice, totalSubtotal, totalDiscount);
                       },
                     ),
         ),
+        // Menampilkan notifikasi jika showNotification bernilai true
         if (showNotification)
           TweenAnimationBuilder<double>(
+            // Animasi notifikasi muncul
             tween: Tween(begin: 0.0, end: 1.0),
             duration: const Duration(milliseconds: 500),
             builder: (context, value, child) {
               return Positioned(
+                // Menentukan posisi notifikasi di layar
                 top: MediaQuery.of(context).padding.top + 20,
                 left: 20,
                 right: 20,
                 child: Opacity(
+                  // Mengatur transparansi berdasarkan animasi
                   opacity: value,
                   child: Container(
+                    // Membuat tampilan notifikasi
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 15),
                     decoration: BoxDecoration(
-                      color: Colors.green,
+                      color: Colors.green, // Warna latar notifikasi
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: [
                         BoxShadow(
@@ -523,6 +575,7 @@ class _OrderScreenState extends State<OrderScreen> {
                       ],
                     ),
                     child: const Row(
+                      // Konten notifikasi
                       children: [
                         Icon(Icons.check_circle, color: Colors.white),
                         SizedBox(width: 10),

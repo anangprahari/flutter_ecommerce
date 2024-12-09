@@ -4,11 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:ecommerce_mobile_app/constants.dart';
 
+// Model untuk pesan chat, menyimpan detail pesan seperti isi pesan, pengirim, waktu, dll
 class ChatMessage {
-  final String message;
-  final bool isUser;
-  final DateTime timestamp;
-  final String senderId;
+  final String message; // Isi pesan
+  final bool isUser; // Apakah pesan dari pengguna
+  final DateTime timestamp; // Waktu pengiriman pesan
+  final String senderId; // ID pengirim pesan
 
   ChatMessage({
     required this.message,
@@ -17,16 +18,19 @@ class ChatMessage {
     required this.senderId,
   });
 
+  // Membuat objek ChatMessage dari dokumen Firestore
   factory ChatMessage.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return ChatMessage(
       message: data['message'] ?? '',
+      // Memeriksa apakah pesan dari pengguna saat ini
       isUser: data['senderId'] == FirebaseAuth.instance.currentUser?.uid,
       timestamp: (data['timestamp'] as Timestamp).toDate(),
       senderId: data['senderId'] ?? '',
     );
   }
 
+  // Mengonversi objek ChatMessage menjadi map untuk disimpan di Firestore
   Map<String, dynamic> toFirestore() {
     return {
       'message': message,
@@ -36,18 +40,22 @@ class ChatMessage {
   }
 }
 
+// Layanan untuk mengirim balasan otomatis dalam chat
 class ChatAutoReplyService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Expanded and more context-aware auto-reply dictionary
+  // Kamus balasan otomatis berdasarkan kata kunci
   final Map<String, String> _autoReplies = {
     'halo': 'Halo! Ada yang bisa kami bantu?',
-    'komplain': 'Mohon maaf atas ketidaknyamanan Anda. Bisa tolong jelaskan masalahnya?',
+    'komplain':
+        'Mohon maaf atas ketidaknyamanan Anda. Bisa tolong jelaskan masalahnya?',
     'pesanan': 'Bisa konfirmasi nomor pesanan Anda?',
     'ukuran': 'Kami akan segera membantu Anda dengan masalah ukuran.',
-    'pengiriman': 'Informasi pengiriman sedang kami proses. Mohon tunggu sebentar.',
+    'pengiriman':
+        'Informasi pengiriman sedang kami proses. Mohon tunggu sebentar.',
   };
 
+  // Mengirim balasan otomatis berdasarkan pesan pengguna
   Future<void> sendAutoReply(String chatDocId, String userMessage) async {
     String lowercaseMessage = userMessage.toLowerCase();
     String? replyKey = _findAutoReplyKey(lowercaseMessage);
@@ -55,6 +63,7 @@ class ChatAutoReplyService {
     if (replyKey != null) {
       String adminId = 'admin_jenshop';
 
+      // Menambahkan pesan balasan otomatis ke Firestore
       await _firestore
           .collection('chats')
           .doc(chatDocId)
@@ -68,6 +77,7 @@ class ChatAutoReplyService {
     }
   }
 
+  // Mencari kata kunci yang cocok untuk balasan otomatis
   String? _findAutoReplyKey(String message) {
     for (var key in _autoReplies.keys) {
       if (message.contains(key)) {
@@ -78,6 +88,7 @@ class ChatAutoReplyService {
   }
 }
 
+// Widget layar utama chat
 class ChatScreen extends StatefulWidget {
   final String? orderNumber;
   const ChatScreen({Key? key, this.orderNumber}) : super(key: key);
@@ -87,19 +98,30 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  // Pengontrol untuk input teks pesan
   final TextEditingController _messageController = TextEditingController();
+
+  // Pengontrol untuk scroll layar chat
   final ScrollController _scrollController = ScrollController();
+
+  // Stream untuk memuat pesan dari Firestore
   late Stream<QuerySnapshot> _messagesStream;
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Layanan balasan otomatis
   final ChatAutoReplyService _autoReplyService = ChatAutoReplyService();
 
   @override
   void initState() {
     super.initState();
+    // Inisialisasi stream pesan saat widget pertama kali dibuat
     _initializeMessagesStream();
   }
 
+  // Menyiapkan stream untuk memuat pesan dari Firestore
   void _initializeMessagesStream() {
+    // Menggunakan nomor pesanan atau dukungan umum sebagai ID dokumen
     String chatDocId = widget.orderNumber ?? 'general_support';
     _messagesStream = _firestore
         .collection('chats')
@@ -109,9 +131,12 @@ class _ChatScreenState extends State<ChatScreen> {
         .snapshots();
   }
 
+  // Mengirim pesan baru
   void _sendMessage() async {
+    // Cek apakah pesan kosong
     if (_messageController.text.trim().isEmpty) return;
 
+    // Periksa apakah pengguna sudah login
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -120,8 +145,10 @@ class _ChatScreenState extends State<ChatScreen> {
       return;
     }
 
+    // Tentukan ID dokumen chat
     String chatDocId = widget.orderNumber ?? 'general_support';
 
+    // Tambahkan pesan ke Firestore
     await _firestore
         .collection('chats')
         .doc(chatDocId)
@@ -133,12 +160,17 @@ class _ChatScreenState extends State<ChatScreen> {
           senderId: currentUser.uid,
         ).toFirestore());
 
+    // Kirim balasan otomatis
     await _autoReplyService.sendAutoReply(chatDocId, _messageController.text);
 
+    // Bersihkan input teks
     _messageController.clear();
+
+    // Gulir ke bawah layar
     _scrollToBottom();
   }
 
+  // Menggulung layar chat ke bagian bawah
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
@@ -154,6 +186,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // App bar dengan judul dan detail kontak admin
       appBar: AppBar(
         elevation: 2,
         title: const Column(
@@ -180,21 +213,27 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: Column(
         children: [
+          // Daftar pesan yang di-streaming dari Firestore
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: _messagesStream,
               builder: (context, snapshot) {
+                // Tampilkan indikator loading saat memuat
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
+
+                // Tampilkan pesan jika tidak ada pesan
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return const Center(child: Text('Belum ada pesan'));
                 }
 
+                // Konversi dokumen menjadi objek ChatMessage
                 final messages = snapshot.data!.docs
                     .map((doc) => ChatMessage.fromFirestore(doc))
                     .toList();
 
+                // Tampilkan daftar pesan
                 return ListView.builder(
                   controller: _scrollController,
                   padding: const EdgeInsets.all(16),
@@ -207,6 +246,7 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
+          // Area input pesan
           ChatInputArea(
             messageController: _messageController,
             onSendMessage: _sendMessage,
@@ -217,6 +257,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 }
 
+// Widget untuk area input pesan
 class ChatInputArea extends StatelessWidget {
   final TextEditingController messageController;
   final VoidCallback onSendMessage;
@@ -230,6 +271,7 @@ class ChatInputArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      // Dekorasi container input pesan
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -244,11 +286,13 @@ class ChatInputArea extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
+          // Tombol lampirkan file (belum diimplementasikan)
           IconButton(
             icon: const Icon(Icons.attach_file),
             onPressed: () {},
             color: kprimaryColor,
           ),
+          // TextField untuk menulis pesan
           Expanded(
             child: TextField(
               controller: messageController,
@@ -270,6 +314,7 @@ class ChatInputArea extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
+          // Tombol kirim pesan
           Container(
             decoration: BoxDecoration(
               color: kprimaryColor,
@@ -287,6 +332,7 @@ class ChatInputArea extends StatelessWidget {
   }
 }
 
+// Widget untuk menampilkan gelembung pesan
 class MessageBubble extends StatelessWidget {
   final ChatMessage message;
 
@@ -298,19 +344,24 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
+      // Posisi pesan berbeda untuk pesan pengguna dan admin
       alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
+        // Batasi lebar maksimum pesan
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
         margin: const EdgeInsets.only(bottom: 16),
         child: Column(
+          // Atur posisi cross-axis berdasarkan pengirim pesan
           crossAxisAlignment: message.isUser
               ? CrossAxisAlignment.end
               : CrossAxisAlignment.start,
           children: [
+            // Gelembung pesan
             Container(
               decoration: BoxDecoration(
+                // Warna berbeda untuk pesan pengguna dan admin
                 color: message.isUser ? kprimaryColor : Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
@@ -329,12 +380,14 @@ class MessageBubble extends StatelessWidget {
               child: Text(
                 message.message,
                 style: TextStyle(
+                  // Warna teks berbeda untuk pesan pengguna dan admin
                   color: message.isUser ? Colors.white : Colors.black87,
                   fontSize: 14,
                 ),
               ),
             ),
             const SizedBox(height: 4),
+            // Tampilkan waktu pengiriman pesan
             Text(
               DateFormat('HH:mm').format(message.timestamp),
               style: TextStyle(

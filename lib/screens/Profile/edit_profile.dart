@@ -10,6 +10,7 @@ import 'dart:io';
 import '../../Provider/user_provider.dart';
 import '../../constants.dart';
 
+// Halaman Edit Profil sebagai StatefulWidget
 class EditProfile extends StatefulWidget {
   const EditProfile({Key? key}) : super(key: key);
 
@@ -18,23 +19,33 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
+  // Kunci global untuk form validasi
   final _formKey = GlobalKey<FormState>();
+
+  // Kontroler teks untuk setiap input field
   late TextEditingController _nameController;
   late TextEditingController _addressController;
   late TextEditingController _bioController;
   late TextEditingController _birthDateController;
   late TextEditingController _phoneNumberController;
   late TextEditingController _emailController;
+
+  // Variabel untuk menyimpan jenis kelamin yang dipilih
   late String _selectedGender;
+
+  // Flag untuk mengecek validitas form
   bool _isFormValid = false;
+
+  // Path gambar profil
   String? _profileImagePath;
 
   @override
   void initState() {
     super.initState();
+    // Mendapatkan data pengguna dari UserProvider
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
-    // Initialize controllers with existing data
+    // Menginisialisasi kontroler dengan data yang sudah ada
     _nameController = TextEditingController(text: userProvider.name);
     _addressController = TextEditingController(text: userProvider.address);
     _bioController = TextEditingController(text: userProvider.bio);
@@ -44,16 +55,20 @@ class _EditProfileState extends State<EditProfile> {
     _emailController = TextEditingController(text: userProvider.email);
     _selectedGender = userProvider.gender;
 
+    // Menyiapkan validasi form
     _setupFormValidation();
   }
 
+  // Metode untuk menyiapkan validasi form secara dinamis
   void _setupFormValidation() {
     void validateForm() {
       setState(() {
+        // Memperbarui status validasi form
         _isFormValid = _formKey.currentState?.validate() ?? false;
       });
     }
 
+    // Menambahkan listener untuk setiap kontroler
     _nameController.addListener(validateForm);
     _addressController.addListener(validateForm);
     _bioController.addListener(validateForm);
@@ -64,6 +79,7 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   void dispose() {
+    // Membersihkan semua kontroler saat widget dihapus
     _nameController.dispose();
     _addressController.dispose();
     _bioController.dispose();
@@ -73,6 +89,7 @@ class _EditProfileState extends State<EditProfile> {
     super.dispose();
   }
 
+  // Metode untuk memilih tanggal lahir
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -80,6 +97,7 @@ class _EditProfileState extends State<EditProfile> {
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       builder: (context, child) {
+        // Mengkustomisasi tema date picker
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
@@ -94,6 +112,7 @@ class _EditProfileState extends State<EditProfile> {
       },
     );
 
+    // Memperbarui kontroler dengan tanggal yang dipilih
     if (picked != null) {
       setState(() {
         _birthDateController.text = DateFormat('dd/MM/yyyy').format(picked);
@@ -101,6 +120,7 @@ class _EditProfileState extends State<EditProfile> {
     }
   }
 
+  // Metode untuk memilih gambar dari galeri
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
     try {
@@ -109,23 +129,25 @@ class _EditProfileState extends State<EditProfile> {
         setState(() {
           _profileImagePath = image.path;
         });
-        // Immediately update the provider with the new image path
+        // Memperbarui path gambar profil di provider
         Provider.of<UserProvider>(context, listen: false)
             .updateProfileImage(image.path);
       }
     } catch (e) {
+      // Menampilkan pesan kesalahan jika gagal memilih gambar
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Gagal memilih gambar')),
       );
     }
   }
 
+  // Metode untuk menyimpan perubahan profil
   void _saveChanges() async {
     if (_formKey.currentState!.validate()) {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         try {
-          // Save user data to Firestore
+          // Menyimpan data pengguna ke Firestore
           await FirebaseFirestore.instance
               .collection('users')
               .doc(user.uid)
@@ -139,7 +161,7 @@ class _EditProfileState extends State<EditProfile> {
             'email': _emailController.text,
           });
 
-          // Update UserProvider
+          // Memperbarui data pengguna di UserProvider
           Provider.of<UserProvider>(context, listen: false).setUserData(
             name: _nameController.text,
             address: _addressController.text,
@@ -151,15 +173,18 @@ class _EditProfileState extends State<EditProfile> {
             profileImagePath: _profileImagePath,
           );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Profil berhasil diperbarui'),
-          backgroundColor: Colors.green,
-        ),
-      );
+          // Menampilkan pesan sukses
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Profil berhasil diperbarui'),
+              backgroundColor: Colors.green,
+            ),
+          );
 
-       Navigator.pop(context);
+          // Kembali ke halaman sebelumnya
+          Navigator.pop(context);
         } catch (e) {
+          // Menampilkan pesan kesalahan jika gagal memperbarui
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Gagal memperbarui profil: ${e.toString()}'),
@@ -171,22 +196,24 @@ class _EditProfileState extends State<EditProfile> {
     }
   }
 
-
- @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // AppBar untuk halaman edit profil
       appBar: _buildAppBar(),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
           child: Column(
             children: [
+              // Header profil dengan foto dan informasi dasar
               _buildProfileHeader(),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Input field untuk berbagai informasi profil
                     _buildNameField(),
                     const SizedBox(height: 16),
                     _buildAddressField(),
@@ -210,6 +237,8 @@ class _EditProfileState extends State<EditProfile> {
       ),
     );
   }
+
+  // Membangun AppBar untuk halaman edit profil
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       title: const Text(
@@ -224,6 +253,7 @@ class _EditProfileState extends State<EditProfile> {
       elevation: 0,
       iconTheme: const IconThemeData(color: Colors.white),
       actions: [
+        // Tombol simpan yang hanya aktif jika form valid
         TextButton(
           onPressed: _isFormValid ? _saveChanges : null,
           child: Text(
@@ -239,6 +269,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
+  // Membangun header profil dengan foto dan informasi dasar
   Widget _buildProfileHeader() {
     final userProvider = Provider.of<UserProvider>(context);
     return Container(
@@ -250,6 +281,7 @@ class _EditProfileState extends State<EditProfile> {
             const SizedBox(height: 20),
             Stack(
               children: [
+                // Avatar profil dengan kemampuan untuk memilih gambar
                 Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -268,6 +300,7 @@ class _EditProfileState extends State<EditProfile> {
                                 as ImageProvider,
                   ),
                 ),
+                // Tombol untuk memilih gambar
                 Positioned(
                   bottom: 0,
                   right: 0,
@@ -287,6 +320,7 @@ class _EditProfileState extends State<EditProfile> {
               ],
             ),
             const SizedBox(height: 16),
+            // Nama dan email pengguna
             Text(
               _nameController.text,
               style: const TextStyle(
@@ -309,6 +343,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
+  // Input field untuk nama lengkap
   Widget _buildNameField() {
     return TextFormField(
       controller: _nameController,
@@ -319,6 +354,7 @@ class _EditProfileState extends State<EditProfile> {
       ),
       textCapitalization: TextCapitalization.words,
       validator: (value) {
+        // Validasi nama tidak boleh kosong
         if (value == null || value.isEmpty) {
           return 'Nama tidak boleh kosong';
         }
@@ -327,6 +363,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
+  // Input field untuk alamat
   Widget _buildAddressField() {
     return TextFormField(
       controller: _addressController,
@@ -337,6 +374,7 @@ class _EditProfileState extends State<EditProfile> {
       ),
       maxLines: 2,
       validator: (value) {
+        // Validasi alamat tidak boleh kosong
         if (value == null || value.isEmpty) {
           return 'Alamat tidak boleh kosong';
         }
@@ -345,6 +383,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
+  // Input field untuk bio
   Widget _buildBioField() {
     return TextFormField(
       controller: _bioController,
@@ -358,6 +397,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
+  // Selector untuk memilih jenis kelamin
   Widget _buildGenderSelector() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -372,6 +412,7 @@ class _EditProfileState extends State<EditProfile> {
         const SizedBox(height: 8),
         Row(
           children: [
+            // Opsi jenis kelamin laki-laki
             Expanded(
               child: _buildGenderOption(
                 title: "Laki-laki",
@@ -380,6 +421,7 @@ class _EditProfileState extends State<EditProfile> {
               ),
             ),
             const SizedBox(width: 12),
+            // Opsi jenis kelamin perempuan
             Expanded(
               child: _buildGenderOption(
                 title: "Perempuan",
@@ -393,6 +435,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
+  // Widget untuk setiap opsi jenis kelamin
   Widget _buildGenderOption({
     required String title,
     required String value,
@@ -409,6 +452,7 @@ class _EditProfileState extends State<EditProfile> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
+          // Desain untuk opsi yang dipilih
           color: isSelected ? kprimaryColor.withOpacity(0.1) : Colors.white,
           border: Border.all(
             color: isSelected ? kprimaryColor : Colors.grey.shade300,
@@ -438,19 +482,22 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
+  // Metode untuk membangun input field tanggal lahir
   Widget _buildDateField() {
     return TextFormField(
       controller: _birthDateController,
-      readOnly: true,
+      readOnly: true, // Membuat field hanya bisa dibuka melalui date picker
       decoration: _buildInputDecoration(
         "Tanggal Lahir",
         Icons.calendar_today_outlined,
         "Pilih tanggal lahir Anda",
       ).copyWith(
+        // Menambahkan ikon dropdown di sebelah kanan
         suffixIcon: Icon(Icons.arrow_drop_down, color: kprimaryColor),
       ),
-      onTap: () => _selectDate(context),
+      onTap: () => _selectDate(context), // Membuka date picker saat di-tap
       validator: (value) {
+        // Validasi tanggal lahir tidak boleh kosong
         if (value == null || value.isEmpty) {
           return 'Tanggal lahir tidak boleh kosong';
         }
@@ -459,6 +506,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
+  // Metode untuk membangun input field nomor telepon
   Widget _buildPhoneField() {
     return TextFormField(
       controller: _phoneNumberController,
@@ -468,11 +516,13 @@ class _EditProfileState extends State<EditProfile> {
         "Contoh: 08123456789",
       ),
       keyboardType: TextInputType.phone,
+      // Membatasi input hanya untuk angka dan panjang 13 digit
       inputFormatters: [
         FilteringTextInputFormatter.digitsOnly,
         LengthLimitingTextInputFormatter(13),
       ],
       validator: (value) {
+        // Validasi nomor telepon
         if (value == null || value.isEmpty) {
           return 'Nomor telepon tidak boleh kosong';
         }
@@ -484,6 +534,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
+  // Metode untuk membangun input field email
   Widget _buildEmailField() {
     return TextFormField(
       controller: _emailController,
@@ -494,18 +545,21 @@ class _EditProfileState extends State<EditProfile> {
       ),
       keyboardType: TextInputType.emailAddress,
       validator: (value) {
+        // Validasi email
         if (value == null || value.isEmpty) {
           return 'Email tidak boleh kosong';
         }
+        // Regex untuk memvalidasi format email
         final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
         if (!emailRegex.hasMatch(value)) {
           return 'Format email tidak valid';
         }
         return null;
-      },  
+      },
     );
   }
 
+  // Metode untuk membuat dekorasi input yang konsisten
   InputDecoration _buildInputDecoration(
     String label,
     IconData icon,
@@ -517,6 +571,7 @@ class _EditProfileState extends State<EditProfile> {
       prefixIcon: Icon(icon, color: kprimaryColor),
       labelStyle: TextStyle(color: Colors.grey[700]),
       hintStyle: TextStyle(color: Colors.grey[400]),
+      // Berbagai konfigurasi border untuk kondisi berbeda
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(color: Colors.grey[300]!),

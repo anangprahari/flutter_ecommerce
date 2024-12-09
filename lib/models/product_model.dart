@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Review {
@@ -11,26 +10,9 @@ class Review {
     required this.content,
     required this.rating,
   });
-
-  factory Review.fromMap(Map<String, dynamic> map) {
-    return Review(
-      username: map['username'] ?? '',
-      content: map['content'] ?? '',
-      rating: (map['rating'] as num?)?.toDouble() ?? 0.0,
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'username': username,
-      'content': content,
-      'rating': rating,
-    };
-  }
 }
 
 class Product {
-  final String id;
   final String title;
   final String description;
   final String image;
@@ -52,7 +34,6 @@ class Product {
   final List<Review> reviews;
 
   Product({
-    this.id = '',
     required this.title,
     required this.review,
     required this.description,
@@ -73,53 +54,6 @@ class Product {
     this.specifications = const [],
     this.reviews = const [],
   });
-
-  // Metode untuk mengonversi dari Firestore
-  factory Product.fromFirestore(DocumentSnapshot doc) {
-    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    return Product(
-      id: doc.id,
-      title: data['title'] ?? '',
-      description: data['description'] ?? '',
-      image: data['image'] ?? '',
-      price: (data['price'] as num?)?.toDouble() ?? 0.0,
-      originalPrice: (data['originalPrice'] as num?)?.toDouble(),
-      discountPercentage: data['discountPercentage'],
-      seller: data['seller'] ?? '',
-      colors:
-          (data['colors'] as List?)?.map((color) => Color(color)).toList() ??
-              [],
-      category: data['category'] ?? '',
-      review: data['review'] ?? '',
-      rate: (data['rate'] as num?)?.toDouble() ?? 0.0,
-      reviewCount: data['reviewCount'] ?? 0,
-      quantity: data['quantity'] ?? 1,
-      reviews: (data['reviews'] as List?)
-              ?.map((reviewMap) => Review.fromMap(reviewMap))
-              .toList() ??
-          [],
-    );
-  }
-
-  // Metode untuk mengonversi ke Map untuk Firestore
-  Map<String, dynamic> toFirestore() {
-    return {
-      'title': title,
-      'description': description,
-      'image': image,
-      'price': price,
-      'originalPrice': originalPrice,
-      'discountPercentage': discountPercentage,
-      'seller': seller,
-      'colors': colors.map((color) => color.value).toList(),
-      'category': category,
-      'review': review,
-      'rate': rate,
-      'reviewCount': reviewCount,
-      'quantity': quantity,
-      'reviews': reviews.map((review) => review.toMap()).toList(),
-    };
-  }
 }
 
 final List<Product> all = [

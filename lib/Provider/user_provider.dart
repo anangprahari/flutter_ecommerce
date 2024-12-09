@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Provider untuk mengelola data pengguna
 class UserProvider with ChangeNotifier {
+  // Variabel untuk menyimpan informasi pribadi pengguna
   String _name = "";
   String _address = "";
   String _bio = "";
@@ -8,8 +10,9 @@ class UserProvider with ChangeNotifier {
   String _birthDate = "";
   String _phoneNumber = "";
   String _email = "";
-  String _profileImagePath = ""; // Add this line
+  String _profileImagePath = ""; // Tambahan untuk menyimpan path gambar profil
 
+  // Getter untuk mengakses variabel privat
   String get name => _name;
   String get address => _address;
   String get bio => _bio;
@@ -17,8 +20,9 @@ class UserProvider with ChangeNotifier {
   String get birthDate => _birthDate;
   String get phoneNumber => _phoneNumber;
   String get email => _email;
-  String get profileImagePath => _profileImagePath; // Add this line
+  String get profileImagePath => _profileImagePath;
 
+  // Metode untuk mengatur data pengguna sekaligus
   void setUserData({
     required String name,
     required String address,
@@ -27,8 +31,9 @@ class UserProvider with ChangeNotifier {
     required String birthDate,
     required String phoneNumber,
     required String email,
-    String? profileImagePath, // Add this line
+    String? profileImagePath, // Parameter opsional untuk path gambar profil
   }) {
+    // Memperbarui semua informasi pengguna
     _name = name;
     _address = address;
     _bio = bio;
@@ -36,13 +41,16 @@ class UserProvider with ChangeNotifier {
     _birthDate = birthDate;
     _phoneNumber = phoneNumber;
     _email = email;
+
+    // Memperbarui path gambar profil jika disediakan
     if (profileImagePath != null) {
-      // Add this block
       _profileImagePath = profileImagePath;
     }
-    notifyListeners();
+
+    notifyListeners(); // Memberi tahu pendengar bahwa data telah berubah
   }
 
+  // Metode untuk menghapus semua data pengguna
   void clearUserData() {
     _name = '';
     _address = '';
@@ -55,7 +63,7 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Add a separate method for updating just the profile image
+  // Metode untuk memperbarui hanya gambar profil
   void updateProfileImage(String path) {
     _profileImagePath = path;
     notifyListeners();

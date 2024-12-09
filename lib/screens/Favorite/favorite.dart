@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../constants.dart';
 import 'package:ecommerce_mobile_app/screens/Detail/detail_screen.dart';
 
+// Layar produk favorit yang dapat berubah (stateful)
 class Favorite extends StatefulWidget {
   const Favorite({super.key});
 
@@ -14,19 +15,24 @@ class Favorite extends StatefulWidget {
 class _FavoriteState extends State<Favorite> {
   @override
   Widget build(BuildContext context) {
+    // Mendapatkan provider favorit
     final provider = FavoriteProvider.of(context);
+    // Mendapatkan daftar produk favorit
     final finalList = provider.favorites;
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
+      // AppBar layar favorit
       appBar: AppBar(
         backgroundColor: kprimaryColor,
         elevation: 0,
         centerTitle: true,
+        // Tombol kembali
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
+        // Judul AppBar
         title: const Text(
           "Produk Favorit",
           style: TextStyle(
@@ -35,11 +41,14 @@ class _FavoriteState extends State<Favorite> {
             fontSize: 20,
           ),
         ),
+        // Aksi pada AppBar
         actions: [
+          // Tombol hapus semua favorit jika daftar tidak kosong
           if (finalList.isNotEmpty)
             IconButton(
               icon: const Icon(Icons.delete_sweep, color: Colors.white),
               onPressed: () {
+                // Tampilkan dialog konfirmasi penghapusan
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
@@ -51,13 +60,16 @@ class _FavoriteState extends State<Favorite> {
                       "Apakah Anda yakin ingin menghapus semua produk dari favorit?",
                     ),
                     actions: [
+                      // Tombol batal
                       TextButton(
                         onPressed: () => Navigator.pop(context),
                         child: const Text("Batal"),
                       ),
+                      // Tombol konfirmasi hapus
                       TextButton(
                         onPressed: () {
                           setState(() {
+                            // Hapus semua item dari daftar favorit
                             finalList.clear();
                           });
                           Navigator.pop(context);
@@ -74,17 +86,21 @@ class _FavoriteState extends State<Favorite> {
             ),
         ],
       ),
+      // Isi body layar favorit
       body: finalList.isEmpty
+          // Tampilan saat daftar favorit kosong
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // Ikon favorit kosong
                   Icon(
                     Icons.favorite_border_rounded,
                     size: 100,
                     color: Colors.grey[400],
                   ),
                   const SizedBox(height: 20),
+                  // Teks informasi daftar favorit kosong
                   Text(
                     "Daftar favorit Anda kosong",
                     style: TextStyle(
@@ -104,6 +120,7 @@ class _FavoriteState extends State<Favorite> {
                 ],
               ),
             )
+          // Tampilan daftar produk favorit
           : SafeArea(
               child: ListView.builder(
                 padding: const EdgeInsets.all(16),
@@ -112,6 +129,7 @@ class _FavoriteState extends State<Favorite> {
                   final item = finalList[index];
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16),
+                    // Gesture detector untuk navigasi ke layar detail
                     child: GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -121,6 +139,7 @@ class _FavoriteState extends State<Favorite> {
                           ),
                         );
                       },
+                      // Kontainer untuk setiap item favorit
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
@@ -138,11 +157,13 @@ class _FavoriteState extends State<Favorite> {
                           borderRadius: BorderRadius.circular(16),
                           child: Stack(
                             children: [
+                              // Konten utama item favorit
                               Padding(
                                 padding: const EdgeInsets.all(12),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    // Gambar produk
                                     Container(
                                       height: 120,
                                       width: 120,
@@ -151,7 +172,8 @@ class _FavoriteState extends State<Favorite> {
                                         color: kcontentColor,
                                       ),
                                       child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius:
+                                        BorderRadius.circular(12),
                                         child: Image.asset(
                                           item.image,
                                           fit: BoxFit.cover,
@@ -159,11 +181,13 @@ class _FavoriteState extends State<Favorite> {
                                       ),
                                     ),
                                     const SizedBox(width: 16),
+                                    // Informasi detail produk
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
+                                          // Judul produk
                                           Text(
                                             item.title,
                                             maxLines: 2,
@@ -174,6 +198,7 @@ class _FavoriteState extends State<Favorite> {
                                             ),
                                           ),
                                           const SizedBox(height: 8),
+                                          // Informasi penjual
                                           Row(
                                             children: [
                                               Icon(
@@ -192,6 +217,7 @@ class _FavoriteState extends State<Favorite> {
                                             ],
                                           ),
                                           const SizedBox(height: 8),
+                                          // Rating produk
                                           Row(
                                             children: [
                                               Icon(
@@ -217,10 +243,12 @@ class _FavoriteState extends State<Favorite> {
                                             ],
                                           ),
                                           const SizedBox(height: 8),
+                                          // Informasi harga
                                           Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.end,
                                             children: [
+                                              // Harga saat ini
                                               Text(
                                                 NumberFormat.currency(
                                                   locale: 'id',
@@ -233,6 +261,7 @@ class _FavoriteState extends State<Favorite> {
                                                   color: kprimaryColor,
                                                 ),
                                               ),
+                                              // Harga asli (jika ada diskon)
                                               if (item.originalPrice !=
                                                   null) ...[
                                                 const SizedBox(width: 8),
@@ -258,6 +287,7 @@ class _FavoriteState extends State<Favorite> {
                                   ],
                                 ),
                               ),
+                              // Tombol hapus dari favorit
                               Positioned(
                                 top: 0,
                                 right: 0,
@@ -266,6 +296,7 @@ class _FavoriteState extends State<Favorite> {
                                   child: IconButton(
                                     onPressed: () {
                                       setState(() {
+                                        // Hapus item dari daftar favorit
                                         finalList.removeAt(index);
                                       });
                                     },

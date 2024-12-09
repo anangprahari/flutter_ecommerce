@@ -6,10 +6,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 import '../../constants.dart';
 
+// Widget utama untuk layar akun virtual BRI
 class BRIVirtualAccountScreen extends StatefulWidget {
-  final double amount;
-  final String orderNumber;
-  final VoidCallback onSuccess;
+  // Parameter yang dibutuhkan untuk membuat layar
+  final double amount; // Jumlah pembayaran
+  final String orderNumber; // Nomor pesanan
+  final VoidCallback onSuccess; // Callback ketika pembayaran berhasil
 
   const BRIVirtualAccountScreen({
     Key? key,
@@ -23,65 +25,81 @@ class BRIVirtualAccountScreen extends StatefulWidget {
       _BRIVirtualAccountScreenState();
 }
 
+// State untuk layar akun virtual BRI
 class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
+  // Variabel untuk mengatur ekspansi instruksi
   bool isExpanded = false;
+  
+  // Nomor virtual account BRI
   final String vaNumber = "8077 7000 1282 4775";
+  
+  // Instance Firestore untuk pencatatan transaksi
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  
+  // Instance Firebase Messaging untuk notifikasi
   final FirebaseMessaging messaging = FirebaseMessaging.instance;
 
   @override
   void initState() {
     super.initState();
+    // Catat transaksi saat layar pertama kali dimuat
     _logTransaction();
   }
 
+  // Fungsi untuk mencatat transaksi ke Firestore
   Future<void> _logTransaction() async {
     try {
       await firestore.collection('transactions').add({
         'orderNumber': widget.orderNumber,
         'amount': widget.amount,
         'vaNumber': vaNumber,
-        'status': 'pending',
+        'status': 'pending', // Status awal transaksi
         'timestamp': FieldValue.serverTimestamp(),
       });
-      debugPrint("Transaction logged successfully!");
+      debugPrint("Transaksi berhasil dicatat!");
     } catch (e) {
-      debugPrint("Failed to log transaction: $e");
+      debugPrint("Gagal mencatat transaksi: $e");
     }
   }
 
+  // Fungsi untuk mengirim notifikasi pembayaran
   Future<void> _sendPaymentNotification() async {
     try {
       await messaging.sendMessage(
-        to: '/topics/payments',
+        to: '/topics/payments', // Topik untuk notifikasi pembayaran
         data: {
           'orderNumber': widget.orderNumber,
           'amount': widget.amount.toString(),
           'status': 'completed',
         },
       );
-      debugPrint("Payment notification sent successfully!");
+      debugPrint("Notifikasi pembayaran terkirim!");
     } catch (e) {
-      debugPrint("Failed to send payment notification: $e");
+      debugPrint("Gagal mengirim notifikasi pembayaran: $e");
     }
   }
 
+  // Fungsi untuk memformat mata uang dalam Rupiah
   String formatCurrency(double amount) {
     final formatter = NumberFormat.currency(
-      locale: 'id_ID',
+      locale: 'id_ID', // Menggunakan format Indonesia
       symbol: 'Rp ',
-      decimalDigits: 0,
+      decimalDigits: 0, // Tanpa digit desimal
     );
     return formatter.format(amount);
   }
 
+  // Fungsi untuk mendapatkan batas waktu pembayaran
   String getPaymentDeadline() {
+    // Tambahkan 24 jam dari waktu sekarang
     final deadline = DateTime.now().add(const Duration(hours: 24));
     return DateFormat('HH:mm, d MMM yyyy').format(deadline);
   }
 
+  // Fungsi untuk menyalin nomor VA ke clipboard
   void _copyVANumber() {
     Clipboard.setData(ClipboardData(text: vaNumber));
+    // Tampilkan snackbar konfirmasi
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -99,7 +117,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
       ),
     );
 
-    // Simulate payment success
+    // Simulasi pembayaran berhasil setelah 10 detik
     Future.delayed(const Duration(seconds: 10), () {
       if (mounted) {
         _markPaymentSuccess();
@@ -107,20 +125,25 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
     });
   }
 
+  // Fungsi untuk menandai pembayaran sebagai berhasil
   Future<void> _markPaymentSuccess() async {
     try {
+      // Cari dokumen transaksi dengan nomor pesanan yang sesuai
       await firestore
           .collection('transactions')
           .where('orderNumber', isEqualTo: widget.orderNumber)
           .get()
           .then((snapshot) {
         for (var doc in snapshot.docs) {
+          // Update status transaksi menjadi 'completed'
           doc.reference.update({'status': 'completed'});
         }
       });
 
+      // Kirim notifikasi pembayaran
       _sendPaymentNotification();
 
+      // Tampilkan snackbar konfirmasi
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -141,14 +164,16 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
         );
       }
     } catch (e) {
-      debugPrint("Failed to mark payment success: $e");
+      debugPrint("Gagal menandai pembayaran berhasil: $e");
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Struktur utama layar pembayaran
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
+      // App bar dengan judul dan ID pesanan
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,23 +203,26 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
+      // Body dengan scroll view
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildAmountSection(),
+            _buildAmountSection(), // Bagian jumlah pembayaran
             const SizedBox(height: 8),
-            _buildVirtualAccountSection(),
+            _buildVirtualAccountSection(), // Bagian nomor virtual account
             const SizedBox(height: 8),
-            _buildPaymentInstructions(),
+            _buildPaymentInstructions(), // Bagian instruksi pembayaran
             const SizedBox(height: 16),
-            _buildSupportSection(),
+            _buildSupportSection(), // Bagian dukungan pelanggan
           ],
         ),
       ),
+      // Bottom navigation bar dengan tombol aksi
       bottomNavigationBar: _buildBottomBar(),
     );
   }
 
+  // Widget untuk menampilkan section jumlah pembayaran
   Widget _buildAmountSection() {
     return Container(
       color: Colors.white,
@@ -226,6 +254,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
                   ),
                 ],
               ),
+              // Penanda waktu pembayaran
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
@@ -253,6 +282,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
     );
   }
 
+  // Widget untuk menampilkan section nomor virtual account
   Widget _buildVirtualAccountSection() {
     return Container(
       color: Colors.white,
@@ -260,6 +290,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header dengan logo bank
           Row(
             children: [
               Image.asset(
@@ -289,6 +320,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
             ],
           ),
           SizedBox(height: 20),
+          // Container dengan detail nomor virtual account
           Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -315,6 +347,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
                         letterSpacing: 1,
                       ),
                     ),
+                    // Tombol salin nomor VA
                     InkWell(
                       onTap: _copyVANumber,
                       child: Container(
@@ -355,6 +388,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
     );
   }
 
+  // Widget untuk menampilkan section instruksi pembayaran
   Widget _buildPaymentInstructions() {
     return Container(
       color: Colors.white,
@@ -370,6 +404,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
             ),
           ),
           SizedBox(height: 16),
+          // Ekspansi tile untuk instruksi pembayaran melalui ATM
           _buildInstructionExpansionTile(
             'ATM BRI',
             [
@@ -384,6 +419,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
             ],
             Icons.atm,
           ),
+          // Ekspansi tile untuk instruksi pembayaran melalui Mobile Banking
           _buildInstructionExpansionTile(
             'Mobile Banking BRI',
             [
@@ -398,6 +434,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
             ],
             Icons.phone_android,
           ),
+          // Ekspansi tile untuk instruksi pembayaran melalui Internet Banking
           _buildInstructionExpansionTile(
             'Internet Banking BRI',
             [
@@ -416,6 +453,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
     );
   }
 
+  // Widget untuk membuat ekspansi tile dengan instruksi pembayaran
   Widget _buildInstructionExpansionTile(
       String title, List<String> steps, IconData icon) {
     return Card(
@@ -427,9 +465,12 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
       ),
       child: Theme(
         data: ThemeData().copyWith(dividerColor: Colors.transparent),
+        // Widget ExpansionTile untuk menampilkan instruksi yang dapat diperluas
         child: ExpansionTile(
+          // Ikon leading untuk setiap metode pembayaran
           leading: Icon(icon, color: kprimaryColor),
           tilePadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          // Judul metode pembayaran
           title: Text(
             title,
             style: TextStyle(
@@ -438,6 +479,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
             ),
           ),
           children: [
+            // Konten yang akan ditampilkan saat tile diperluas
             Padding(
               padding: EdgeInsets.all(16),
               child: ListView.builder(
@@ -450,6 +492,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Penomoran langkah dengan desain bulat
                         Container(
                           padding: EdgeInsets.all(6),
                           decoration: BoxDecoration(
@@ -466,6 +509,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
                           ),
                         ),
                         SizedBox(width: 12),
+                        // Teks instruksi untuk setiap langkah
                         Expanded(
                           child: Text(
                             steps[index],
@@ -487,6 +531,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
     );
   }
 
+  // Widget untuk menampilkan section dukungan pelanggan
   Widget _buildSupportSection() {
     return Container(
       color: Colors.white,
@@ -494,6 +539,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Judul section dukungan
           Text(
             'Butuh Bantuan?',
             style: TextStyle(
@@ -502,6 +548,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
             ),
           ),
           SizedBox(height: 12),
+          // Baris dengan ikon headset dan teks layanan pelanggan
           Row(
             children: [
               Icon(Icons.headset_mic, color: kprimaryColor),
@@ -513,6 +560,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
             ],
           ),
           SizedBox(height: 8),
+          // Nomor telepon layanan pelanggan
           Text(
             '1500017',
             style: TextStyle(
@@ -526,9 +574,11 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
     );
   }
 
+  // Widget untuk membangun bottom bar dengan tombol aksi
   Widget _buildBottomBar() {
     return Container(
       padding: EdgeInsets.all(16),
+      // Dekorasi container dengan shadow ringan
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -541,8 +591,10 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
       ),
       child: Row(
         children: [
+          // Tombol untuk melihat pesanan dengan full width
           Expanded(
             child: ElevatedButton(
+              // Gaya tombol dengan warna primer
               style: ElevatedButton.styleFrom(
                 backgroundColor: kprimaryColor,
                 padding: EdgeInsets.symmetric(vertical: 16),
@@ -550,6 +602,7 @@ class _BRIVirtualAccountScreenState extends State<BRIVirtualAccountScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
+              // Panggil callback onSuccess saat tombol ditekan
               onPressed: widget.onSuccess,
               child: Text(
                 'Lihat Pesanan',

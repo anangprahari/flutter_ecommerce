@@ -5,6 +5,7 @@ import 'profile_entry_screen.dart';
 import '../Provider/auth_provider.dart';
 import '../constants.dart';
 
+// Widget StatefulWidget untuk halaman pendaftaran
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
 
@@ -12,13 +13,23 @@ class RegisterScreen extends StatefulWidget {
   _RegisterScreenState createState() => _RegisterScreenState();
 }
 
+// State untuk halaman pendaftaran
 class _RegisterScreenState extends State<RegisterScreen> {
+  // Key untuk form validasi
   final _formKey = GlobalKey<FormState>();
+
+  // Controller untuk input teks
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  // Status persetujuan syarat & ketentuan
   bool _agreedToTerms = false;
+
+  // Status loading saat proses pendaftaran
   bool _isLoading = false;
+
+  // Status visibilitas password
   bool _isPasswordVisible = false;
 
   @override
@@ -31,10 +42,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
           key: _formKey,
           child: Column(
             children: [
-              // Logo section
+              // Bagian Logo
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
+                  // Gradien warna latar belakang logo
                   gradient: LinearGradient(
                     colors: [kprimaryColor, Colors.white],
                     begin: Alignment.topCenter,
@@ -53,10 +65,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               const SizedBox(height: 10),
 
-              // Form section
+              // Bagian Formulir Pendaftaran
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Container(
+                  // Dekorasi container formulir dengan shadow dan rounded corner
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: const BorderRadius.only(
@@ -76,6 +89,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Judul Halaman
                       Center(
                         child: Text(
                           "Daftar",
@@ -88,13 +102,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      // Full Name Field
+                      // Input Nama Lengkap
                       TextFormField(
                         controller: _fullNameController,
                         decoration: _inputDecoration(
                           "Nama Lengkap",
                           Icons.person,
                         ),
+                        // Validasi input nama lengkap
                         validator: (value) {
                           if (value?.isEmpty ?? true) {
                             return 'Silakan masukkan nama lengkap Anda';
@@ -104,7 +119,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Email Field
+                      // Input Email
                       TextFormField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
@@ -112,6 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           "Email",
                           Icons.email,
                         ),
+                        // Validasi input email
                         validator: (value) {
                           if (value?.isEmpty ?? true) {
                             return 'Silakan masukkan email Anda';
@@ -125,13 +141,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Password Field
+                      // Input Kata Sandi
                       TextFormField(
                         controller: _passwordController,
                         obscureText: !_isPasswordVisible,
                         decoration: _inputDecoration(
                           "Kata sandi",
                           Icons.lock,
+                          // Tombol untuk mengubah visibilitas password
                           suffixIcon: IconButton(
                             icon: Icon(
                               _isPasswordVisible
@@ -146,6 +163,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             },
                           ),
                         ),
+                        // Validasi input kata sandi
                         validator: (value) {
                           if (value?.isEmpty ?? true) {
                             return 'Silakan masukkan kata sandi Anda';
@@ -158,7 +176,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Terms and Conditions
+                      // Persetujuan Syarat & Ketentuan
                       Row(
                         children: [
                           Checkbox(
@@ -202,12 +220,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      // Register Button
+                      // Tombol Buat Akun
                       Center(
                         child: _isLoading
+                            // Indikator loading saat proses pendaftaran
                             ? const CircularProgressIndicator(
                                 color: kprimaryColor,
                               )
+                            // Tombol untuk mendaftar
                             : ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: kprimaryColor,
@@ -230,7 +250,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      // Divider
+                      // Pemisah dengan opsi masuk lain
                       Row(
                         children: [
                           Expanded(child: Divider(color: Colors.grey[400])),
@@ -243,7 +263,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      // Google Sign Up Button
+                      // Tombol Masuk dengan Google
                       Center(
                         child: OutlinedButton.icon(
                           style: OutlinedButton.styleFrom(
@@ -265,6 +285,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13),
                           ),
+                          // Fungsi untuk login dengan Google
                           onPressed: () async {
                             if (_isLoading) return;
 
@@ -279,6 +300,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               if (success) {
                                 if (!mounted) return;
 
+                                // Navigasi ke halaman pengisian profil
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
@@ -288,6 +310,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               } else {
                                 if (!mounted) return;
 
+                                // Menampilkan pesan error jika login Google gagal
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content:
@@ -297,6 +320,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 );
                               }
                             } catch (e) {
+                              // Menangani error yang tidak terduga
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
@@ -312,7 +336,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 10),
 
-                      // Login Link
+                      // Tombol untuk navigasi ke halaman login
                       Center(
                         child: TextButton(
                           onPressed: () {
@@ -343,6 +367,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
+  // Metode untuk membuat dekorasi input field
   InputDecoration _inputDecoration(String label, IconData icon,
       {Widget? suffixIcon}) {
     return InputDecoration(
@@ -360,11 +385,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
+  // Metode untuk menangani proses pendaftaran
   Future<void> _handleRegister() async {
+    // Validasi form
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
+    // Cek persetujuan syarat & ketentuan
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -375,9 +403,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
+    // Mulai proses loading
     setState(() => _isLoading = true);
 
     try {
+      // Proses registrasi melalui AuthProvider
       final success =
           await Provider.of<AuthProvider>(context, listen: false).register(
         fullName: _fullNameController.text,
@@ -388,6 +418,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (success) {
         if (!mounted) return;
 
+        // Menampilkan pesan berhasil
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Pendaftaran berhasil! Silakan masuk.'),
@@ -395,6 +426,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         );
 
+        // Navigasi ke halaman login
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -402,6 +434,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       } else {
         if (!mounted) return;
 
+        // Menampilkan pesan error jika pendaftaran gagal
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Pendaftaran gagal. Email mungkin sudah terdaftar.'),
@@ -410,6 +443,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       }
     } catch (e) {
+      // Menangani error yang tidak terduga
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Pendaftaran gagal: ${e.toString()}'),
@@ -417,12 +451,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       );
     } finally {
+      // Menghentikan status loading
       if (mounted) {
         setState(() => _isLoading = false);
       }
     }
   }
 
+  // Membersihkan controller saat widget dihancurkan
   @override
   void dispose() {
     _fullNameController.dispose();

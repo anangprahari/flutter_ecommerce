@@ -1,80 +1,154 @@
 name: ecommerce_mobile_app
-description: "A new Flutter project."
-# The following line prevents the package from being accidentally published to
-# pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: "none" # Remove this line if you wish to publish to pub.dev
+description: "Proyek Flutter baru."
 
-# The following defines the version and build number for your application.
-# A version number is three numbers separated by dots, like 1.2.43
-# followed by an optional build number separated by a +.
-# Both the version and the builder number may be overridden in flutter
-# build by specifying --build-name and --build-number, respectively.
-# In Android, build-name is used as versionName while build-number used as versionCode.
-# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
-# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
-# Read more about iOS versioning at
-# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-# In Windows, build-name is used as the  major, minor, and patch parts
-# of the product and file versions while build-number is used as the build suffix.
+# Mencegah publikasi tidak sengaja ke pub.dev
+publish_to: "none" 
+
+# Konfigurasi versi aplikasi
+# Mengikuti aturan semantic versioning: mayor.minor.patch
 version: 1.0.0+1
 
+# Spesifikasi versi SDK Dart
 environment:
-  sdk: ^3.5.3
+  sdk: ^3.5.3 
 
-# Dependencies specify other packages that your package needs in order to work.
-# To automatically upgrade your package dependencies to the latest versions
-# consider running `flutter pub upgrade --major-versions`. Alternatively,
-# dependencies can be manually updated by changing the version numbers below to
-# the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run `flutter pub outdated`.
 dependencies:
+  # Kerangka kerja Flutter inti
+  # Menyediakan fondasi dasar untuk membangun aplikasi mobile
   flutter:
     sdk: flutter
+
+  # Provider - Manajemen State
+  # Membantu mengelola dan menyebarkan state aplikasi antar widget
+  # Memudahkan pembagian data dan logika di seluruh aplikasi
   provider: ^6.0.0
+
+  # Google Fonts - Manajemen Tipografi
+  # Memungkinkan penggunaan font Google secara langsung di aplikasi
+  # Memberikan variasi dan kustomisasi tipografi yang luas
   google_fonts: ^6.2.1
+
+  # Intl - Internasionalisasi
+  # Mendukung pemformatan tanggal, angka, dan fitur lokalitas lainnya
+  # Penting untuk aplikasi dengan dukungan multi-bahasa
   intl: ^0.17.0
+
+  # Font Awesome - Ikon Komprehensif
+  # Menyediakan kumpulan ikon yang beragam untuk desain UI
+  # Cocok untuk menambahkan ikon kustom dan menarik
   font_awesome_flutter: ^9.0.0
+
+  # FlutterToast - Notifikasi Singkat
+  # Menampilkan pesan singkat (toast) untuk memberikan umpan balik pengguna
+  # Berguna untuk konfirmasi aksi atau peringatan
   fluttertoast: ^8.2.1
+
+  # Lucide Icons - Ikon Modern
+  # Menyediakan set ikon minimalis dan bersih
+  # Mendukung desain UI kontemporer
   lucide_icons: 0.257.0
+
+  # Lottie - Animasi Lanjutan
+  # Mengintegrasikan animasi dari Adobe After Effects
+  # Memungkinkan animasi kompleks dan menarik
   lottie: ^2.7.0
+
+  # Timeline Tile - Widget Garis Waktu
+  # Membuat tampilan garis waktu atau proses bertahap
+  # Berguna untuk menunjukkan alur atau progress
   timeline_tile: ^2.0.0
+
+  # Animate Do - Animasi Masuk/Keluar
+  # Menyediakan efek animasi siap pakai untuk widget
+  # Menambah interaksi visual pada transisi elemen
   animate_do: ^3.0.2
+
+  # Image Picker - Pemilih Gambar
+  # Memungkinkan pemilihan gambar dari galeri atau kamera
+  # Mendukung platform iOS dan Android
   image_picker: ^1.1.2
+
+  # Flutter Animate - Animasi Lanjutan
+  # Menawarkan opsi animasi yang lebih kompleks dan dapat disesuaikan
+  # Memberikan kontrol detail pada animasi
   flutter_animate: ^4.5.2
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  # Cupertino Icons - Ikon iOS
+  # Ikon default dari sistem desain Cupertino
   cupertino_icons: ^1.0.8
+
+  # Firebase Core - Konfigurasi Firebase
+  # Menyediakan inisialisasi dasar untuk layanan Firebase
   firebase_core: ^3.8.0
+
+  # Firebase Authentication
+  # Mendukung berbagai metode autentikasi
+  # Termasuk login email/password dan Google Sign-In
   firebase_auth: ^5.3.3
+
+  # Google Sign-In
+  # Memungkinkan autentikasi menggunakan akun Google
+  # Menyederhanakan proses login
   google_sign_in: ^6.1.4
+
+  # Cloud Firestore - Database Awan
+  # Database NoSQL untuk menyimpan dan mensinkronkan data aplikasi
+  # Fleksibel dan real-time
   cloud_firestore: ^5.5.0
+
+  # Firebase Cloud Messaging
+  # Mendukung pengiriman dan penerimaan push notification
+  # Meningkatkan interaksi pengguna
   firebase_messaging: ^15.1.5
+
+  # Firebase Storage
+  # Penyimpanan cloud untuk konten yang dibuat pengguna
+  # Mendukung unggah gambar, video, dan file lainnya
   firebase_storage: ^12.3.6
+
+  # Flutter Secure Storage
+  # Menyimpan data sensitif dengan enkripsi
+  # Aman untuk menyimpan token, kunci, dll
   flutter_secure_storage: ^9.2.2
+
+  # Local Authentication
+  # Mendukung autentikasi biometrik
+  # Memungkinkan login dengan sidik jari atau pengenalan wajah
   local_auth: ^2.3.0
+
+  # Shared Preferences
+  # Penyimpanan lokal sederhana untuk data kunci-nilai
+  # Cocok untuk menyimpan pengaturan pengguna
   shared_preferences: ^2.3.3
 
+  # Firebase Dynamic Links
+  # Membuat tautan yang bekerja di lintas platform
+  # Mempertahankan konteks saat membuka aplikasi
+  firebase_dynamic_links: ^6.0.11
+
+  # Share Plus
+  # Membagikan konten ke aplikasi lain
+  # Mendukung berbagi teks, file, dan konten lainnya
+  share_plus: ^7.2.2
+
+  # URL Launcher
+  # Membuka tautan web di browser default
+  # Memudahkan navigasi eksternal
+  url_launcher: ^6.3.1
+
 dev_dependencies:
+  # Alat pengujian Flutter
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
+  # Aturan lint resmi Flutter
+  # Meningkatkan kualitas kode
   flutter_lints: ^4.0.0
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-# The following section is specific to Flutter packages.
 flutter:
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
+  
+  # Direktori aset untuk berbagai kategori gambar
   assets:
     - images/
     - images/all/

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../constants.dart';
 import 'package:intl/intl.dart';
 
+// Widget StatefulWidget untuk layar keranjang belanja
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 
@@ -14,15 +15,20 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
+    // Mendapatkan instance provider keranjang dari konteks
     final provider = CartProvider.of(context);
+
+    // Mendapatkan daftar item yang ada di keranjang
     final finalList = provider.cart;
 
+    // Fungsi untuk membuat tombol kuantitas (tambah dan kurang)
     Widget quantityButton(IconData icon, int index) {
       return Material(
         color: kcontentColor,
         borderRadius: BorderRadius.circular(8),
         child: InkWell(
           borderRadius: BorderRadius.circular(8),
+          // Aksi ketika tombol ditekan untuk menambah atau mengurangi kuantitas
           onTap: () {
             setState(() {
               icon == Icons.add
@@ -45,16 +51,22 @@ class _CartScreenState extends State<CartScreen> {
       );
     }
 
+    // Struktur utama layar keranjang
     return Scaffold(
+      // Warna latar belakang layar
       backgroundColor: Colors.grey[100],
+
+      // Konfigurasi app bar
       appBar: AppBar(
         backgroundColor: kprimaryColor,
         elevation: 0,
         centerTitle: true,
+        // Tombol kembali di sebelah kiri
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
+        // Judul app bar
         title: const Text(
           "Keranjang Saya",
           style: TextStyle(
@@ -63,10 +75,12 @@ class _CartScreenState extends State<CartScreen> {
             fontSize: 20,
           ),
         ),
+        // Aksi di app bar untuk menghapus semua item
         actions: [
           if (finalList.isNotEmpty)
             IconButton(
               icon: const Icon(Icons.delete_sweep, color: Colors.white),
+              // Menampilkan dialog konfirmasi penghapusan
               onPressed: () {
                 showDialog(
                   context: context,
@@ -75,13 +89,16 @@ class _CartScreenState extends State<CartScreen> {
                     content: const Text(
                         "Apakah Anda yakin ingin mengosongkan keranjang?"),
                     actions: [
+                      // Tombol batal
                       TextButton(
                         onPressed: () => Navigator.pop(context),
                         child: const Text("Batal"),
                       ),
+                      // Tombol konfirmasi hapus
                       TextButton(
                         onPressed: () {
                           setState(() {
+                            // Mengosongkan daftar keranjang
                             finalList.clear();
                           });
                           Navigator.pop(context);
@@ -96,17 +113,21 @@ class _CartScreenState extends State<CartScreen> {
             ),
         ],
       ),
+
+      // Kondisi tampilan saat keranjang kosong
       body: finalList.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // Ikon keranjang kosong
                   Icon(
                     Icons.shopping_cart_outlined,
                     size: 100,
                     color: Colors.grey[400],
                   ),
                   const SizedBox(height: 20),
+                  // Teks keranjang kosong
                   Text(
                     "Keranjang Anda kosong",
                     style: TextStyle(
@@ -118,21 +139,26 @@ class _CartScreenState extends State<CartScreen> {
                 ],
               ),
             )
+          // Tampilan saat keranjang berisi item
           : SafeArea(
               child: Column(
                 children: [
+                  // Daftar item keranjang
                   Expanded(
                     child: ListView.builder(
                       padding: const EdgeInsets.all(16),
                       itemCount: finalList.length,
                       itemBuilder: (context, index) {
+                        // Item keranjang saat ini
                         final cartItems = finalList[index];
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16),
+                          // Kontainer untuk setiap item keranjang
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
                               color: Colors.white,
+                              // Efek bayangan
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.grey.withOpacity(0.1),
@@ -152,6 +178,7 @@ class _CartScreenState extends State<CartScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
+                                        // Gambar produk
                                         Container(
                                           height: 100,
                                           width: 100,
@@ -170,11 +197,13 @@ class _CartScreenState extends State<CartScreen> {
                                           ),
                                         ),
                                         const SizedBox(width: 16),
+                                        // Informasi detail produk
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
+                                              // Judul produk
                                               Text(
                                                 cartItems.title,
                                                 maxLines: 1,
@@ -185,6 +214,7 @@ class _CartScreenState extends State<CartScreen> {
                                                 ),
                                               ),
                                               const SizedBox(height: 4),
+                                              // Kategori produk
                                               Text(
                                                 cartItems.category,
                                                 style: TextStyle(
@@ -193,6 +223,7 @@ class _CartScreenState extends State<CartScreen> {
                                                 ),
                                               ),
                                               const SizedBox(height: 8),
+                                              // Harga produk
                                               Text(
                                                 NumberFormat.currency(
                                                   locale: 'id',
@@ -206,6 +237,7 @@ class _CartScreenState extends State<CartScreen> {
                                                 ),
                                               ),
                                               const SizedBox(height: 8),
+                                              // Kontrol kuantitas
                                               Container(
                                                 padding:
                                                     const EdgeInsets.all(4),
@@ -218,12 +250,14 @@ class _CartScreenState extends State<CartScreen> {
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: [
+                                                    // Tombol kurangi kuantitas
                                                     quantityButton(
                                                         Icons.remove, index),
                                                     Padding(
                                                       padding: const EdgeInsets
                                                           .symmetric(
                                                           horizontal: 12),
+                                                      // Menampilkan jumlah kuantitas
                                                       child: Text(
                                                         cartItems.quantity
                                                             .toString(),
@@ -234,6 +268,7 @@ class _CartScreenState extends State<CartScreen> {
                                                         ),
                                                       ),
                                                     ),
+                                                    // Tombol tambah kuantitas
                                                     quantityButton(
                                                         Icons.add, index),
                                                   ],
@@ -245,6 +280,7 @@ class _CartScreenState extends State<CartScreen> {
                                       ],
                                     ),
                                   ),
+                                  // Tombol hapus item
                                   Positioned(
                                     top: 0,
                                     right: 0,
@@ -253,6 +289,7 @@ class _CartScreenState extends State<CartScreen> {
                                       child: IconButton(
                                         onPressed: () {
                                           setState(() {
+                                            // Menghapus item dari keranjang
                                             finalList.removeAt(index);
                                           });
                                         },
@@ -272,6 +309,7 @@ class _CartScreenState extends State<CartScreen> {
                       },
                     ),
                   ),
+                  // Kotak checkout ditampilkan jika keranjang tidak kosong
                   if (finalList.isNotEmpty) const CheckOutBox(),
                 ],
               ),

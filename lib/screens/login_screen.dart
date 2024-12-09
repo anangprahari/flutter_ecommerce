@@ -4,6 +4,7 @@ import 'profile_entry_screen.dart';
 import '../Provider/auth_provider.dart';
 import '../constants.dart';
 
+// Widget LoginScreen sebagai halaman login
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -11,10 +12,16 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
+// State untuk widget LoginScreen
 class _LoginScreenState extends State<LoginScreen> {
+  // Key untuk form validation
   final _formKey = GlobalKey<FormState>();
+
+  // Controller untuk input field
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  // State untuk loading dan visibility password
   bool _isLoading = false;
   bool _isPasswordVisible = false;
 
@@ -25,6 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SingleChildScrollView(
         padding: EdgeInsets.zero,
         child: ConstrainedBox(
+          // Constraint untuk memastikan tinggi minimum sesuai layar
           constraints: BoxConstraints(
             minHeight: MediaQuery.of(context).size.height,
           ),
@@ -32,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
             key: _formKey,
             child: Column(
               children: [
-                // Logo section
+                // Bagian logo dengan gradient background
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -54,10 +62,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 10),
 
-                // Form section
+                // Bagian form login
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Container(
+                    // Dekorasi container form
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: const BorderRadius.only(
@@ -77,6 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Judul form login
                         Center(
                           child: Text(
                             "Masuk",
@@ -89,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 20),
 
-                        // Email Field
+                        // Field input email
                         TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
@@ -97,6 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             "Email",
                             Icons.email,
                           ),
+                          // Validasi email
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
                               return 'Silakan masukkan email Anda';
@@ -110,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Password Field
+                        // Field input password
                         TextFormField(
                           controller: _passwordController,
                           obscureText: !_isPasswordVisible,
@@ -131,6 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                             ),
                           ),
+                          // Validasi password
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
                               return 'Silakan masukkan kata sandi Anda';
@@ -140,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 20),
 
-                        // Login Button
+                        // Tombol login
                         Center(
                           child: _isLoading
                               ? const CircularProgressIndicator(
@@ -168,7 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 20),
 
-                        // Divider
+                        // Pembatas dengan teks "atau"
                         Row(
                           children: [
                             Expanded(child: Divider(color: Colors.grey[400])),
@@ -181,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 20),
 
-                        // Google Sign In Button
+                        // Tombol login dengan Google
                         Center(
                           child: OutlinedButton.icon(
                             style: OutlinedButton.styleFrom(
@@ -203,6 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fontWeight: FontWeight.bold,
                                   fontSize: 13),
                             ),
+                            // Handler untuk login Google
                             onPressed: () async {
                               if (_isLoading) return;
 
@@ -250,7 +263,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 10),
 
-                        // Register Link
+                        // Link ke halaman registrasi
                         Center(
                           child: TextButton(
                             onPressed: () {
@@ -278,6 +291,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  // Method untuk membuat dekorasi input field
   InputDecoration _inputDecoration(String label, IconData icon,
       {Widget? suffixIcon}) {
     return InputDecoration(
@@ -295,6 +309,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  // Method untuk menangani proses login
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -340,6 +355,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  // Method untuk membersihkan controller saat widget di dispose
   @override
   void dispose() {
     _emailController.dispose();

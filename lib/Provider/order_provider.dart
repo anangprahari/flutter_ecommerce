@@ -4,20 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/product_model.dart';
 
+// Provider untuk mengelola pesanan pengguna
 class OrderProvider with ChangeNotifier {
+  // Inisialisasi instance Firestore dan FirebaseAuth
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // Daftar pesanan pengguna
   List<Map<String, dynamic>> _orders = [];
+
+  // Variabel untuk menyimpan informasi pengiriman
   String _shippingName = '';
   String _shippingAddress = '';
   String _shippingPhone = '';
   String _shippingRoute = '';
   String _paymentMethod = 'Cash on Delivery';
 
-  // New field to track the last known shipping status
+  // Variabel untuk melacak tahap pengiriman terakhir yang diketahui
   int _lastKnownShippingStep = 0;
 
+  // Getter untuk mengakses variabel privat
   List<Map<String, dynamic>> get orders => _orders;
   String get shippingName => _shippingName;
   String get shippingAddress => _shippingAddress;
@@ -26,12 +32,13 @@ class OrderProvider with ChangeNotifier {
   String get paymentMethod => _paymentMethod;
   int get lastKnownShippingStep => _lastKnownShippingStep;
 
+  // Metode untuk mengatur metode pembayaran
   void setPaymentMethod(String method) {
     _paymentMethod = method;
-    notifyListeners();
+    notifyListeners(); // Memberi tahu pendengar bahwa data telah berubah
   }
 
-  // Method to save the current shipping step
+  // Metode untuk menyimpan tahap pengiriman saat ini ke SharedPreferences
   Future<void> saveShippingStep(int step) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('lastShippingStep', step);
@@ -39,23 +46,26 @@ class OrderProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Method to retrieve the last saved shipping step
+  // Metode untuk mengambil tahap pengiriman terakhir dari SharedPreferences
   Future<int> retrieveLastShippingStep() async {
     final prefs = await SharedPreferences.getInstance();
     _lastKnownShippingStep = prefs.getInt('lastShippingStep') ?? 0;
     return _lastKnownShippingStep;
   }
 
+  // Metode untuk mengambil daftar pesanan pengguna dari Firestore
   Future<void> fetchUserOrders() async {
     try {
       User? currentUser = _auth.currentUser;
       if (currentUser == null) return;
 
+      // Mengambil pesanan yang sesuai dengan ID pengguna saat ini
       QuerySnapshot querySnapshot = await _firestore
           .collection('orders')
           .where('userId', isEqualTo: currentUser.uid)
           .get();
 
+      // Mengubah dokumen Firestore menjadi daftar pesanan
       _orders = querySnapshot.docs.map((doc) {
         return {
           ...doc.data() as Map<String, dynamic>,
@@ -69,6 +79,7 @@ class OrderProvider with ChangeNotifier {
     }
   }
 
+  // Metode untuk menambahkan pesanan baru ke Firestore
   Future<void> addOrder(
     List<Product> products,
     String? name,
@@ -84,10 +95,12 @@ class OrderProvider with ChangeNotifier {
         throw Exception('Pengguna belum login');
       }
 
+      // Menyediakan nilai default jika informasi tidak tersedia
       String safeName = name ?? 'Nama tidak tersedia';
       String safeAddress = address ?? 'Alamat tidak tersedia';
       String safePhone = phone ?? 'Nomor telepon tidak tersedia';
 
+      // Mengubah produk menjadi format yang dapat disimpan di Firestore
       List<Map<String, dynamic>> productMaps = products.map((product) {
         return {
           'title': product.title,
@@ -104,6 +117,7 @@ class OrderProvider with ChangeNotifier {
         };
       }).toList();
 
+      // Menambahkan pesanan baru ke koleksi 'orders' di Firestore
       DocumentReference orderRef = await _firestore.collection('orders').add({
         'userId': currentUser.uid,
         'products': productMaps,
@@ -118,10 +132,10 @@ class OrderProvider with ChangeNotifier {
         'status': 'Pesanan Dikonfirmasi',
       });
 
-      // Reset shipping step when a new order is added
+      // Mereset tahap pengiriman saat pesanan baru ditambahkan
       await saveShippingStep(0);
 
-      // Update lokal state
+      // Memperbarui status lokal
       _orders.add({
         'id': orderRef.id,
         'products': productMaps,
@@ -134,6 +148,7 @@ class OrderProvider with ChangeNotifier {
         'paymentMethod': paymentMethod,
       });
 
+      // Memperbarui informasi pengiriman
       _shippingName = safeName;
       _shippingAddress = safeAddress;
       _shippingPhone = safePhone;

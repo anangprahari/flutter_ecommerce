@@ -2,127 +2,153 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+// Provider untuk mengelola otentikasi pengguna menggunakan Firebase
 class AuthProvider with ChangeNotifier {
+  // Instansi FirebaseAuth untuk operasi autentikasi
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Variabel untuk menyimpan pengguna saat ini
   User? _currentUser;
 
+  // Getter untuk mendapatkan pengguna saat ini
   User? get currentUser => _currentUser;
+
+  // Getter untuk mengecek status otentikasi
   bool get isAuthenticated => _currentUser != null;
 
-  // Initialize the provider by checking current authentication state
+  // Konstruktor untuk menginisialisasi provider dan mengamati perubahan status autentikasi
   AuthProvider() {
     _auth.authStateChanges().listen((User? user) {
       _currentUser = user;
+      // Memberi tahu listeners jika status autentikasi berubah
       notifyListeners();
     });
   }
 
-  // Email and Password Registration
+  // Metode untuk mendaftarkan pengguna baru dengan email dan password
   Future<bool> register({
     required String fullName,
     required String email,
     required String password,
   }) async {
     try {
+      // Membuat pengguna baru dengan Firebase Authentication
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // Update user profile with full name
+      // Memperbarui profil pengguna dengan nama lengkap
       await userCredential.user?.updateDisplayName(fullName);
       await userCredential.user?.reload();
 
+      // Memperbarui pengguna saat ini
       _currentUser = _auth.currentUser;
+      // Memberi tahu listeners
       notifyListeners();
       return true;
     } on FirebaseAuthException catch (e) {
+      // Menangani kesalahan dari Firebase
       print('Kesalahan pendaftaran: ${e.message}');
       return false;
     } catch (e) {
+      // Menangani kesalahan umum
       print('Kesalahan pendaftaran: $e');
       return false;
     }
   }
 
-  // Email and Password Login
+  // Metode untuk login pengguna dengan email dan password
   Future<bool> login({
     required String email,
     required String password,
   }) async {
     try {
+      // Login menggunakan Firebase Authentication
       await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
+      // Memperbarui pengguna saat ini
       _currentUser = _auth.currentUser;
+      // Memberi tahu listeners
       notifyListeners();
       return true;
     } on FirebaseAuthException catch (e) {
+      // Menangani kesalahan dari Firebase
       print('Kesalahan masuk: ${e.message}');
       return false;
     } catch (e) {
+      // Menangani kesalahan umum
       print('Kesalahan masuk: $e');
       return false;
     }
   }
 
-  // Google Sign-In
+  // Metode untuk login menggunakan akun Google
   Future<bool> signInWithGoogle() async {
     try {
+      // Inisialisasi Google Sign-In
       final GoogleSignIn googleSignIn = GoogleSignIn();
 
-      // Trigger the authentication flow
+      // Memulai alur otentikasi Google
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
-        // Canceled by user
+        // Jika login dibatalkan oleh pengguna
         return false;
       }
 
-      // Obtain the auth details
+      // Mendapatkan detail otentikasi Google
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
-      // Create a new credential
+      // Membuat kredensial baru
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      // Sign in to Firebase with the credential
+      // Login ke Firebase menggunakan kredensial
       await _auth.signInWithCredential(credential);
 
+      // Memperbarui pengguna saat ini
       _currentUser = _auth.currentUser;
+      // Memberi tahu listeners
       notifyListeners();
       return true;
     } on FirebaseAuthException catch (e) {
+      // Menangani kesalahan dari Firebase
       print('FirebaseAuthException: ${e.message}');
       return false;
     } catch (e) {
+      // Menangani kesalahan umum
       print('Sign-In Error: $e');
       return false;
     }
   }
 
-  // Logout
+  // Metode untuk logout pengguna
   Future<void> logout() async {
     try {
-      // Sign out from Firebase
+      // Logout dari Firebase
       await _auth.signOut();
 
-      // Sign out from Google if signed in with Google
+      // Logout dari Google jika login menggunakan Google
       await GoogleSignIn().signOut();
 
+      // Mengatur pengguna saat ini menjadi null
       _currentUser = null;
+      // Memberi tahu listeners
       notifyListeners();
     } catch (e) {
+      // Menangani kesalahan logout
       print('Logout error: $e');
     }
   }
 
-  // Get current user data
+  // Metode untuk mendapatkan data pengguna saat ini
   Map<String, dynamic>? getCurrentUserData() {
     if (_currentUser == null) return null;
     return {

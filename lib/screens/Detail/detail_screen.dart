@@ -7,7 +7,9 @@ import 'package:ecommerce_mobile_app/screens/Detail/Widget/detail_app_bar.dart';
 import 'package:ecommerce_mobile_app/screens/Detail/Widget/image_slider.dart';
 import 'package:ecommerce_mobile_app/screens/Detail/Widget/items_details.dart';
 
+// Layar detail produk yang dapat berubah (stateful)
 class DetailScreen extends StatefulWidget {
+  // Parameter produk yang akan ditampilkan
   final Product product;
 
   const DetailScreen({Key? key, required this.product}) : super(key: key);
@@ -17,21 +19,26 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  // Variabel untuk menyimpan jumlah, warna, dan ukuran produk yang dipilih
   int quantity = 1;
   Color? selectedColor;
   String? selectedSize;
   int currentImage = 0;
+
+  // Kontroller gulir untuk CustomScrollView
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    // Inisialisasi warna dan ukuran pertama kali
     selectedColor = widget.product.colors.first;
     selectedSize = widget.product.sizes.first;
   }
 
   @override
   void dispose() {
+    // Membersihkan kontroller scroll saat widget dihapus
     _scrollController.dispose();
     super.dispose();
   }
@@ -43,10 +50,12 @@ class _DetailScreenState extends State<DetailScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            // Area konten yang dapat digulir
             Expanded(
               child: CustomScrollView(
                 controller: _scrollController,
                 slivers: [
+                  // Bagian atas layar dengan gambar produk
                   SliverToBoxAdapter(
                     child: Stack(
                       children: [
@@ -61,6 +70,7 @@ class _DetailScreenState extends State<DetailScreen> {
                           ),
                           child: Column(
                             children: [
+                              // AppBar detail produk
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
@@ -68,8 +78,8 @@ class _DetailScreenState extends State<DetailScreen> {
                                 ),
                                 child: DetailAppBar(product: widget.product),
                               ),
+                              // Slider gambar produk
                               Expanded(
-                                // Removed Hero widget and using simple Container
                                 child: Container(
                                   child: MyImageSlider(
                                     image: widget.product.image,
@@ -87,6 +97,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       ],
                     ),
                   ),
+                  // Bagian detail produk
                   SliverToBoxAdapter(
                     child: Transform.translate(
                       offset: const Offset(0, -20),
@@ -100,18 +111,25 @@ class _DetailScreenState extends State<DetailScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Detail item produk
                               ItemsDetails(product: widget.product),
                               const SizedBox(height: 24),
+
+                              // Bagian pilihan warna
                               _buildSection(
                                 title: 'Warna',
                                 child: _buildColorOptions(),
                               ),
                               const SizedBox(height: 24),
+
+                              // Bagian pilihan ukuran
                               _buildSection(
                                 title: 'Ukuran',
                                 child: _buildSizeOptions(),
                               ),
                               const SizedBox(height: 24),
+
+                              // Bagian keterangan produk
                               _buildSection(
                                 title: 'Keterangan',
                                 child: Description(product: widget.product),
@@ -125,6 +143,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 ],
               ),
             ),
+            // Bilah bawah untuk menambah ke keranjang
             _buildBottomBar(),
           ],
         ),
@@ -132,6 +151,7 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
+  // Metode untuk membuat bagian dengan judul
   Widget _buildSection({required String title, required Widget child}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,6 +170,7 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
+  // Membuat daftar pilihan warna
   Widget _buildColorOptions() {
     return Wrap(
       spacing: 12,
@@ -160,6 +181,7 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
+  // Membuat pilihan warna individual
   Widget _buildColorOption(Color color) {
     return GestureDetector(
       onTap: () => setState(() => selectedColor = color),
@@ -192,6 +214,7 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
+  // Membuat daftar pilihan ukuran
   Widget _buildSizeOptions() {
     return Wrap(
       spacing: 12,
@@ -201,6 +224,7 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
+  // Membuat pilihan ukuran individual
   Widget _buildSizeOption(String size) {
     final isSelected = selectedSize == size;
     return GestureDetector(
@@ -228,6 +252,7 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
+  // Membangun bilah bawah untuk menambah ke keranjang
   Widget _buildBottomBar() {
     return Container(
       decoration: BoxDecoration(

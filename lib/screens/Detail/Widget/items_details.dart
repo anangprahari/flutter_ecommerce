@@ -4,25 +4,32 @@ import 'package:ecommerce_mobile_app/models/product_model.dart';
 import 'package:ecommerce_mobile_app/constants.dart';
 import 'reviews_screen.dart';
 
+// Widget StatelessWidget untuk menampilkan detail produk secara menyeluruh
 class ItemsDetails extends StatelessWidget {
+  // Parameter produk yang akan ditampilkan
   final Product product;
 
+  // Konstruktor dengan parameter wajib product
   const ItemsDetails({Key? key, required this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Memformat harga produk dalam rupiah dengan konfigurasi lokal Indonesia
     final formattedPrice = NumberFormat.currency(
       locale: 'id',
       symbol: 'Rp. ',
       decimalDigits: 0,
     ).format(product.price);
 
+    // Struktur utama tampilan detail produk
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Bagian judul dan informasi penjual
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Menampilkan judul produk
             Text(
               product.title,
               style: const TextStyle(
@@ -33,6 +40,7 @@ class ItemsDetails extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 4),
+            // Menampilkan nama penjual
             Text(
               'Penjual: ${product.seller}',
               style: TextStyle(
@@ -43,19 +51,24 @@ class ItemsDetails extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
+        // Bagian harga produk
         _buildPriceSection(formattedPrice),
         const SizedBox(height: 20),
+        // Bagian rating dan ulasan
         _buildRatingSection(context),
+        // Menampilkan spesifikasi produk jika tersedia
         if (product.specifications.isNotEmpty) ...[
           const SizedBox(height: 16),
           _buildSpecifications(),
         ],
         const SizedBox(height: 16),
+        // Informasi pengiriman dan garansi
         _buildDeliveryInfo(),
       ],
     );
   }
 
+  // Metode untuk membangun section harga produk
   Widget _buildPriceSection(String formattedPrice) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -66,6 +79,7 @@ class ItemsDetails extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          // Kolom harga produk saat ini
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -88,6 +102,7 @@ class ItemsDetails extends StatelessWidget {
             ],
           ),
           const SizedBox(width: 16),
+          // Menampilkan harga asli dan diskon jika tersedia
           if (product.originalPrice != null) ...[
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,6 +130,7 @@ class ItemsDetails extends StatelessWidget {
               ],
             ),
             const SizedBox(width: 16),
+            // Label persentase diskon
             Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: 12,
@@ -139,9 +155,11 @@ class ItemsDetails extends StatelessWidget {
     );
   }
 
+  // Metode untuk membangun section rating dan ulasan
   Widget _buildRatingSection(BuildContext context) {
     return InkWell(
       onTap: () {
+        // Navigasi ke layar ulasan saat di-tap
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -158,6 +176,7 @@ class ItemsDetails extends StatelessWidget {
         ),
         child: Row(
           children: [
+            // Kontainer rating bintang
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -179,6 +198,7 @@ class ItemsDetails extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
+            // Informasi jumlah ulasan
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,6 +232,7 @@ class ItemsDetails extends StatelessWidget {
     );
   }
 
+  // Metode untuk menampilkan spesifikasi produk
   Widget _buildSpecifications() {
     return Wrap(
       spacing: 8,
@@ -238,6 +259,7 @@ class ItemsDetails extends StatelessWidget {
     );
   }
 
+  // Metode untuk menampilkan informasi pengiriman dan garansi
   Widget _buildDeliveryInfo() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -248,6 +270,7 @@ class ItemsDetails extends StatelessWidget {
       ),
       child: Column(
         children: [
+          // Informasi pengiriman gratis
           if (product.freeShipping)
             _buildInfoRow(
               icon: Icons.local_shipping_outlined,
@@ -256,6 +279,7 @@ class ItemsDetails extends StatelessWidget {
             ),
           if (product.freeShipping && product.returns30Days)
             const SizedBox(height: 12),
+          // Informasi pengembalian barang
           if (product.returns30Days)
             _buildInfoRow(
               icon: Icons.replay_outlined,
@@ -265,6 +289,7 @@ class ItemsDetails extends StatelessWidget {
           if ((product.freeShipping || product.returns30Days) &&
               product.warranty)
             const SizedBox(height: 12),
+          // Informasi garansi produk
           if (product.warranty)
             _buildInfoRow(
               icon: Icons.verified_user_outlined,
@@ -276,6 +301,7 @@ class ItemsDetails extends StatelessWidget {
     );
   }
 
+  // Metode untuk membangun baris informasi dengan ikon, judul, dan subjudul
   Widget _buildInfoRow({
     required IconData icon,
     required String title,
@@ -283,6 +309,7 @@ class ItemsDetails extends StatelessWidget {
   }) {
     return Row(
       children: [
+        // Kontainer ikon
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
@@ -293,6 +320,7 @@ class ItemsDetails extends StatelessWidget {
           child: Icon(icon, size: 20, color: kprimaryColor),
         ),
         const SizedBox(width: 12),
+        // Informasi teks
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

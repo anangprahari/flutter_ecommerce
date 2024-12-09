@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:ecommerce_mobile_app/constants.dart';
 
-// Models
+// Model untuk kategori bantuan
 class HelpCategory {
-  final String title;
-  final String description;
-  final IconData icon;
-  final int articleCount;
-  final List<HelpArticle> articles;
+  final String title; // Judul kategori
+  final String description; // Deskripsi kategori
+  final IconData icon; // Ikon kategori
+  final int articleCount; // Jumlah artikel dalam kategori
+  final List<HelpArticle> articles; // Daftar artikel dalam kategori
 
   HelpCategory({
     required this.title,
@@ -18,11 +18,12 @@ class HelpCategory {
   });
 }
 
+// Model untuk artikel bantuan
 class HelpArticle {
-  final String title;
-  final String content;
-  final bool isPinned;
-  final DateTime lastUpdated;
+  final String title; // Judul artikel
+  final String content; // Konten artikel
+  final bool isPinned; // Menandakan apakah artikel dipin
+  final DateTime lastUpdated; // Tanggal terakhir artikel diperbarui
 
   HelpArticle({
     required this.title,
@@ -32,6 +33,7 @@ class HelpArticle {
   });
 }
 
+// Widget utama untuk layar pusat bantuan
 class HelpCenterScreen extends StatefulWidget {
   const HelpCenterScreen({Key? key}) : super(key: key);
 
@@ -39,11 +41,14 @@ class HelpCenterScreen extends StatefulWidget {
   State<HelpCenterScreen> createState() => _HelpCenterScreenState();
 }
 
+// State untuk HelpCenterScreen
 class _HelpCenterScreenState extends State<HelpCenterScreen> {
-  final TextEditingController _searchController = TextEditingController();
-  bool _isSearching = false;
-  List<HelpArticle> _searchResults = [];
+  final TextEditingController _searchController =
+      TextEditingController(); // Kontroler untuk input pencarian
+  bool _isSearching = false; // Menandakan apakah sedang dalam mode pencarian
+  List<HelpArticle> _searchResults = []; // Hasil pencarian artikel
 
+  // Daftar kategori bantuan
   final List<HelpCategory> categories = [
     HelpCategory(
       title: 'Pemesanan & Pembayaran',
@@ -329,6 +334,7 @@ Catatan Penting:
     ),
   ];
 
+  // Daftar bantuan cepat
   final List<String> quickHelp = [
     'Cara melacak pesanan',
     'Cara membatalkan pesanan',
@@ -336,30 +342,33 @@ Catatan Penting:
     'Cara menghubungi penjual',
   ];
 
+  // Fungsi untuk melakukan pencarian artikel berdasarkan query
   void _performSearch(String query) {
     if (query.isEmpty) {
       setState(() {
-        _isSearching = false;
-        _searchResults = [];
+        _isSearching = false; // Matikan mode pencarian jika query kosong
+        _searchResults = []; // Kosongkan hasil pencarian
       });
       return;
     }
 
-    final List<HelpArticle> results = [];
+    final List<HelpArticle> results = []; // Daftar hasil pencarian
     for (var category in categories) {
       for (var article in category.articles) {
+        // Cek apakah judul artikel mengandung query pencarian
         if (article.title.toLowerCase().contains(query.toLowerCase())) {
-          results.add(article);
+          results.add(article); // Tambahkan artikel ke hasil pencarian
         }
       }
     }
 
     setState(() {
-      _isSearching = true;
-      _searchResults = results;
+      _isSearching = true; // Aktifkan mode pencarian
+      _searchResults = results; // Simpan hasil pencarian
     });
   }
 
+  // Fungsi untuk menampilkan detail artikel
   void _showArticleDetail(BuildContext context, HelpArticle article) {
     Navigator.push(
       context,
@@ -415,15 +424,15 @@ Catatan Penting:
     );
   }
 
-  // UI Component Methods
+  // Metode untuk membangun bagian pencarian
   Widget _buildSearchSection() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16), // Padding untuk kontainer
       decoration: BoxDecoration(
-        color: kprimaryColor,
+        color: kprimaryColor, // Warna latar belakang
         borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(24),
-          bottomRight: Radius.circular(24),
+          bottomLeft: Radius.circular(24), // Radius sudut kiri bawah
+          bottomRight: Radius.circular(24), // Radius sudut kanan bawah
         ),
       ),
       child: Column(
@@ -432,33 +441,38 @@ Catatan Penting:
           Text(
             'Hai, ada yang bisa kami bantu?',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withOpacity(0.9), // Warna teks
               fontSize: 16,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 16), // Jarak vertikal
           TextField(
-            controller: _searchController,
-            style: const TextStyle(color: Colors.black87),
-            onChanged: _performSearch,
+            controller: _searchController, // Kontroler untuk input pencarian
+            style: const TextStyle(color: Colors.black87), // Warna teks input
+            onChanged:
+                _performSearch, // Panggil fungsi pencarian saat teks berubah
             decoration: InputDecoration(
               filled: true,
-              fillColor: Colors.white,
-              hintText: "Cari bantuan...",
-              hintStyle: TextStyle(color: Colors.grey[400]),
-              prefixIcon: const Icon(Icons.search, color: Colors.grey),
+              fillColor: Colors.white, // Warna latar belakang input
+              hintText: "Cari bantuan...", // Teks petunjuk
+              hintStyle:
+                  TextStyle(color: Colors.grey[400]), // Warna teks petunjuk
+              prefixIcon: const Icon(Icons.search,
+                  color: Colors.grey), // Ikon pencarian
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
-                      icon: const Icon(Icons.clear),
+                      icon:
+                          const Icon(Icons.clear), // Ikon untuk menghapus input
                       onPressed: () {
-                        _searchController.clear();
-                        _performSearch('');
+                        _searchController.clear(); // Kosongkan input
+                        _performSearch(
+                            ''); // Lakukan pencarian dengan query kosong
                       },
                     )
                   : null,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.circular(12), // Radius sudut input
+                borderSide: BorderSide.none, // Tidak ada garis tepi
               ),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -471,44 +485,46 @@ Catatan Penting:
     );
   }
 
+  // Metode untuk membangun hasil pencarian
   Widget _buildSearchResults() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16), // Padding untuk hasil pencarian
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Hasil Pencarian (${_searchResults.length})',
+            'Hasil Pencarian (${_searchResults.length})', // Menampilkan jumlah hasil pencarian
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 12), // Jarak vertikal
           if (_searchResults.isEmpty)
-            _buildEmptySearchResults()
+            _buildEmptySearchResults() // Tampilkan pesan jika tidak ada hasil
           else
-            _buildSearchResultsList(),
+            _buildSearchResultsList(), // Tampilkan daftar hasil pencarian
         ],
       ),
     );
   }
 
+  // Metode untuk membangun pesan jika tidak ada hasil pencarian
   Widget _buildEmptySearchResults() {
     return Center(
       child: Column(
         children: [
-          const SizedBox(height: 32),
+          const SizedBox(height: 32), // Jarak vertikal
           Icon(
             Icons.search_off_outlined,
             size: 48,
-            color: Colors.grey[400],
+            color: Colors.grey[400], // Warna ikon
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 16), // Jarak vertikal
           Text(
-            'Tidak ada hasil yang ditemukan',
+            'Tidak ada hasil yang ditemukan', // Pesan tidak ada hasil
             style: TextStyle(
-              color: Colors.grey[600],
+              color: Colors.grey[600], // Warna teks
               fontSize: 16,
             ),
           ),
@@ -517,15 +533,17 @@ Catatan Penting:
     );
   }
 
+  // Metode untuk membangun daftar hasil pencarian
   Widget _buildSearchResultsList() {
     return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: _searchResults.length,
+      shrinkWrap: true, // Mengatur ukuran daftar
+      physics: const NeverScrollableScrollPhysics(), // Nonaktifkan scroll
+      itemCount: _searchResults.length, // Jumlah item dalam daftar
       itemBuilder: (context, index) {
-        final article = _searchResults[index];
+        final article =
+            _searchResults[index]; // Ambil artikel dari hasil pencarian
         return ListTile(
-          title: Text(article.title),
+          title: Text(article.title), // Judul artikel
           leading: const Icon(Icons.article_outlined),
           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
           onTap: () => _showArticleDetail(context, article),
@@ -534,6 +552,7 @@ Catatan Penting:
     );
   }
 
+  // Metode untuk membangun bagian bantuan cepat
   Widget _buildQuickHelp() {
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -588,86 +607,99 @@ Catatan Penting:
     );
   }
 
+  // Widget untuk membangun kategori bantuan
   Widget _buildCategories() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16), // Padding horizontal
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment:
+            CrossAxisAlignment.start, // Mengatur alignment ke kiri
         children: [
           const Text(
-            "Kategori Bantuan",
+            "Kategori Bantuan", // Judul kategori
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 16), // Jarak vertikal
           ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: categories.length,
+            shrinkWrap: true, // Mengatur ukuran ListView
+            physics:
+                const NeverScrollableScrollPhysics(), // Menonaktifkan scroll
+            itemCount: categories.length, // Jumlah kategori
             itemBuilder: (context, index) {
-              final category = categories[index];
+              final category =
+                  categories[index]; // Mengambil kategori berdasarkan index
               return Card(
-                elevation: 0,
-                margin: const EdgeInsets.only(bottom: 12),
+                elevation: 0, // Mengatur elevasi kartu
+                margin: const EdgeInsets.only(bottom: 12), // Margin bawah
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius:
+                      BorderRadius.circular(12), // Mengatur sudut kartu
                   side: BorderSide(color: Colors.grey[200]!),
                 ),
                 child: InkWell(
                   onTap: () {
+                    // Navigasi ke layar kategori bantuan saat diklik
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => HelpCategoryScreen(
-                          category: category,
+                          category: category, // Mengirim kategori ke layar baru
                         ),
                       ),
                     );
                   },
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius:
+                      BorderRadius.circular(12), // Mengatur sudut InkWell
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16), // Padding dalam kartu
                     child: Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(12),
+                          padding:
+                              const EdgeInsets.all(12), // Padding dalam ikon
                           decoration: BoxDecoration(
-                            color: kprimaryColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
+                            color: kprimaryColor
+                                .withOpacity(0.1), // Warna latar belakang
+                            borderRadius:
+                                BorderRadius.circular(12), // Sudut bulat
                           ),
                           child: Icon(
-                            category.icon,
-                            color: kprimaryColor,
-                            size: 24,
+                            category.icon, // Ikon kategori
+                            color: kprimaryColor, // Warna ikon
+                            size: 24, // Ukuran ikon
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: 16), // Jarak horizontal
                         Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment
+                                .start, // Mengatur alignment ke kiri
                             children: [
                               Text(
-                                category.title,
+                                category.title, // Judul kategori
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 4), // Jarak vertikal
                               Text(
-                                category.description,
+                                category.description, // Deskripsi kategori
                                 style: TextStyle(
-                                  color: Colors.grey[600],
+                                  color:
+                                      Colors.grey[600], // Warna teks deskripsi
                                   fontSize: 13,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 4), // Jarak vertikal
                               Text(
-                                '${category.articleCount} artikel',
+                                '${category.articleCount} artikel', // Jumlah artikel
                                 style: TextStyle(
-                                  color: Colors.grey[400],
+                                  color: Colors
+                                      .grey[400], // Warna teks jumlah artikel
                                   fontSize: 12,
                                 ),
                               ),
@@ -675,9 +707,9 @@ Catatan Penting:
                           ),
                         ),
                         Icon(
-                          Icons.arrow_forward_ios,
+                          Icons.arrow_forward_ios, // Ikon panah
                           size: 16,
-                          color: Colors.grey[400],
+                          color: Colors.grey[400], // Warna ikon panah
                         ),
                       ],
                     ),
@@ -691,51 +723,55 @@ Catatan Penting:
     );
   }
 
+  // Widget untuk membangun kontak dukungan
   Widget _buildContactSupport() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16), // Padding di sekitar kartu
       child: Card(
-        elevation: 0,
+        elevation: 0, // Mengatur elevasi kartu
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12), // Sudut bulat
           side: BorderSide(color: Colors.grey[200]!),
         ),
         child: InkWell(
-          onTap: () => _showContactSupportDialog(context),
-          borderRadius: BorderRadius.circular(12),
+          onTap: () => _showContactSupportDialog(
+              context), // Menampilkan dialog kontak dukungan saat diklik
+          borderRadius: BorderRadius.circular(12), // Mengatur sudut InkWell
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16), // Padding dalam kartu
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12), // Padding dalam ikon
                   decoration: BoxDecoration(
-                    color: kprimaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    color:
+                        kprimaryColor.withOpacity(0.1), // Warna latar belakang
+                    borderRadius: BorderRadius.circular(12), // Sudut bulat
                   ),
                   child: Icon(
-                    Icons.headset_mic_outlined,
-                    color: kprimaryColor,
-                    size: 24,
+                    Icons.headset_mic_outlined, // Ikon headset
+                    color: kprimaryColor, // Warna ikon headset
+                    size: 24, // Ukuran ikon
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 16), // Jarak horizontal
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start, // Mengatur alignment ke kiri
                     children: [
                       const Text(
-                        'Hubungi Layanan Pelanggan',
+                        'Hubungi Layanan Pelanggan', // Judul untuk kontak dukungan
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 4), // Jarak vertikal
                       Text(
-                        'Butuh bantuan lebih lanjut? Hubungi kami',
+                        'Butuh bantuan lebih lanjut? Hubungi kami', // Deskripsi kontak dukungan
                         style: TextStyle(
-                          color: Colors.grey[600],
+                          color: Colors.grey[600], // Warna teks deskripsi
                           fontSize: 13,
                         ),
                       ),
@@ -743,9 +779,9 @@ Catatan Penting:
                   ),
                 ),
                 Icon(
-                  Icons.arrow_forward_ios,
+                  Icons.arrow_forward_ios, // Ikon panah
                   size: 16,
-                  color: Colors.grey[400],
+                  color: Colors.grey[400], // Warna ikon panah
                 ),
               ],
             ),
@@ -755,47 +791,50 @@ Catatan Penting:
     );
   }
 
+  // Fungsi untuk menampilkan dialog kontak dukungan
   void _showContactSupportDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Hubungi Kami'),
+        title: const Text('Hubungi Kami'), // Judul dialog
         content: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min, // Ukuran kolom minimal
           children: [
             ListTile(
-              leading: const Icon(Icons.chat),
-              title: const Text('Obrolan Langsung'),
-              subtitle: const Text('Respon cepat 24/7'),
+              leading: const Icon(Icons.chat), // Ikon obrolan
+              title: const Text('Obrolan Langsung'), // Judul opsi obrolan
+              subtitle:
+                  const Text('Respon cepat 24/7'), // Subjudul opsi obrolan
               onTap: () {
-                Navigator.pop(context);
-                // Implement live chat navigation
+                Navigator.pop(context); // Menutup dialog
+                // Implementasi navigasi obrolan langsung
               },
             ),
             ListTile(
-              leading: const Icon(Icons.email),
-              title: const Text('Email'),
-              subtitle: const Text('cs@example.com'),
+              leading: const Icon(Icons.email), // Ikon email
+              title: const Text('Email'), // Judul opsi email
+              subtitle: const Text('anangpraf04@gmail.com'), // Subjudul email
               onTap: () {
-                Navigator.pop(context);
-                // Implement email functionality
+                Navigator.pop(context); // Menutup dialog
+                // Implementasi fungsi email
               },
             ),
             ListTile(
-              leading: const Icon(Icons.phone),
-              title: const Text('Telepon'),
-              subtitle: const Text('0800-1234-5678'),
+              leading: const Icon(Icons.phone), // Ikon telepon
+              title: const Text('Telepon'), // Judul opsi telepon
+              subtitle: const Text('089529717594'), // Subjudul telepon
               onTap: () {
-                Navigator.pop(context);
-                // Implement phone call functionality
+                Navigator.pop(context); // Menutup dialog
+                // Implementasi fungsi panggilan telepon
               },
             ),
           ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Tutup'),
+            onPressed: () =>
+                Navigator.pop(context), // Menutup dialog saat tombol ditekan
+            child: const Text('Tutup'), // Teks tombol
           ),
         ],
       ),
@@ -804,14 +843,15 @@ Catatan Penting:
 
   @override
   void dispose() {
-    _searchController.dispose();
-    super.dispose();
+    _searchController
+        .dispose(); // Menghapus controller pencarian saat widget dibuang
+    super.dispose(); // Memanggil metode dispose dari superclass
   }
 }
 
-// Help Category Screen
+// Kelas untuk layar kategori bantuan
 class HelpCategoryScreen extends StatelessWidget {
-  final HelpCategory category;
+  final HelpCategory category; // Kategori bantuan yang diterima
 
   const HelpCategoryScreen({
     Key? key,
@@ -823,25 +863,27 @@ class HelpCategoryScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          category.title,
+          category.title, // Judul kategori
           style:
               const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: kprimaryColor,
-        centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: kprimaryColor, // Warna latar belakang AppBar
+        centerTitle: true, // Mengatur judul ke tengah
+        iconTheme:
+            const IconThemeData(color: Colors.white), // Warna ikon di AppBar
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16), // Padding di sekitar konten
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+                CrossAxisAlignment.start, // Mengatur alignment ke kiri
             children: [
-              _buildCategoryHeader(),
-              const SizedBox(height: 24),
-              _buildPinnedArticles(),
-              const SizedBox(height: 24),
-              _buildAllArticles(),
+              _buildCategoryHeader(), // Memanggil fungsi untuk membangun header kategori
+              const SizedBox(height: 24), // Jarak vertikal
+              _buildPinnedArticles(), // Memanggil fungsi untuk membangun artikel yang dipin
+              const SizedBox(height: 24), // Jarak vertikal
+              _buildAllArticles(), // Memanggil fungsi untuk membangun semua artikel
             ],
           ),
         ),
@@ -849,37 +891,39 @@ class HelpCategoryScreen extends StatelessWidget {
     );
   }
 
+  // Widget untuk membangun header kategori
   Widget _buildCategoryHeader() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16), // Padding di dalam header
       decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.grey[100], // Warna latar belakang header
+        borderRadius: BorderRadius.circular(12), // Sudut bulat
       ),
       child: Row(
         children: [
           Icon(
-            category.icon,
-            color: kprimaryColor,
-            size: 32,
+            category.icon, // Ikon kategori
+            color: kprimaryColor, // Warna ikon
+            size: 32, // Ukuran ikon
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 16), // Jarak horizontal
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  CrossAxisAlignment.start, // Mengatur alignment ke kiri
               children: [
                 Text(
-                  category.description,
+                  category.description, // Deskripsi kategori
                   style: const TextStyle(
                     fontSize: 14,
-                    color: Colors.black87,
+                    color: Colors.black87, // Warna teks deskripsi
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 4), // Jarak vertikal
                 Text(
-                  '${category.articleCount} artikel tersedia',
+                  '${category.articleCount} artikel tersedia', // Jumlah artikel yang tersedia
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: Colors.grey[600], // Warna teks jumlah artikel
                     fontSize: 12,
                   ),
                 ),
@@ -891,45 +935,54 @@ class HelpCategoryScreen extends StatelessWidget {
     );
   }
 
+  // Widget untuk membangun artikel yang dipin
   Widget _buildPinnedArticles() {
-    final pinnedArticles =
-        category.articles.where((article) => article.isPinned).toList();
-    if (pinnedArticles.isEmpty) return const SizedBox.shrink();
+    final pinnedArticles = category.articles
+        .where((article) => article.isPinned)
+        .toList(); // Mengambil artikel yang dipin
+    if (pinnedArticles.isEmpty)
+      return const SizedBox
+          .shrink(); // Jika tidak ada artikel yang dipin, kembalikan widget kosong
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment:
+          CrossAxisAlignment.start, // Mengatur alignment ke kiri
       children: [
         const Text(
-          'Artikel Populer',
+          'Artikel Populer', // Judul untuk artikel populer
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 12), // Jarak vertikal
         ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: pinnedArticles.length,
+          shrinkWrap: true, // Mengatur ukuran ListView
+          physics: const NeverScrollableScrollPhysics(), // Menonaktifkan scroll
+          itemCount: pinnedArticles.length, // Jumlah artikel yang dipin
           itemBuilder: (context, index) {
-            final article = pinnedArticles[index];
+            final article =
+                pinnedArticles[index]; // Mengambil artikel berdasarkan index
             return Card(
-              elevation: 0,
-              margin: const EdgeInsets.only(bottom: 8),
+              elevation: 0, // Mengatur elevasi kartu
+              margin: const EdgeInsets.only(bottom: 8), // Margin bawah
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12), // Sudut bulat
                 side: BorderSide(color: Colors.grey[200]!),
               ),
               child: ListTile(
-                leading: const Icon(Icons.star_outline, color: Colors.amber),
-                title: Text(article.title),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                leading: const Icon(Icons.star_outline,
+                    color: Colors.amber), // Ikon bintang
+                title: Text(article.title), // Judul artikel
+                trailing:
+                    const Icon(Icons.arrow_forward_ios, size: 16), // Ikon panah
                 onTap: () {
+                  // Navigasi ke layar detail artikel saat diklik
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          ArticleDetailScreen(article: article),
+                      builder: (context) => ArticleDetailScreen(
+                          article: article), // Mengirim artikel ke layar detail
                     ),
                   );
                 },
@@ -941,44 +994,50 @@ class HelpCategoryScreen extends StatelessWidget {
     );
   }
 
+  // Widget untuk membangun semua artikel
   Widget _buildAllArticles() {
-    final regularArticles =
-        category.articles.where((article) => !article.isPinned).toList();
+    final regularArticles = category.articles
+        .where((article) => !article.isPinned)
+        .toList(); // Mengambil artikel yang tidak dipin
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment:
+          CrossAxisAlignment.start, // Mengatur alignment ke kiri
       children: [
         const Text(
-          'Semua Artikel',
+          'Semua Artikel', // Judul untuk semua artikel
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 12), // Jarak vertikal
         ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: regularArticles.length,
+          shrinkWrap: true, // Mengatur ukuran ListView
+          physics: const NeverScrollableScrollPhysics(), // Menonaktifkan scroll
+          itemCount: regularArticles.length, // Jumlah artikel reguler
           itemBuilder: (context, index) {
-            final article = regularArticles[index];
+            final article =
+                regularArticles[index]; // Mengambil artikel berdasarkan index
             return Card(
-              elevation: 0,
-              margin: const EdgeInsets.only(bottom: 8),
+              elevation: 0, // Mengatur elevasi kartu
+              margin: const EdgeInsets.only(bottom: 8), // Margin bawah
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12), // Sudut bulat
                 side: BorderSide(color: Colors.grey[200]!),
               ),
               child: ListTile(
-                leading: const Icon(Icons.article_outlined),
-                title: Text(article.title),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                leading: const Icon(Icons.article_outlined), // Ikon artikel
+                title: Text(article.title), // Judul artikel
+                trailing:
+                    const Icon(Icons.arrow_forward_ios, size: 16), // Ikon panah
                 onTap: () {
+                  // Navigasi ke layar detail artikel saat diklik
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          ArticleDetailScreen(article: article),
+                      builder: (context) => ArticleDetailScreen(
+                          article: article), // Mengirim artikel ke layar detail
                     ),
                   );
                 },
@@ -991,9 +1050,9 @@ class HelpCategoryScreen extends StatelessWidget {
   }
 }
 
-// Article Detail Screen
+// Kelas untuk layar detail artikel
 class ArticleDetailScreen extends StatelessWidget {
-  final HelpArticle article;
+  final HelpArticle article; // Artikel yang diterima
 
   const ArticleDetailScreen({
     Key? key,
@@ -1005,57 +1064,62 @@ class ArticleDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Detail Artikel',
+          'Detail Artikel', // Judul layar detail artikel
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: kprimaryColor,
-        centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: kprimaryColor, // Warna latar belakang AppBar
+        centerTitle: true, // Mengatur judul ke tengah
+        iconTheme:
+            const IconThemeData(color: Colors.white), // Warna ikon di AppBar
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment:
+              CrossAxisAlignment.start, // Mengatur alignment ke kiri
           children: [
             Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
+              width: double.infinity, // Lebar penuh
+              padding: const EdgeInsets.all(16), // Padding di dalam konten
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.white, // Warna latar belakang konten
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
+                    color: Colors.grey
+                        .withOpacity(0.1), // Bayangan di bawah konten
                     spreadRadius: 1,
                     blurRadius: 5,
                   ),
                 ],
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment:
+                    CrossAxisAlignment.start, // Mengatur alignment ke kiri
                 children: [
-                  if (article.isPinned)
+                  if (article.isPinned) // Jika artikel dipin
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
                         vertical: 4,
                       ),
-                      margin: const EdgeInsets.only(bottom: 8),
+                      margin: const EdgeInsets.only(bottom: 8), // Margin bawah
                       decoration: BoxDecoration(
-                        color: Colors.amber.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(4),
+                        color: Colors.amber.withOpacity(
+                            0.1), // Warna latar belakang untuk artikel populer
+                        borderRadius: BorderRadius.circular(4), // Sudut bulat
                       ),
                       child: const Row(
-                        mainAxisSize: MainAxisSize.min,
+                        mainAxisSize: MainAxisSize.min, // Ukuran baris minimal
                         children: [
                           Icon(
-                            Icons.star,
+                            Icons.star, // Ikon bintang
                             size: 16,
-                            color: Colors.amber,
+                            color: Colors.amber, // Warna ikon bintang
                           ),
-                          SizedBox(width: 4),
+                          SizedBox(width: 4), // Jarak horizontal
                           Text(
-                            'Artikel Populer',
+                            'Artikel Populer', // Teks untuk artikel populer
                             style: TextStyle(
-                              color: Colors.amber,
+                              color: Colors.amber, // Warna teks
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),
@@ -1064,17 +1128,17 @@ class ArticleDetailScreen extends StatelessWidget {
                       ),
                     ),
                   Text(
-                    article.title,
+                    article.title, // Judul artikel
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 8), // Jarak vertikal
                   Text(
-                    'Terakhir diperbarui: ${_formatDate(article.lastUpdated)}',
+                    'Terakhir diperbarui: ${_formatDate(article.lastUpdated)}', // Tanggal terakhir diperbarui
                     style: TextStyle(
-                      color: Colors.grey[600],
+                      color: Colors.grey[600], // Warna teks tanggal
                       fontSize: 12,
                     ),
                   ),
@@ -1082,28 +1146,31 @@ class ArticleDetailScreen extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding:
+                  const EdgeInsets.all(16), // Padding di sekitar konten artikel
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment:
+                    CrossAxisAlignment.start, // Mengatur alignment ke kiri
                 children: [
                   Text(
-                    article.content,
+                    article.content, // Konten artikel
                     style: const TextStyle(
                       fontSize: 16,
-                      height: 1.6,
+                      height: 1.6, // Jarak antar baris
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 32), // Jarak vertikal
                   const Text(
-                    'Apakah artikel ini membantu?',
+                    'Apakah artikel ini membantu?', // Pertanyaan untuk umpan balik
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 16), // Jarak vertikal
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment
+                        .center, // Mengatur alignment ke tengah
                     children: [
                       _buildFeedbackButton(
                         context,
@@ -1126,10 +1193,15 @@ class ArticleDetailScreen extends StatelessWidget {
           ],
         ),
       ),
+      // Widget untuk bottom navigation bar dengan tombol kontak support
       bottomNavigationBar: Container(
+        // Padding di sekitar tombol
         padding: const EdgeInsets.all(16),
+
+        // Dekorasi container dengan bayangan dan warna putih
         decoration: BoxDecoration(
           color: Colors.white,
+          // Membuat bayangan ringan di sekitar container
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.1),
@@ -1138,18 +1210,28 @@ class ArticleDetailScreen extends StatelessWidget {
             ),
           ],
         ),
+
+        // Tombol elevated dengan ikon chat
         child: ElevatedButton.icon(
+          // Aksi yang akan dijalankan saat tombol ditekan
           onPressed: () {
-            // Implement chat with support
+            // TODO: Implementasikan fungsi chat dengan support
           },
+
+          // Ikon chat di sebelah kiri teks
           icon: const Icon(Icons.chat_outlined),
+
+          // Label teks tombol
           label: const Text('Hubungi Support'),
+
+          // Gaya tombol dengan warna dan desain khusus
           style: ElevatedButton.styleFrom(
-            backgroundColor: kprimaryColor,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 12),
+            backgroundColor: kprimaryColor, // Warna latar belakang tombol
+            foregroundColor: Colors.white, // Warna teks dan ikon
+            padding:
+                const EdgeInsets.symmetric(vertical: 12), // Padding vertikal
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(8), // Sudut melengkung
             ),
           ),
         ),
@@ -1186,20 +1268,25 @@ class ArticleDetailScreen extends StatelessWidget {
     );
   }
 
+  // Fungsi untuk menangani feedback dari pengguna
   void _handleFeedback(BuildContext context, bool isHelpful) {
-    // Implement feedback handling
+    // Menampilkan snackbar sebagai respon feedback
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        // Konten pesan berbeda berdasarkan jenis feedback
         content: Text(
           isHelpful
               ? 'Terima kasih atas feedback positif Anda!'
               : 'Maaf artikel ini kurang membantu. Kami akan terus meningkatkan konten kami.',
         ),
+
+        // Gaya snackbar mengambang
         behavior: SnackBarBehavior.floating,
       ),
     );
   }
 
+// Fungsi untuk memformat tanggal ke dalam format dd/mm/yyyy
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
   }

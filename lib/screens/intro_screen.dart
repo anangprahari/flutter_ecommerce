@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'register_screen.dart';
 import '../constants.dart';
 
+// Widget IntroScreen sebagai halaman intro/welcome
 class IntroScreen extends StatefulWidget {
   const IntroScreen({Key? key}) : super(key: key);
 
@@ -9,18 +10,23 @@ class IntroScreen extends StatefulWidget {
   State createState() => _IntroScreenState();
 }
 
+// State untuk widget IntroScreen
 class _IntroScreenState extends State<IntroScreen>
     with SingleTickerProviderStateMixin {
+  // Controller untuk mengatur animasi tombol
   late final AnimationController _buttonController = AnimationController(
     duration: const Duration(milliseconds: 200),
     vsync: this,
   );
 
+  // Animasi scale untuk efek scaling pada tombol
   late final Animation<double> _buttonScale = TweenSequence<double>([
+    // Sequence pertama - mengecilkan tombol
     TweenSequenceItem(
       tween: Tween<double>(begin: 1.0, end: 0.95),
       weight: 1.0,
     ),
+    // Sequence kedua - mengembalikan ukuran tombol
     TweenSequenceItem(
       tween: Tween<double>(begin: 0.95, end: 1.0),
       weight: 1.0,
@@ -30,6 +36,7 @@ class _IntroScreenState extends State<IntroScreen>
     curve: Curves.easeInOut,
   ));
 
+  // Method untuk menjalankan animasi tombol dan navigasi
   void _animateButton() async {
     await _buttonController.forward();
     await _buttonController.reverse();
@@ -43,16 +50,19 @@ class _IntroScreenState extends State<IntroScreen>
     }
   }
 
+  // Method untuk membersihkan controller saat widget di dispose
   @override
   void dispose() {
     _buttonController.dispose();
     super.dispose();
   }
 
+  // Method untuk membangun tampilan UI
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        // Dekorasi background dengan gradient
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [kprimaryColor, Colors.white],
@@ -68,6 +78,7 @@ class _IntroScreenState extends State<IntroScreen>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      // Widget judul aplikasi
                       const Text(
                         'Selamat Datang Di JenShop',
                         style: TextStyle(
@@ -77,6 +88,7 @@ class _IntroScreenState extends State<IntroScreen>
                         ),
                       ),
                       const SizedBox(height: 12.0),
+                      // Widget subtitle
                       const Text(
                         'Temukan produk impian Anda',
                         style: TextStyle(
@@ -85,20 +97,21 @@ class _IntroScreenState extends State<IntroScreen>
                         ),
                       ),
                       const SizedBox(height: 20.0),
-                      // Logo tanpa animasi
+                      // Widget logo aplikasi
                       Image.asset(
                         'images/icon/Jenshop.png',
                         width: 300,
                         height: 300,
                       ),
                       const SizedBox(height: 24.0),
-                      // Tombol dengan animasi scale
+                      // Widget tombol dengan animasi scale
                       AnimatedBuilder(
                         animation: _buttonScale,
                         builder: (context, child) {
                           return Transform.scale(
                             scale: _buttonScale.value,
                             child: Container(
+                              // Dekorasi untuk tombol dengan shadow
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20.0),
                                 boxShadow: [
@@ -112,6 +125,7 @@ class _IntroScreenState extends State<IntroScreen>
                               ),
                               child: ElevatedButton(
                                 onPressed: _animateButton,
+                                // Style untuk tombol
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: kprimaryColor,
                                   padding: const EdgeInsets.symmetric(
@@ -121,9 +135,9 @@ class _IntroScreenState extends State<IntroScreen>
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20.0),
                                   ),
-                                  elevation:
-                                      0, // Karena kita menggunakan custom shadow
+                                  elevation: 0,
                                 ),
+                                // Teks pada tombol
                                 child: const Text(
                                   'Ayo Belanja',
                                   style: TextStyle(

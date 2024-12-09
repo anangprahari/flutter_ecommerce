@@ -9,7 +9,9 @@ import '../../Provider/order_provider.dart';
 import '../../constants.dart';
 import '../../Provider/add_to_cart_provider.dart';
 
+// Layar detail pengiriman yang menampilkan informasi pesanan lengkap
 class ShippingDetailsScreen extends StatelessWidget {
+  // Variabel yang diperlukan untuk menampilkan detail pesanan
   final String name;
   final String address;
   final String phone;
@@ -20,6 +22,7 @@ class ShippingDetailsScreen extends StatelessWidget {
   final String? virtualAccountNumber;
   final String? paymentDueDate;
 
+  // Konstruktor untuk menginisialisasi detail pesanan
   const ShippingDetailsScreen({
     Key? key,
     required this.name,
@@ -33,6 +36,7 @@ class ShippingDetailsScreen extends StatelessWidget {
     this.paymentDueDate,
   }) : super(key: key);
 
+  // Metode untuk memformat mata uang dalam format Rupiah
   String formatCurrency(double amount) {
     final formatter = NumberFormat.currency(
       locale: 'id_ID',
@@ -42,10 +46,12 @@ class ShippingDetailsScreen extends StatelessWidget {
     return formatter.format(amount);
   }
 
+  // Menghitung subtotal harga dari semua item di keranjang
   double calculateSubtotal() {
     return cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
   }
 
+  // Menghitung total diskon yang diterapkan pada item-item di keranjang
   double calculateTotalDiscount() {
     if (!discountApplied) return 0;
     return cartItems.fold(
@@ -60,11 +66,14 @@ class ShippingDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Menghitung subtotal, diskon, dan total akhir
     double subtotal = calculateSubtotal();
     double totalDiscount = calculateTotalDiscount();
     double totalAfterDiscount = subtotal - totalDiscount;
 
+    // Struktur utama layar detail pengiriman
     return Scaffold(
+      // AppBar dengan judul dan tema warna
       appBar: AppBar(
         elevation: 0,
         title: const Text(
@@ -78,13 +87,16 @@ class ShippingDetailsScreen extends StatelessWidget {
         backgroundColor: kprimaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
+      // Body dengan tata letak bertumpuk untuk mengakomodasi tombol di bawah
       body: Stack(
         children: [
+          // Konten utama yang dapat di-scroll
           SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Bagian-bagian detail pengiriman
                 _buildSectionTitle('Informasi Pengiriman'),
                 _buildShippingInfo(),
                 _buildSectionTitle('Detail Pesanan'),
@@ -101,6 +113,7 @@ class ShippingDetailsScreen extends StatelessWidget {
               ],
             ),
           ),
+          // Tombol kembali berbelanja di bagian bawah layar
           Positioned(
             bottom: 0,
             left: 0,
@@ -113,6 +126,7 @@ class ShippingDetailsScreen extends StatelessWidget {
     );
   }
 
+  // Widget untuk membuat judul setiap bagian dengan garis samping berwarna
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -140,6 +154,7 @@ class ShippingDetailsScreen extends StatelessWidget {
     );
   }
 
+  // Widget untuk menampilkan informasi pengiriman (nama, alamat, telepon)
   Widget _buildShippingInfo() {
     return Card(
       elevation: 2,
@@ -159,6 +174,7 @@ class ShippingDetailsScreen extends StatelessWidget {
     );
   }
 
+  // Widget untuk membuat baris informasi dengan ikon dan label
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,6 +207,7 @@ class ShippingDetailsScreen extends StatelessWidget {
     );
   }
 
+  // Widget untuk menampilkan detail produk dalam pesanan
   Widget _buildOrderDetails() {
     return Card(
       elevation: 2,
@@ -199,6 +216,7 @@ class ShippingDetailsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            // Membuat daftar produk dengan detail masing-masing
             ...cartItems.map((item) {
               double itemSubtotal = item.price * item.quantity;
               double itemDiscount = discountApplied
@@ -212,6 +230,7 @@ class ShippingDetailsScreen extends StatelessWidget {
     );
   }
 
+  // Widget untuk menampilkan detail produk individual
   Widget _buildProductDetail(Product item, double subtotal, double discount) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -223,6 +242,7 @@ class ShippingDetailsScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Gambar produk
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.asset(
@@ -233,6 +253,7 @@ class ShippingDetailsScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
+          // Detail produk (judul, harga, kuantitas, diskon)
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -263,6 +284,7 @@ class ShippingDetailsScreen extends StatelessWidget {
               ],
             ),
           ),
+          // Total harga setelah diskon
           Text(
             formatCurrency(subtotal - discount),
             style: const TextStyle(
@@ -275,6 +297,7 @@ class ShippingDetailsScreen extends StatelessWidget {
     );
   }
 
+  // Widget untuk menampilkan ringkasan harga (subtotal, diskon, total)
   Widget _buildPriceSummary(double subtotal, double discount, double total) {
     return Card(
       elevation: 2,
@@ -293,6 +316,7 @@ class ShippingDetailsScreen extends StatelessWidget {
     );
   }
 
+  // Widget untuk membuat baris ringkasan harga
   Widget _buildSummaryRow(String label, double value, {bool isBold = false}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -315,6 +339,7 @@ class ShippingDetailsScreen extends StatelessWidget {
     );
   }
 
+  // Widget untuk menampilkan informasi pembayaran
   Widget _buildPaymentInfo() {
     return Card(
       elevation: 2,
@@ -324,6 +349,7 @@ class ShippingDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Metode pembayaran dengan ikon
             Row(
               children: [
                 Icon(
@@ -342,9 +368,11 @@ class ShippingDetailsScreen extends StatelessWidget {
                 ),
               ],
             ),
+            // Nomor rekening virtual jika tersedia
             if (virtualAccountNumber != null)
               _buildPaymentDetail(
                   'Nomor Rekening Virtual', virtualAccountNumber!),
+            // Batas waktu pembayaran jika tersedia
             if (paymentDueDate != null)
               _buildPaymentDetail('Batas Waktu Pembayaran', paymentDueDate!),
           ],
@@ -353,6 +381,7 @@ class ShippingDetailsScreen extends StatelessWidget {
     );
   }
 
+  // Widget untuk menampilkan detail pembayaran
   Widget _buildPaymentDetail(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(top: 8),
@@ -379,6 +408,7 @@ class ShippingDetailsScreen extends StatelessWidget {
     );
   }
 
+  // Widget untuk menampilkan status pengiriman dalam alur proses
   Widget _buildShippingStatus() {
     return Card(
       elevation: 2,
@@ -402,6 +432,7 @@ class ShippingDetailsScreen extends StatelessWidget {
     );
   }
 
+  // Widget untuk membuat langkah status dengan ikon centang/lingkaran
   Widget _buildStatusStep(String text, bool isCompleted,
       {bool isLast = false}) {
     return Row(
@@ -434,6 +465,7 @@ class ShippingDetailsScreen extends StatelessWidget {
     );
   }
 
+  // Widget untuk membuat garis penghubung antar status pengiriman
   Widget _buildStatusLine(bool isCompleted) {
     return Container(
       margin: const EdgeInsets.only(left: 11),
@@ -443,7 +475,7 @@ class ShippingDetailsScreen extends StatelessWidget {
     );
   }
 
-// Method baru untuk menampilkan status autentikasi dengan Firebase
+  // Widget untuk menampilkan status autentikasi pengguna dengan Firebase
   Widget _buildAuthenticationStatus() {
     return Card(
       elevation: 2,
@@ -451,12 +483,14 @@ class ShippingDetailsScreen extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: StreamBuilder<User?>(
+          // Mengamati perubahan status autentikasi
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             User? currentUser = snapshot.data;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Indikator status autentikasi
                 Row(
                   children: [
                     Icon(
@@ -476,33 +510,40 @@ class ShippingDetailsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+                // Detail pengguna jika sudah login
                 if (currentUser != null) ...[
                   const SizedBox(height: 8),
+                  // Mengambil data tambahan pengguna dari Firestore
                   FutureBuilder<DocumentSnapshot>(
                     future: FirebaseFirestore.instance
                         .collection('users')
                         .doc(currentUser.uid)
                         .get(),
                     builder: (context, userSnapshot) {
+                      // Menampilkan indikator loading saat mengambil data
                       if (userSnapshot.connectionState ==
                           ConnectionState.waiting) {
                         return CircularProgressIndicator();
                       }
 
+                      // Mengonversi data pengguna
                       Map<String, dynamic>? userData =
                           userSnapshot.data?.data() as Map<String, dynamic>?;
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Menampilkan email pengguna
                           Text(
                             'Email: ${currentUser.email ?? "Tidak tersedia"}',
                             style: const TextStyle(fontSize: 14),
                           ),
+                          // Menampilkan UID pengguna
                           Text(
                             'UID: ${currentUser.uid}',
                             style: const TextStyle(fontSize: 14),
                           ),
+                          // Menampilkan nama pengguna dari Firestore jika tersedia
                           if (userData != null) ...[
                             Text(
                               'Nama: ${userData['name'] ?? "Tidak tersedia"}',
@@ -522,7 +563,7 @@ class ShippingDetailsScreen extends StatelessWidget {
     );
   }
 
-  // Method untuk tombol kembali berbelanja dengan Firebase
+  // Widget tombol kembali berbelanja dengan logika pemrosesan pesanan Firebase
   Widget _buildReturnToShoppingButton(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -538,9 +579,10 @@ class ShippingDetailsScreen extends StatelessWidget {
         ],
       ),
       child: ElevatedButton(
+        // Logika saat tombol ditekan
         onPressed: () async {
           try {
-            // Tambahkan pesanan ke Firebase
+            // Tambahkan pesanan ke Firebase menggunakan OrderProvider
             await Provider.of<OrderProvider>(context, listen: false).addOrder(
               cartItems,
               name,
@@ -551,7 +593,7 @@ class ShippingDetailsScreen extends StatelessWidget {
               discountApplied: discountApplied,
             );
 
-            // Hapus keranjang di Firebase
+            // Hapus semua item di keranjang Firebase untuk pengguna saat ini
             User? currentUser = FirebaseAuth.instance.currentUser;
             if (currentUser != null) {
               await FirebaseFirestore.instance
@@ -566,21 +608,23 @@ class ShippingDetailsScreen extends StatelessWidget {
               });
             }
 
-            // Bersihkan keranjang lokal
+            // Bersihkan keranjang lokal menggunakan CartProvider
             Provider.of<CartProvider>(context, listen: false).clearCart();
 
-            // Navigasi ke halaman utama
+            // Navigasi kembali ke layar utama (BottomNavBar)
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const BottomNavBar()),
               (route) => false,
             );
           } catch (e) {
+            // Tampilkan pesan kesalahan jika proses gagal
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Gagal menyelesaikan pesanan: $e')),
             );
           }
         },
+        // Gaya tombol dengan warna primer dan desain melengkung
         style: ElevatedButton.styleFrom(
           backgroundColor: kprimaryColor,
           shape: RoundedRectangleBorder(
@@ -589,6 +633,7 @@ class ShippingDetailsScreen extends StatelessWidget {
           minimumSize: const Size(double.infinity, 56),
           elevation: 2,
         ),
+        // Konten tombol dengan ikon tas belanja
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

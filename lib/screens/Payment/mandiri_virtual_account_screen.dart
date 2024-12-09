@@ -6,10 +6,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 import '../../constants.dart';
 
+// Widget StatefulWidget untuk layar pembayaran virtual account Mandiri
 class MandiriVirtualAccountScreen extends StatefulWidget {
-  final double amount;
-  final String orderNumber;
-  final VoidCallback onSuccess;
+  // Parameter yang diperlukan untuk inisialisasi layar
+  final double amount; // Jumlah pembayaran
+  final String orderNumber; // Nomor pesanan
+  final VoidCallback onSuccess; // Callback saat pembayaran berhasil
 
   const MandiriVirtualAccountScreen({
     Key? key,
@@ -23,50 +25,60 @@ class MandiriVirtualAccountScreen extends StatefulWidget {
       _MandiriVirtualAccountScreenState();
 }
 
+// State dari MandiriVirtualAccountScreen
 class _MandiriVirtualAccountScreenState
     extends State<MandiriVirtualAccountScreen> {
+  // Variabel untuk mengatur ekspansi instruksi pembayaran
   bool isExpanded = false;
+  
+  // Nomor virtual account yang statis
   final vaNumber = "8810 7000 1234 5678";
+  
+  // Inisialisasi instance Firestore dan Firebase Messaging
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final FirebaseMessaging messaging = FirebaseMessaging.instance;
 
   @override
   void initState() {
     super.initState();
+    // Mencatat transaksi saat layar pertama kali dimuat
     _logTransaction();
   }
 
+  // Fungsi untuk mencatat transaksi ke Firestore
   Future<void> _logTransaction() async {
     try {
       await firestore.collection('transactions').add({
         'orderNumber': widget.orderNumber,
         'amount': widget.amount,
         'vaNumber': vaNumber,
-        'status': 'pending',
-        'timestamp': FieldValue.serverTimestamp(),
+        'status': 'pending', // Status awal transaksi
+        'timestamp': FieldValue.serverTimestamp(), // Waktu server
       });
-      debugPrint("Transaction logged successfully!");
+      debugPrint("Transaksi berhasil dicatat!");
     } catch (e) {
-      debugPrint("Failed to log transaction: $e");
+      debugPrint("Gagal mencatat transaksi: $e");
     }
   }
 
+  // Fungsi untuk mengirim notifikasi pembayaran
   Future<void> _sendPaymentNotification() async {
     try {
       await messaging.sendMessage(
-        to: '/topics/payments',
+        to: '/topics/payments', // Topik untuk pembayaran
         data: {
           'orderNumber': widget.orderNumber,
           'amount': widget.amount.toString(),
-          'status': 'completed',
+          'status': 'completed', // Status pembayaran selesai
         },
       );
-      debugPrint("Payment notification sent successfully!");
+      debugPrint("Notifikasi pembayaran terkirim!");
     } catch (e) {
-      debugPrint("Failed to send payment notification: $e");
+      debugPrint("Gagal mengirim notifikasi pembayaran: $e");
     }
   }
 
+  // Fungsi untuk memformat mata uang dalam Rupiah
   String formatCurrency(double amount) {
     final formatter = NumberFormat.currency(
       locale: 'id_ID',
@@ -76,13 +88,18 @@ class _MandiriVirtualAccountScreenState
     return formatter.format(amount);
   }
 
+  // Fungsi untuk mendapatkan batas waktu pembayaran (24 jam dari sekarang)
   String getPaymentDeadline() {
     final deadline = DateTime.now().add(Duration(hours: 24));
     return DateFormat('HH:mm, d MMM yyyy').format(deadline);
   }
 
+  // Fungsi untuk menyalin nomor virtual account
   void _copyVANumber() {
+    // Menyalin nomor VA ke clipboard
     Clipboard.setData(ClipboardData(text: vaNumber));
+    
+    // Menampilkan snackbar konfirmasi
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -100,7 +117,7 @@ class _MandiriVirtualAccountScreenState
       ),
     );
 
-    // Simulate payment success
+    // Simulasi pembayaran berhasil setelah 10 detik
     Future.delayed(Duration(seconds: 10), () {
       if (mounted) {
         _markPaymentSuccess();
@@ -108,8 +125,10 @@ class _MandiriVirtualAccountScreenState
     });
   }
 
+  // Fungsi untuk menandai pembayaran sebagai berhasil
   Future<void> _markPaymentSuccess() async {
     try {
+      // Memperbarui status transaksi di Firestore
       await firestore
           .collection('transactions')
           .where('orderNumber', isEqualTo: widget.orderNumber)
@@ -120,8 +139,10 @@ class _MandiriVirtualAccountScreenState
         }
       });
 
+      // Mengirim notifikasi pembayaran
       _sendPaymentNotification();
 
+      // Menampilkan snackbar konfirmasi pembayaran berhasil
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -142,14 +163,16 @@ class _MandiriVirtualAccountScreenState
         );
       }
     } catch (e) {
-      debugPrint("Failed to mark payment success: $e");
+      debugPrint("Gagal menandai pembayaran berhasil: $e");
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Membangun struktur utama layar pembayaran
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
+      // AppBar dengan judul dan informasi pesanan
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,22 +202,26 @@ class _MandiriVirtualAccountScreenState
           onPressed: () => Navigator.pop(context),
         ),
       ),
+      // Body dengan scroll view yang berisi berbagai bagian informasi
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildAmountSection(),
+            _buildAmountSection(), // Bagian jumlah pembayaran
             SizedBox(height: 8),
-            _buildVirtualAccountSection(),
+            _buildVirtualAccountSection(), // Bagian nomor virtual account
             SizedBox(height: 8),
-            _buildPaymentInstructions(),
+            _buildPaymentInstructions(), // Bagian instruksi pembayaran
             SizedBox(height: 16),
-            _buildSupportSection(),
+            _buildSupportSection(), // Bagian dukungan
           ],
         ),
       ),
+      // Bottom bar dengan tombol aksi
       bottomNavigationBar: _buildBottomBar(),
     );
   }
+
+  // Widget untuk menampilkan bagian jumlah pembayaran
   Widget _buildAmountSection() {
     return Container(
       color: Colors.white,
@@ -217,15 +244,16 @@ class _MandiriVirtualAccountScreenState
                   ),
                   SizedBox(height: 4),
                   Text(
-                    formatCurrency(widget.amount),
+                    formatCurrency(widget.amount), // Memformat jumlah dalam Rupiah
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: kprimaryColor, // Mandiri Blue
+                      color: kprimaryColor, // Warna biru Mandiri
                     ),
                   ),
                 ],
               ),
+              // Penghitung waktu pembayaran
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
@@ -237,7 +265,7 @@ class _MandiriVirtualAccountScreenState
                     Icon(Icons.timer, size: 16, color: Colors.orange),
                     SizedBox(width: 4),
                     Text(
-                      getPaymentDeadline(),
+                      getPaymentDeadline(), // Mendapatkan batas waktu pembayaran
                       style: TextStyle(
                         color: Colors.orange,
                         fontWeight: FontWeight.w500,
@@ -253,6 +281,7 @@ class _MandiriVirtualAccountScreenState
     );
   }
 
+  // Widget untuk menampilkan bagian virtual account
   Widget _buildVirtualAccountSection() {
     return Container(
       color: Colors.white,
@@ -260,6 +289,7 @@ class _MandiriVirtualAccountScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Bagian header dengan logo dan nama bank
           Row(
             children: [
               Image.asset(
@@ -289,6 +319,7 @@ class _MandiriVirtualAccountScreenState
             ],
           ),
           SizedBox(height: 20),
+          // Container untuk menampilkan nomor virtual account
           Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -304,6 +335,7 @@ class _MandiriVirtualAccountScreenState
                   style: TextStyle(color: Colors.grey),
                 ),
                 SizedBox(height: 8),
+                // Baris untuk nomor VA dan tombol salin
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -316,7 +348,7 @@ class _MandiriVirtualAccountScreenState
                       ),
                     ),
                     InkWell(
-                      onTap: _copyVANumber,
+                      onTap: _copyVANumber, // Fungsi salin nomor VA
                       child: Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: 16,
@@ -355,6 +387,7 @@ class _MandiriVirtualAccountScreenState
     );
   }
 
+  // Widget untuk menampilkan instruksi pembayaran
   Widget _buildPaymentInstructions() {
     return Container(
       color: Colors.white,
@@ -370,6 +403,7 @@ class _MandiriVirtualAccountScreenState
             ),
           ),
           SizedBox(height: 16),
+          // Expansion tile untuk berbagai metode pembayaran
           _buildInstructionExpansionTile(
             'Internet Banking Mandiri',
             [
@@ -417,6 +451,7 @@ class _MandiriVirtualAccountScreenState
     );
   }
 
+  // Fungsi untuk membuat expansion tile instruksi pembayaran
   Widget _buildInstructionExpansionTile(
       String title, List<String> steps, IconData icon) {
     return Card(
@@ -427,9 +462,11 @@ class _MandiriVirtualAccountScreenState
         side: BorderSide(color: Colors.grey.shade200),
       ),
       child: Theme(
+        // Menghilangkan garis pembatas default pada expansion tile
         data: ThemeData().copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
-          leading: Icon(icon, color: kprimaryColor),
+          leading:
+              Icon(icon, color: kprimaryColor), // Ikon di sebelah kiri judul
           tilePadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           title: Text(
             title,
@@ -439,11 +476,13 @@ class _MandiriVirtualAccountScreenState
             ),
           ),
           children: [
+            // Daftar langkah-langkah instruksi
             Padding(
               padding: EdgeInsets.all(16),
               child: ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true, // Mengatur ukuran list sesuai konten
+                physics:
+                    NeverScrollableScrollPhysics(), // Mencegah scroll dalam list
                 itemCount: steps.length,
                 itemBuilder: (context, index) {
                   return Padding(
@@ -451,6 +490,7 @@ class _MandiriVirtualAccountScreenState
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Penomoran langkah dengan desain bulat
                         Container(
                           padding: EdgeInsets.all(6),
                           decoration: BoxDecoration(
@@ -467,6 +507,7 @@ class _MandiriVirtualAccountScreenState
                           ),
                         ),
                         SizedBox(width: 12),
+                        // Teks langkah instruksi
                         Expanded(
                           child: Text(
                             steps[index],
@@ -488,6 +529,7 @@ class _MandiriVirtualAccountScreenState
     );
   }
 
+  // Widget untuk menampilkan bagian dukungan/bantuan
   Widget _buildSupportSection() {
     return Container(
       color: Colors.white,
@@ -503,6 +545,7 @@ class _MandiriVirtualAccountScreenState
             ),
           ),
           SizedBox(height: 12),
+          // Baris dengan ikon headset dan teks panggilan
           Row(
             children: [
               Icon(Icons.headset_mic, color: kprimaryColor),
@@ -514,6 +557,7 @@ class _MandiriVirtualAccountScreenState
             ],
           ),
           SizedBox(height: 8),
+          // Nomor kontak bantuan
           Text(
             '14000',
             style: TextStyle(
@@ -527,11 +571,13 @@ class _MandiriVirtualAccountScreenState
     );
   }
 
+  // Widget untuk membangun bottom bar dengan tombol aksi
   Widget _buildBottomBar() {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
+        // Efek bayangan ringan
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -542,6 +588,7 @@ class _MandiriVirtualAccountScreenState
       ),
       child: Row(
         children: [
+          // Tombol "Lihat Pesanan" yang memenuhi lebar layar
           Expanded(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -551,6 +598,7 @@ class _MandiriVirtualAccountScreenState
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
+              // Memanggil callback onSuccess saat tombol ditekan
               onPressed: widget.onSuccess,
               child: Text(
                 'Lihat Pesanan',

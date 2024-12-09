@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../constants.dart';
 
+// Widget StatefulWidget untuk bilah pencarian dengan fitur filter
 class MySearchBAR extends StatefulWidget {
+  // Fungsi callback untuk aksi pencarian
   final Function(String) onSearch;
+  
+  // Fungsi callback untuk menerapkan filter
   final Function(Map<String, dynamic>) onApplyFilters;
+  
+  // Filter awal yang dapat digunakan saat inisialisasi
   final Map<String, dynamic>? initialFilters;
 
   const MySearchBAR({
@@ -18,51 +24,63 @@ class MySearchBAR extends StatefulWidget {
   State<MySearchBAR> createState() => _MySearchBARState();
 }
 
+// Kelas state untuk mengelola logika dan antarmuka bilah pencarian
 class _MySearchBARState extends State<MySearchBAR>
     with SingleTickerProviderStateMixin {
+  // Pengontrol teks untuk input pencarian
   final TextEditingController _searchController = TextEditingController();
+  
+  // Node fokus untuk mengatur fokus pada input pencarian
   final FocusNode _searchFocusNode = FocusNode();
+  
+  // Flag untuk menampilkan tombol hapus
   bool _showClearButton = false;
+  
+  // Pengontrol animasi untuk efek pulse
   late AnimationController _animationController;
+  
+  // Animasi untuk efek pulse
   late Animation<double> _pulseAnimation;
 
-  // Filter state
-  late String selectedCategory;
-  late String selectedShipping;
-  late List<String> selectedFeatures;
-  int? minPrice;
-  int? maxPrice;
+  // State filter
+  late String selectedCategory;    // Kategori yang dipilih
+  late String selectedShipping;    // Pengiriman yang dipilih
+  late List<String> selectedFeatures;  // Fitur yang dipilih
+  int? minPrice;  // Harga minimum
+  int? maxPrice;  // Harga maksimum
 
   @override
   void initState() {
     super.initState();
 
-    // Initialize filter state from initial filters
+    // Inisialisasi state filter dari filter awal yang diberikan
     selectedCategory = widget.initialFilters?['category'] ?? "Semua";
     selectedShipping = widget.initialFilters?['shipping'] ?? "Semua";
-    selectedFeatures =
-        List<String>.from(widget.initialFilters?['features'] ?? []);
+    selectedFeatures = List<String>.from(widget.initialFilters?['features'] ?? []);
     minPrice = widget.initialFilters?['minPrice'];
     maxPrice = widget.initialFilters?['maxPrice'];
 
+    // Tambahkan listener untuk mengontrol visibilitas tombol hapus
     _searchController.addListener(() {
       setState(() {
         _showClearButton = _searchController.text.isNotEmpty;
       });
     });
 
-    // Tambahkan kembali AnimationController untuk pulse effect
+    // Konfigurasi AnimationController untuk efek pulse
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
 
+    // Buat animasi pulse dengan skala antara 1.0 dan 1.05
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: Curves.easeInOut,
       ),
     )..addStatusListener((status) {
+        // Balik animasi maju dan mundur untuk efek pulse berkelanjutan
         if (status == AnimationStatus.completed) {
           _animationController.reverse();
         } else if (status == AnimationStatus.dismissed) {
@@ -70,9 +88,11 @@ class _MySearchBARState extends State<MySearchBAR>
         }
       });
 
+    // Mulai animasi
     _animationController.forward();
   }
 
+  // Metode untuk menerapkan filter yang dipilih
   void _applyFilters() {
     final filters = {
       "category": selectedCategory,
@@ -85,6 +105,7 @@ class _MySearchBARState extends State<MySearchBAR>
     Navigator.pop(context);
   }
 
+  // Metode untuk menampilkan bottom sheet filter
   void _showFilterBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -219,6 +240,7 @@ class _MySearchBARState extends State<MySearchBAR>
     );
   }
 
+  // Widget untuk membuat bagian filter dengan pilihan tunggal
   Widget _buildFilterSection(String title, List<String> options,
       ValueChanged<String> onChanged, String selectedOption) {
     return Column(
@@ -265,6 +287,7 @@ class _MySearchBARState extends State<MySearchBAR>
     );
   }
 
+  // Widget untuk membuat bagian filter dengan pilihan multi-select
   Widget _buildMultiSelectFilterSection(String title, List<String> options,
       ValueChanged<String> onSelected, List<String> selectedOptions) {
     return Column(
@@ -313,6 +336,7 @@ class _MySearchBARState extends State<MySearchBAR>
     );
   }
 
+  // Widget untuk membuat filter rentang harga
   Widget _buildPriceRangeFilter(StateSetter setModalState) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -402,9 +426,11 @@ class _MySearchBARState extends State<MySearchBAR>
 
   @override
   Widget build(BuildContext context) {
+    // Gunakan AnimatedBuilder untuk animasi pulse
     return AnimatedBuilder(
       animation: _pulseAnimation,
       builder: (context, child) {
+        // Transform untuk skala animasi
         return Transform.scale(
           scale: _searchController.text.isEmpty ? _pulseAnimation.value : 1.0,
           child: Container(
@@ -452,6 +478,7 @@ class _MySearchBARState extends State<MySearchBAR>
                     onChanged: widget.onSearch,
                   ),
                 ),
+                // Tampilkan tombol hapus jika teks tidak kosong
                 if (_showClearButton)
                   IconButton(
                     icon: Icon(
@@ -463,6 +490,7 @@ class _MySearchBARState extends State<MySearchBAR>
                       _searchFocusNode.unfocus();
                     },
                   ),
+                // Tombol filter
                 IconButton(
                   onPressed: _showFilterBottomSheet,
                   icon: Icon(
@@ -477,6 +505,7 @@ class _MySearchBARState extends State<MySearchBAR>
           ),
         );
       },
+      // Tambahkan animasi fade in saat widget dimuat
     ).animate().fadeIn(
           duration: const Duration(milliseconds: 500),
         );
@@ -484,9 +513,17 @@ class _MySearchBARState extends State<MySearchBAR>
 
   @override
   void dispose() {
-   _animationController.dispose();
-  _searchController.dispose();
-  _searchFocusNode.dispose();
-  super.dispose();
+    // Pembersihan sumber daya
+    // Hapus AnimationController
+    _animationController.dispose();
+
+    // Hapus TextEditingController
+    _searchController.dispose();
+
+    // Hapus FocusNode
+    _searchFocusNode.dispose();
+
+    // Panggil dispose dari parent class
+    super.dispose();
   }
 }

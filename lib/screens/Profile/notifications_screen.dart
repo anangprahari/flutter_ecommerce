@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ecommerce_mobile_app/constants.dart';
 
+// Model untuk menyimpan informasi notifikasi
 class NotificationItem {
-  final String title;
-  final String message;
-  final DateTime timestamp;
-  final NotificationType type;
-  bool isRead; // Make this mutable
-  final String? imageUrl;
-  final String? actionUrl;
-  final double? price;
-  final String? orderId;
+  final String title; // Judul notifikasi
+  final String message; // Pesan notifikasi
+  final DateTime timestamp; // Waktu notifikasi
+  final NotificationType type; // Tipe notifikasi
+  bool isRead; // Status baca notifikasi
+  final String? imageUrl; // URL gambar opsional
+  final String? actionUrl; // URL aksi opsional
+  final double? price; // Harga opsional
+  final String? orderId; // Nomor pesanan opsional
 
   NotificationItem({
     required this.title,
@@ -26,19 +27,21 @@ class NotificationItem {
   });
 }
 
+// Enum untuk kategori tipe notifikasi
 enum NotificationType {
-  promo,
-  order,
-  payment,
-  account,
-  delivery,
-  wishlist,
-  review,
-  restock,
-  price_alert,
-  reward
+  promo, // Promosi
+  order, // Pesanan
+  payment, // Pembayaran
+  account, // Akun
+  delivery, // Pengiriman
+  wishlist, // Daftar keinginan
+  review, // Ulasan
+  restock, // Stok ulang
+  price_alert, // Alert harga
+  reward // Reward
 }
 
+// Widget layar utama notifikasi
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({Key? key}) : super(key: key);
 
@@ -48,10 +51,16 @@ class NotificationsScreen extends StatefulWidget {
 
 class _NotificationsScreenState extends State<NotificationsScreen>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+  // Kontroler untuk tab
+    late TabController _tabController;
+
+  // Status loading
   bool _isLoading = false;
+
+  // Waktu terakhir diperbarui
   DateTime? _lastUpdated;
 
+  // Daftar notifikasi contoh
   final List<NotificationItem> notifications = [
     // Promo Notifications
     NotificationItem(
@@ -162,6 +171,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     ),
   ];
 
+  // Pengaturan notifikasi default
   final Map<NotificationType, bool> _notificationSettings = {
     NotificationType.promo: true,
     NotificationType.order: true,
@@ -178,10 +188,13 @@ class _NotificationsScreenState extends State<NotificationsScreen>
   @override
   void initState() {
     super.initState();
+    // Inisialisasi kontroler tab dengan 2 tab
     _tabController = TabController(length: 2, vsync: this);
+    // Set waktu terakhir diperbarui ke waktu sekarang
     _lastUpdated = DateTime.now();
   }
 
+  // Mendapatkan ikon berdasarkan tipe notifikasi
   IconData _getNotificationIcon(NotificationType type) {
     switch (type) {
       case NotificationType.promo:
@@ -207,6 +220,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     }
   }
 
+  // Mendapatkan warna berdasarkan tipe notifikasi
   Color _getNotificationColor(NotificationType type) {
     switch (type) {
       case NotificationType.promo:
@@ -232,12 +246,13 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     }
   }
 
+  // Fungsi untuk menyegarkan notifikasi (simulasi pemanggilan API)
   Future<void> _refreshNotifications() async {
     setState(() {
       _isLoading = true;
     });
 
-    // Simulate API call
+     // Simulasi penundaan untuk memperlihatkan loading
     await Future.delayed(const Duration(seconds: 2));
 
     setState(() {
@@ -246,19 +261,21 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     });
   }
 
-  // Fix the mark all as read function
+  // Menandai semua notifikasi sebagai sudah dibaca
   void _markAllAsRead() {
     setState(() {
       for (var notification in notifications) {
         notification.isRead = true;
       }
     });
+     // Tampilkan pesan konfirmasi
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
           content: Text('Semua notifikasi telah ditandai sebagai dibaca')),
     );
   }
 
+  // Menghapus semua notifikasi dengan konfirmasi dialog
   void _deleteAllNotifications() {
     showDialog(
       context: context,
@@ -266,10 +283,12 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         title: const Text('Hapus Semua Notifikasi'),
         content: const Text('Anda yakin ingin menghapus semua notifikasi?'),
         actions: [
+           // Tombol batal
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Batal'),
           ),
+           // Tombol konfirmasi hapus
           TextButton(
             onPressed: () {
               setState(() {
@@ -290,6 +309,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // App Bar dengan judul, waktu terakhir diperbarui, dan aksi
       appBar: AppBar(
         elevation: 0,
         title: Column(
@@ -315,6 +335,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         backgroundColor: kprimaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
+          // Tombol tandai semua sebagai dibaca
           IconButton(
             icon: const Icon(
               Icons.done_all_outlined,
@@ -323,6 +344,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
             onPressed: _markAllAsRead,
             tooltip: 'Tandai semua sebagai dibaca',
           ),
+           // Menu popup untuk opsi tambahan
           PopupMenuButton(
             icon: const Icon(
               Icons.more_vert,
@@ -341,6 +363,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
             },
           ),
         ],
+        // Tab bar untuk navigasi antara semua notifikasi dan pengaturan
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
@@ -353,6 +376,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
           ],
         ),
       ),
+       // Isi layar dengan tab view
       body: TabBarView(
         controller: _tabController,
         children: [
@@ -363,9 +387,11 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     );
   }
 
+    // Widget untuk membangun daftar notifikasi
   Widget _buildNotificationsList() {
     return RefreshIndicator(
       onRefresh: _refreshNotifications,
+      // Tampilan jika tidak ada notifikasi
       child: notifications.isEmpty
           ? Center(
               child: Column(
@@ -387,6 +413,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                 ],
               ),
             )
+            // Daftar notifikasi dengan kemampuan geser hapus
           : Stack(
               children: [
                 ListView.builder(
@@ -396,6 +423,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                     final notification = notifications[index];
                     return Dismissible(
                       key: Key(notification.timestamp.toString()),
+                        // Latar belakang saat menggeser untuk menghapus
                       background: Container(
                         decoration: BoxDecoration(
                           color: Colors.red,
@@ -409,6 +437,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                         ),
                       ),
                       direction: DismissDirection.endToStart,
+                      // Aksi saat notifikasi dihapus
                       onDismissed: (direction) {
                         setState(() {
                           notifications.removeAt(index);
@@ -420,6 +449,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                           ),
                         );
                       },
+                      // Kartu notifikasi dengan desain khusus
                       child: Card(
                         elevation: 0,
                         margin: const EdgeInsets.only(bottom: 12),
@@ -431,9 +461,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                         ),
                         child: InkWell(
                           onTap: () {
-                            // Handle notification tap
+                           // Handle notifikasi ketika diklik
                             if (notification.actionUrl != null) {
-                              // Navigate to action URL
+                               // Navigasi ke URL aksi
                             }
                           },
                           borderRadius: BorderRadius.circular(12),
@@ -614,6 +644,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                     );
                   },
                 ),
+                  // Indikator loading
                 if (_isLoading)
                   Container(
                     color: Colors.black12,
@@ -625,13 +656,14 @@ class _NotificationsScreenState extends State<NotificationsScreen>
             ),
     );
   }
-
+   // Widget untuk membangun pengaturan notifikasi
   Widget _buildNotificationSettings() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+           // Kartu pengaturan tipe notifikasi
           Card(
             elevation: 0,
             shape: RoundedRectangleBorder(
@@ -640,6 +672,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
             ),
             child: Column(
               children: [
+                // Pengaturan untuk berbagai tipe notifikasi
                 _buildSettingsTile(
                   title: 'Promo & Diskon',
                   subtitle: 'Info promo, flash sale, dan voucher terbaru',
@@ -803,7 +836,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
       ),
     );
   }
-
+  // Widget untuk membuat setelan notifikasi individual
   Widget _buildSettingsTile({
     required String title,
     required String subtitle,
@@ -820,6 +853,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
           color: Colors.grey[600],
         ),
       ),
+      // Ikon dengan latar belakang berwarna
       secondary: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -832,11 +866,13 @@ class _NotificationsScreenState extends State<NotificationsScreen>
           size: 24,
         ),
       ),
+       // Pengaturan status aktif/nonaktif notifikasi
       value: _notificationSettings[type] ?? false, // Provide default value
       onChanged: (bool value) {
         setState(() {
           _notificationSettings[type] = value;
         });
+          // Tampilkan pesan konfirmasi perubahan
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -852,24 +888,42 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     );
   }
 
-  String _formatTimestamp(DateTime timestamp) {
-    final now = DateTime.now();
-    final difference = now.difference(timestamp);
-
-    if (difference.inMinutes < 60) {
-      return '${difference.inMinutes} menit yang lalu';
-    } else if (difference.inHours < 24) {
-      return '${difference.inHours} jam yang lalu';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} hari yang lalu';
-    } else {
-      return DateFormat('dd MMM yyyy').format(timestamp);
-    }
+  // Fungsi untuk memformat timestamp menjadi string yang ramah baca
+// Menerima input DateTime dan mengembalikan string representasi waktu
+String _formatTimestamp(DateTime timestamp) {
+  // Dapatkan waktu saat ini
+  final now = DateTime.now();
+  
+  // Hitung selisih waktu antara waktu saat ini dan timestamp
+  final difference = now.difference(timestamp);
+  
+  // Jika selisih kurang dari 60 menit, tampilkan dalam menit
+  if (difference.inMinutes < 60) {
+    return '${difference.inMinutes} menit yang lalu';
+  } 
+  // Jika selisih kurang dari 24 jam, tampilkan dalam jam
+  else if (difference.inHours < 24) {
+    return '${difference.inHours} jam yang lalu';
+  } 
+  // Jika selisih kurang dari 7 hari, tampilkan dalam hari
+  else if (difference.inDays < 7) {
+    return '${difference.inDays} hari yang lalu';
+  } 
+  // Jika selisih lebih dari 7 hari, tampilkan tanggal lengkap
+  else {
+    // Gunakan DateFormat untuk memformat tanggal dalam format "dd MMM yyyy"
+    return DateFormat('dd MMM yyyy').format(timestamp);
   }
+}
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+// Override method dispose untuk membersihkan sumber daya
+// Penting untuk mencegah memory leak pada controller
+@override
+void dispose() {
+  // Dispose tab controller untuk membersihkan sumber daya
+  _tabController.dispose();
+  
+  // Panggil method dispose dari parent class
+  super.dispose();
+}
 }

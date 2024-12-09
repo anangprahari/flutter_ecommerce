@@ -8,6 +8,7 @@ import '../Provider/user_provider.dart';
 import 'nav_bar_screen.dart';
 import '../constants.dart';
 
+// Kelas StatefulWidget untuk layar entri profil pengguna
 class ProfileEntryScreen extends StatefulWidget {
   const ProfileEntryScreen({Key? key}) : super(key: key);
 
@@ -16,7 +17,10 @@ class ProfileEntryScreen extends StatefulWidget {
 }
 
 class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
+  // Kunci global untuk form validasi
   final _formKey = GlobalKey<FormState>();
+
+  // Controller untuk mengelola input teks berbagai field
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
@@ -24,26 +28,34 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
+  // Variabel untuk menyimpan jenis kelamin yang dipilih
   String _selectedGender = '';
+
+  // Flag untuk status validasi form
   bool _isFormValid = false;
 
   @override
   void initState() {
     super.initState();
+    // Memuat data pengguna yang sudah ada saat inisialisasi
     _loadExistingUserData();
+    // Menyiapkan validasi form
     _setupFormValidation();
   }
 
-   Future<void> _loadExistingUserData() async {
+  // Fungsi untuk memuat data pengguna yang sudah ada dari Firestore
+  Future<void> _loadExistingUserData() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
+        // Mengambil dokumen pengguna dari Firestore
         final userData = await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
             .get();
 
         if (userData.exists) {
+          // Memperbarui state dengan data yang ada
           setState(() {
             _nameController.text = userData.get('name') ?? '';
             _addressController.text = userData.get('address') ?? '';
@@ -60,13 +72,16 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
     }
   }
 
+  // Fungsi untuk menyiapkan validasi form secara dinamis
   void _setupFormValidation() {
     void validateForm() {
       setState(() {
+        // Memperbarui status validasi form
         _isFormValid = _formKey.currentState?.validate() ?? false;
       });
     }
 
+    // Menambahkan listener untuk setiap controller
     _nameController.addListener(validateForm);
     _addressController.addListener(validateForm);
     _bioController.addListener(validateForm);
@@ -77,6 +92,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
 
   @override
   void dispose() {
+    // Membersihkan semua controller saat widget dihapus
     _nameController.dispose();
     _addressController.dispose();
     _bioController.dispose();
@@ -86,6 +102,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
     super.dispose();
   }
 
+  // Fungsi untuk memilih tanggal lahir menggunakan date picker
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -93,6 +110,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       builder: (context, child) {
+        // Kustomisasi tema date picker
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
@@ -108,12 +126,14 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
     );
 
     if (picked != null) {
+      // Memperbarui controller dengan tanggal yang dipilih
       setState(() {
         _birthDateController.text = DateFormat('dd/MM/yyyy').format(picked);
       });
     }
   }
 
+  // Validasi format email
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email tidak boleh kosong';
@@ -125,6 +145,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
     return null;
   }
 
+  // Validasi nomor telepon
   String? _validatePhone(String? value) {
     if (value == null || value.isEmpty) {
       return 'Nomor telepon tidak boleh kosong';
@@ -137,8 +158,10 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Membangun tampilan layar entri profil
     return Scaffold(
       backgroundColor: Colors.white,
+      // AppBar dengan judul
       appBar: AppBar(
         title: const Text(
           "Masukkan Data Pribadi",
@@ -152,6 +175,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
+      // Body form dengan scroll view
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -159,23 +183,23 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfoCard(),
+              _buildInfoCard(), // Kartu informasi
               const SizedBox(height: 20),
-              _buildNameField(),
+              _buildNameField(), // Field nama
               const SizedBox(height: 16),
-              _buildAddressField(),
+              _buildAddressField(), // Field alamat
               const SizedBox(height: 16),
-              _buildBioField(),
+              _buildBioField(), // Field bio
               const SizedBox(height: 16),
-              _buildGenderSelector(),
+              _buildGenderSelector(), // Selector jenis kelamin
               const SizedBox(height: 16),
-              _buildDateField(),
+              _buildDateField(), // Field tanggal lahir
               const SizedBox(height: 16),
-              _buildPhoneField(),
+              _buildPhoneField(), // Field nomor telepon
               const SizedBox(height: 16),
-              _buildEmailField(),
+              _buildEmailField(), // Field email
               const SizedBox(height: 24),
-              _buildSubmitButton(),
+              _buildSubmitButton(), // Tombol submit
             ],
           ),
         ),
@@ -183,6 +207,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
     );
   }
 
+  // Widget kartu informasi
   Widget _buildInfoCard() {
     return Container(
       padding: const EdgeInsets.all(16.0),
@@ -210,6 +235,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
     );
   }
 
+  // Widget field nama lengkap
   Widget _buildNameField() {
     return TextFormField(
       controller: _nameController,
@@ -228,6 +254,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
     );
   }
 
+  // Widget field alamat
   Widget _buildAddressField() {
     return TextFormField(
       controller: _addressController,
@@ -246,6 +273,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
     );
   }
 
+  // Widget field bio
   Widget _buildBioField() {
     return TextFormField(
       controller: _bioController,
@@ -259,6 +287,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
     );
   }
 
+  // Widget selector jenis kelamin
   Widget _buildGenderSelector() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -294,6 +323,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
     );
   }
 
+  // Widget opsi jenis kelamin
   Widget _buildGenderOption({
     required String title,
     required String value,
@@ -339,6 +369,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
     );
   }
 
+  // Widget field tanggal lahir
   Widget _buildDateField() {
     return TextFormField(
       controller: _birthDateController,
@@ -360,6 +391,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
     );
   }
 
+  // Widget field nomor telepon
   Widget _buildPhoneField() {
     return TextFormField(
       controller: _phoneNumberController,
@@ -377,6 +409,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
     );
   }
 
+  // Widget field email
   Widget _buildEmailField() {
     return TextFormField(
       controller: _emailController,
@@ -390,6 +423,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
     );
   }
 
+  // Widget tombol submit
   Widget _buildSubmitButton() {
     return SizedBox(
       width: double.infinity,
@@ -409,7 +443,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
                   final user = FirebaseAuth.instance.currentUser;
                   if (user != null) {
                     try {
-                      // Save user data to Firestore
+                      // Simpan data pengguna ke Firestore
                       await FirebaseFirestore.instance
                           .collection('users')
                           .doc(user.uid)
@@ -423,7 +457,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
                         'email': _emailController.text,
                       }, SetOptions(merge: true));
 
-                      // Update UserProvider
+                      // Perbarui UserProvider
                       Provider.of<UserProvider>(context, listen: false)
                           .setUserData(
                         name: _nameController.text,
@@ -435,6 +469,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
                         email: _emailController.text,
                       );
 
+                      // Navigasi ke layar navbar utama dan menghapus riwayat navigasi sebelumnya
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
@@ -442,6 +477,7 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
                         (route) => false,
                       );
                     } catch (e) {
+                      // Menampilkan pesan error jika penyimpanan profil gagal
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                             content:
@@ -463,37 +499,56 @@ class _ProfileEntryScreenState extends State<ProfileEntryScreen> {
     );
   }
 
+  // Fungsi untuk membuat dekorasi input standar
   InputDecoration _buildInputDecoration(
     String label,
     IconData icon,
     String hint,
   ) {
     return InputDecoration(
+      // Label teks di atas input
       labelText: label,
+      // Petunjuk teks di dalam input
       hintText: hint,
+      // Ikon prefix di sebelah kiri input
       prefixIcon: Icon(icon, color: kprimaryColor),
+
+      // Gaya untuk label teks
       labelStyle: TextStyle(color: Colors.grey[700]),
+      // Gaya untuk petunjuk teks
       hintStyle: TextStyle(color: Colors.grey[400]),
+
+      // Border default
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(color: Colors.grey[300]!),
       ),
+
+      // Border saat input aktif namun tidak difokus
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(color: Colors.grey[300]!),
       ),
+
+      // Border saat input difokus
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(color: kprimaryColor, width: 2),
       ),
+
+      // Border saat terjadi error
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: Colors.red, width: 1),
       ),
+
+      // Border saat error dan difokus
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: Colors.red, width: 2),
       ),
+
+      // Mengisi background input
       filled: true,
       fillColor: Colors.grey[50],
     );

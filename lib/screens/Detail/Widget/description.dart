@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:ecommerce_mobile_app/models/product_model.dart';
 import 'package:ecommerce_mobile_app/constants.dart';
 
+// Widget stateful untuk menampilkan deskripsi, spesifikasi, dan informasi pengiriman produk
 class Description extends StatefulWidget {
+  // Produk yang akan ditampilkan detailnya
   final Product product;
 
+  // Konstruktor dengan parameter produk yang wajib diisi
   const Description({Key? key, required this.product}) : super(key: key);
 
   @override
@@ -13,20 +16,31 @@ class Description extends StatefulWidget {
 
 class _DescriptionState extends State<Description>
     with SingleTickerProviderStateMixin {
+  // Variabel untuk melacak tab yang dipilih saat ini
   int selectedTab = 0;
+
+  // Kontroler untuk mengatur tab
   late TabController _tabController;
+
+  // Daftar label tab dalam bahasa Indonesia
   final List<String> _tabs = ["Deskripsi", "Spesifikasi", "Pengiriman"];
+
+  // Kontroler scroll untuk mengatur posisi scroll
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    // Inisialisasi kontroler tab dengan 3 tab
     _tabController = TabController(length: 3, vsync: this);
+    
+    // Tambahkan listener untuk mengupdate state saat tab berubah
     _tabController.addListener(() {
       setState(() {
         selectedTab = _tabController.index;
       });
-      // Add smooth scroll to top when tab changes
+      
+      // Tambahkan animasi scroll ke atas saat tab berubah
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           0,
@@ -39,6 +53,7 @@ class _DescriptionState extends State<Description>
 
   @override
   void dispose() {
+    // Bersihkan kontroler tab dan scroll saat widget dihapus
     _tabController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -46,22 +61,29 @@ class _DescriptionState extends State<Description>
 
   @override
   Widget build(BuildContext context) {
+    // Widget utama dengan scroll yang dapat digulir
     return SingleChildScrollView(
       controller: _scrollController,
       physics: const BouncingScrollPhysics(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Bangun custom tab bar
           _buildCustomTabBar(),
           const SizedBox(height: 24),
+          
+          // Bangun konten tab yang dipilih
           _buildTabContent(),
           const SizedBox(height: 24),
+          
+          // Tampilkan informasi tambahan hanya jika tab deskripsi dipilih
           if (selectedTab == 0) _buildAdditionalInfo(),
         ],
       ),
     );
   }
 
+  // Metode untuk membuat custom tab bar dengan desain khusus
   Widget _buildCustomTabBar() {
     return Container(
       height: 56,
@@ -79,6 +101,7 @@ class _DescriptionState extends State<Description>
       ),
       child: TabBar(
         controller: _tabController,
+        // Indikator tab dengan gradien warna primer
         indicator: BoxDecoration(
           borderRadius: BorderRadius.circular(28),
           gradient: LinearGradient(
@@ -106,11 +129,13 @@ class _DescriptionState extends State<Description>
           fontWeight: FontWeight.w500,
           fontSize: 14,
         ),
+        // Buat tab dari daftar label
         tabs: _tabs.map((tab) => _buildTab(tab)).toList(),
       ),
     );
   }
 
+  // Metode untuk membuat desain individual tab
   Widget _buildTab(String text) {
     return Tab(
       child: Container(
@@ -125,9 +150,11 @@ class _DescriptionState extends State<Description>
     );
   }
 
+  // Metode untuk membuat konten tab dengan animasi transisi
   Widget _buildTabContent() {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 400),
+      // Kustomisasi transisi fade dan slide
       transitionBuilder: (Widget child, Animation<double> animation) {
         return FadeTransition(
           opacity: animation,
@@ -148,6 +175,7 @@ class _DescriptionState extends State<Description>
     );
   }
 
+  // Metode untuk memilih konten berdasarkan tab yang aktif
   Widget _buildSelectedContent() {
     switch (selectedTab) {
       case 0:
@@ -161,11 +189,13 @@ class _DescriptionState extends State<Description>
     }
   }
 
+  // Metode untuk membangun konten deskripsi produk
   Widget _buildDescription() {
     return _buildContentCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header dengan ikon dan judul
           Row(
             children: [
               Container(
@@ -192,6 +222,7 @@ class _DescriptionState extends State<Description>
             ],
           ),
           const SizedBox(height: 20),
+          // Teks deskripsi produk
           Text(
             widget.product.description,
             style: const TextStyle(
@@ -206,11 +237,13 @@ class _DescriptionState extends State<Description>
     );
   }
 
+  // Metode untuk membangun konten spesifikasi produk
   Widget _buildSpecifications() {
     return _buildContentCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header dengan ikon dan judul
           Row(
             children: [
               Container(
@@ -237,6 +270,7 @@ class _DescriptionState extends State<Description>
             ],
           ),
           const SizedBox(height: 20),
+          // Bangun daftar spesifikasi dengan animasi
           ...widget.product.specifications.asMap().entries.map(
                 (entry) => _buildSpecificationItem(
                   entry.value,
@@ -248,6 +282,7 @@ class _DescriptionState extends State<Description>
     );
   }
 
+  // Metode untuk membuat item spesifikasi dengan animasi
   Widget _buildSpecificationItem(String spec, int index) {
     return TweenAnimationBuilder<double>(
       duration: Duration(milliseconds: 400 + (index * 100)),
@@ -261,6 +296,7 @@ class _DescriptionState extends State<Description>
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Row(
                 children: [
+                  // Ikon centang untuk setiap spesifikasi
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -274,6 +310,7 @@ class _DescriptionState extends State<Description>
                     ),
                   ),
                   const SizedBox(width: 12),
+                  // Teks spesifikasi
                   Expanded(
                     child: Text(
                       spec,
@@ -293,11 +330,13 @@ class _DescriptionState extends State<Description>
     );
   }
 
+  // Metode untuk membangun konten informasi pengiriman
   Widget _buildShipping() {
     return _buildContentCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header dengan ikon dan judul
           Row(
             children: [
               Container(
@@ -324,6 +363,7 @@ class _DescriptionState extends State<Description>
             ],
           ),
           const SizedBox(height: 20),
+          // Tampilkan fitur pengiriman berdasarkan properti produk
           if (widget.product.freeShipping)
             _buildShippingFeature(
               icon: Icons.local_shipping_outlined,
@@ -351,6 +391,7 @@ class _DescriptionState extends State<Description>
     );
   }
 
+  // Metode untuk membuat kartu fitur pengiriman
   Widget _buildShippingFeature({
     required IconData icon,
     required String title,
@@ -377,6 +418,7 @@ class _DescriptionState extends State<Description>
       ),
       child: Row(
         children: [
+          // Ikon dengan warna sesuai fitur
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -386,6 +428,7 @@ class _DescriptionState extends State<Description>
             child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(width: 16),
+          // Judul dan subjudul fitur
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -416,6 +459,7 @@ class _DescriptionState extends State<Description>
     );
   }
 
+  // Metode untuk membuat kartu konten dengan bayangan
   Widget _buildContentCard({required Widget child}) {
     return Container(
       width: double.infinity,
@@ -435,12 +479,14 @@ class _DescriptionState extends State<Description>
     );
   }
 
+  // Metode untuk membangun informasi tambahan (hanya ditampilkan di tab deskripsi)
   Widget _buildAdditionalInfo() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Judul bagian informasi tambahan
           const Text(
             "Informasi Tambahan",
             style: TextStyle(
@@ -450,12 +496,14 @@ class _DescriptionState extends State<Description>
             ),
           ),
           const SizedBox(height: 16),
+          // Kartu informasi ketersediaan produk
           _buildInfoCard(
             icon: Icons.shopping_bag_outlined,
             title: "Tersedia",
             subtitle: "Siap dikirim",
             color: Colors.green,
           ),
+          // Kartu informasi keaslian produk
           _buildInfoCard(
             icon: Icons.verified_outlined,
             title: "Produk Asli",
@@ -467,6 +515,7 @@ class _DescriptionState extends State<Description>
     );
   }
 
+  // Metode untuk membuat kartu informasi dengan ikon, judul, dan subjudul
   Widget _buildInfoCard({
     required IconData icon,
     required String title,
@@ -489,6 +538,7 @@ class _DescriptionState extends State<Description>
       ),
       child: Row(
         children: [
+          // Kontainer ikon dengan latar belakang berwarna
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -502,6 +552,7 @@ class _DescriptionState extends State<Description>
             ),
           ),
           const SizedBox(width: 12),
+          // Kolom judul dan subjudul
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

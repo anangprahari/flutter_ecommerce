@@ -5,10 +5,13 @@ import 'package:ecommerce_mobile_app/screens/Detail/detail_screen.dart';
 import 'package:intl/intl.dart';
 import '../../../constants.dart';
 
+// Widget StatefulWidget untuk kartu produk yang dapat diinteraksi
 class ProductCard extends StatefulWidget {
+  // Parameter produk dan harga yang diformat
   final Product product;
   final String priceFormatted;
 
+  // Konstruktor dengan parameter wajib
   const ProductCard({
     Key? key,
     required this.product,
@@ -21,9 +24,12 @@ class ProductCard extends StatefulWidget {
 
 class _ProductCardState extends State<ProductCard>
     with SingleTickerProviderStateMixin {
+  // Kontroler animasi untuk efek sentuhan
   late AnimationController _controller;
+  // Animasi skala untuk efek menekan kartu
   late Animation<double> _scaleAnimation;
 
+  // Fungsi untuk memformat harga dalam mata uang Rupiah
   String formatRupiah(double price) {
     final formatter =
         NumberFormat.currency(locale: 'id_ID', symbol: 'Rp', decimalDigits: 0);
@@ -33,10 +39,12 @@ class _ProductCardState extends State<ProductCard>
   @override
   void initState() {
     super.initState();
+    // Inisialisasi kontroler animasi dengan durasi 200 milidetik
     _controller = AnimationController(
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
+    // Membuat animasi skala dengan rentang 1.0 ke 0.95
     _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
@@ -44,23 +52,30 @@ class _ProductCardState extends State<ProductCard>
 
   @override
   void dispose() {
+    // Membersihkan kontroler animasi untuk mencegah memory leak
     _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Mendapatkan provider favorit dari konteks
     final provider = FavoriteProvider.of(context);
+    // Mendapatkan lebar layar perangkat
     final screenWidth = MediaQuery.of(context).size.width;
-    // Menghitung ukuran yang responsif berdasarkan lebar layar
-    final cardWidth = (screenWidth - 32) /
-        2; // Mengasumsikan padding horizontal 16 di kedua sisi
-    final imageHeight = cardWidth * 0.9; // Rasio aspek yang lebih kecil
+
+    // Menghitung lebar kartu secara responsif
+    final cardWidth = (screenWidth - 32) / 2;
+    // Menghitung tinggi gambar dengan rasio aspek
+    final imageHeight = cardWidth * 0.9;
 
     return GestureDetector(
+      // Animasi ketika kartu ditekan
       onTapDown: (_) => _controller.forward(),
       onTapUp: (_) => _controller.reverse(),
       onTapCancel: () => _controller.reverse(),
+
+      // Navigasi ke halaman detail produk saat kartu diklik
       onTap: () {
         Navigator.push(
           context,
@@ -69,11 +84,14 @@ class _ProductCardState extends State<ProductCard>
           ),
         );
       },
+
+      // Widget pembungkus animasi skala
       child: AnimatedBuilder(
         animation: _scaleAnimation,
         builder: (context, child) => Transform.scale(
           scale: _scaleAnimation.value,
           child: Container(
+            // Desain kontainer kartu produk
             width: cardWidth,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -91,8 +109,10 @@ class _ProductCardState extends State<ProductCard>
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Tumpukan gambar produk dan fitur tambahan
                 Stack(
                   children: [
+                    // Kontainer gambar produk
                     Container(
                       height: imageHeight,
                       width: double.infinity,
@@ -103,6 +123,7 @@ class _ProductCardState extends State<ProductCard>
                         ),
                       ),
                       child: Hero(
+                        // Efek transisi gambar antar layar
                         tag: widget.product.image,
                         child: ClipRRect(
                           borderRadius: const BorderRadius.vertical(
@@ -115,6 +136,8 @@ class _ProductCardState extends State<ProductCard>
                         ),
                       ),
                     ),
+
+                    // Label diskon (jika ada)
                     if (widget.product.discountPercentage != null)
                       Positioned(
                         left: 8,
@@ -146,10 +169,13 @@ class _ProductCardState extends State<ProductCard>
                           ),
                         ),
                       ),
+
+                    // Tombol favorit
                     Positioned(
                       right: 8,
                       top: 8,
                       child: GestureDetector(
+                        // Toggle status favorit produk
                         onTap: () {
                           provider.toggleFavorite(widget.product);
                         },
@@ -167,6 +193,7 @@ class _ProductCardState extends State<ProductCard>
                             ],
                           ),
                           child: Icon(
+                            // Pilih ikon berdasarkan status favorit
                             provider.isExist(widget.product)
                                 ? Icons.favorite
                                 : Icons.favorite_border,
@@ -178,14 +205,17 @@ class _ProductCardState extends State<ProductCard>
                     ),
                   ],
                 ),
+
+                // Informasi detail produk
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Rating dan Review
+                      // Rating produk
                       Row(
                         children: [
+                          // Bintang rating
                           Row(
                             children: List.generate(
                               5,
@@ -199,6 +229,7 @@ class _ProductCardState extends State<ProductCard>
                             ),
                           ),
                           const SizedBox(width: 4),
+                          // Skor rating
                           Text(
                             "${widget.product.rate}",
                             style: TextStyle(
@@ -210,7 +241,8 @@ class _ProductCardState extends State<ProductCard>
                         ],
                       ),
                       const SizedBox(height: 6),
-                      // Judul Produk
+
+                      // Judul produk
                       Text(
                         widget.product.title,
                         style: const TextStyle(
@@ -222,10 +254,12 @@ class _ProductCardState extends State<ProductCard>
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 6),
-                      // Harga
+
+                      // Informasi harga
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Harga setelah diskon
                           Text(
                             widget.priceFormatted,
                             style: TextStyle(
@@ -234,6 +268,7 @@ class _ProductCardState extends State<ProductCard>
                               color: kprimaryColor,
                             ),
                           ),
+                          // Harga asli (jika ada diskon)
                           if (widget.product.originalPrice != null)
                             Text(
                               formatRupiah(widget.product.originalPrice!),
@@ -246,6 +281,8 @@ class _ProductCardState extends State<ProductCard>
                             ),
                         ],
                       ),
+
+                      // Label gratis ongkir (jika berlaku)
                       if (widget.product.freeShipping) ...[
                         const SizedBox(height: 6),
                         Container(

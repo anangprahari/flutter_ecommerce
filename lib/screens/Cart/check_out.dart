@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ecommerce_mobile_app/screens/Cart/checkout_screen.dart';
 import 'package:intl/intl.dart';
 
+// Widget StatefulWidget untuk kotak checkout
 class CheckOutBox extends StatefulWidget {
   const CheckOutBox({super.key});
 
@@ -11,11 +12,16 @@ class CheckOutBox extends StatefulWidget {
 }
 
 class _CheckOutBoxState extends State<CheckOutBox> {
+  // Kontroler untuk input kode diskon
   final TextEditingController _discountController = TextEditingController();
+
+  // Status apakah diskon sudah diterapkan
   bool _isDiscountApplied = false;
 
+  // Metode untuk menerapkan diskon
   void _applyDiscount() {
     setState(() {
+      // Cek apakah kode diskon yang dimasukkan adalah "jenshop"
       _isDiscountApplied =
           _discountController.text.trim().toLowerCase() == "jenshop";
     });
@@ -23,18 +29,30 @@ class _CheckOutBoxState extends State<CheckOutBox> {
 
   @override
   Widget build(BuildContext context) {
+    // Mendapatkan instance provider keranjang
     final provider = CartProvider.of(context);
+
+    // Inisialisasi variabel untuk perhitungan total
     double subtotal = 0;
     double discountAmount = 0;
     double total = 0;
-    final screenSize = MediaQuery.of(context).size;
-    final isSmallScreen = screenSize.width <= 375; // iPhone SE width
 
+    // Mendapatkan ukuran layar
+    final screenSize = MediaQuery.of(context).size;
+
+    // Mengecek apakah layar termasuk layar kecil (misalnya iPhone SE)
+    final isSmallScreen = screenSize.width <= 375;
+
+    // List untuk menyimpan detail produk
     List<Map<String, dynamic>> productDetails = [];
+
+    // Iterasi melalui setiap produk di keranjang untuk menghitung total
     for (var product in provider.cart) {
+      // Menghitung subtotal produk
       double productSubtotal = product.price * product.quantity;
       double productDiscountAmount = 0;
 
+      // Menerapkan diskon jika tersedia
       if (_isDiscountApplied &&
           product.discountPercentage != null &&
           product.discountPercentage! > 0) {
@@ -43,9 +61,11 @@ class _CheckOutBoxState extends State<CheckOutBox> {
         discountAmount += productDiscountAmount;
       }
 
+      // Menambahkan ke total keseluruhan
       subtotal += productSubtotal;
       total += (productSubtotal - productDiscountAmount);
 
+      // Menyimpan detail produk untuk ditampilkan
       productDetails.add({
         'name': product.title,
         'price': product.price,
@@ -55,6 +75,7 @@ class _CheckOutBoxState extends State<CheckOutBox> {
       });
     }
 
+    // Kontainer utama untuk kotak checkout
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -62,6 +83,7 @@ class _CheckOutBoxState extends State<CheckOutBox> {
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
+        // Efek bayangan di bagian atas
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),
@@ -74,6 +96,7 @@ class _CheckOutBoxState extends State<CheckOutBox> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Bagian input diskon
           SingleChildScrollView(
             padding: EdgeInsets.symmetric(
               horizontal: isSmallScreen ? 12 : 16,
@@ -82,7 +105,7 @@ class _CheckOutBoxState extends State<CheckOutBox> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Discount Input Section
+                // Kontainer input kode diskon
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.grey[100],
@@ -94,6 +117,7 @@ class _CheckOutBoxState extends State<CheckOutBox> {
                   ),
                   child: Row(
                     children: [
+                      // TextField untuk memasukkan kode diskon
                       Expanded(
                         child: TextField(
                           controller: _discountController,
@@ -110,6 +134,7 @@ class _CheckOutBoxState extends State<CheckOutBox> {
                         ),
                       ),
                       const SizedBox(width: 8),
+                      // Tombol untuk mengaktifkan diskon
                       ElevatedButton(
                         onPressed: _applyDiscount,
                         style: ElevatedButton.styleFrom(
@@ -140,11 +165,11 @@ class _CheckOutBoxState extends State<CheckOutBox> {
             ),
           ),
 
-          // Scrollable Product List Section
+          // Daftar produk yang dapat digulir
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height *
-                  0.15, // Limit to 15% of screen height
+              // Membatasi tinggi maksimum daftar produk
+              maxHeight: MediaQuery.of(context).size.height * 0.15,
             ),
             child: SingleChildScrollView(
               child: Padding(
@@ -153,12 +178,14 @@ class _CheckOutBoxState extends State<CheckOutBox> {
                 ),
                 child: Column(
                   children: [
+                    // Daftar item produk
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: productDetails.length,
                       itemBuilder: (context, index) {
                         final product = productDetails[index];
+                        // Kontainer untuk setiap produk
                         return Container(
                           margin: const EdgeInsets.only(bottom: 12),
                           padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
@@ -170,6 +197,7 @@ class _CheckOutBoxState extends State<CheckOutBox> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Baris pertama: nama produk dan kuantitas
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -193,6 +221,7 @@ class _CheckOutBoxState extends State<CheckOutBox> {
                                 ],
                               ),
                               const SizedBox(height: 4),
+                              // Baris kedua: harga per item dan subtotal
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -221,6 +250,7 @@ class _CheckOutBoxState extends State<CheckOutBox> {
                                   ),
                                 ],
                               ),
+                              // Menampilkan diskon jika ada
                               if (_isDiscountApplied && product['discount'] > 0)
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4),
@@ -253,7 +283,7 @@ class _CheckOutBoxState extends State<CheckOutBox> {
             ),
           ),
 
-          // Summary and Checkout Sections
+          // Bagian ringkasan dan checkout
           SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(
@@ -262,7 +292,7 @@ class _CheckOutBoxState extends State<CheckOutBox> {
               ),
               child: Column(
                 children: [
-                  // Summary Section
+                  // Kontainer ringkasan pembayaran
                   Container(
                     margin: const EdgeInsets.only(top: 8),
                     padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
@@ -273,6 +303,7 @@ class _CheckOutBoxState extends State<CheckOutBox> {
                     ),
                     child: Column(
                       children: [
+                        // Baris subtotal
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -296,6 +327,7 @@ class _CheckOutBoxState extends State<CheckOutBox> {
                             ),
                           ],
                         ),
+                        // Baris total diskon (jika ada)
                         if (_isDiscountApplied) ...[
                           const SizedBox(height: 8),
                           Row(
@@ -323,10 +355,12 @@ class _CheckOutBoxState extends State<CheckOutBox> {
                             ],
                           ),
                         ],
+                        // Garis pembatas
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: Divider(color: Colors.grey[300]),
                         ),
+                        // Baris total pembayaran
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -355,7 +389,7 @@ class _CheckOutBoxState extends State<CheckOutBox> {
                     ),
                   ),
 
-                  // Checkout Button
+                  // Tombol checkout
                   Container(
                     margin: EdgeInsets.only(
                       top: 16,
@@ -374,7 +408,9 @@ class _CheckOutBoxState extends State<CheckOutBox> {
                         ),
                         elevation: 0,
                       ),
+                      // Aksi saat tombol checkout ditekan
                       onPressed: () {
+                        // Navigasi ke layar checkout dengan membawa detail pembayaran
                         Navigator.push(
                           context,
                           MaterialPageRoute(

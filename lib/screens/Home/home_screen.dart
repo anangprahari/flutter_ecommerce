@@ -8,6 +8,7 @@ import '../../models/category.dart';
 import 'Widget/home_app_bar.dart';
 import 'Widget/image_slider.dart';
 
+// Layar Utama Aplikasi E-Commerce
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -16,22 +17,29 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // Variabel untuk mengontrol slider dan indeks kategori yang dipilih
   int currentSlider = 0;
   int selectedIndex = 0;
+
+  // Pengontrol teks untuk fungsi pencarian
   TextEditingController searchController = TextEditingController();
+
+  // Daftar produk yang difilter untuk ditampilkan
   List<Product> filteredProducts = all;
+
+  // Pengontrol scroll untuk layar
   final ScrollController _scrollController = ScrollController();
 
-  // Filter state variables
+  // Variabel untuk menyimpan filter yang dipilih pengguna
   String selectedCategory = "Semua";
   String selectedShipping = "Semua";
   List<String> selectedFeatures = [];
   int? minPrice;
   int? maxPrice;
 
-  // Define comprehensive product lists
+  // Daftar kategori produk yang dapat dipilih
   List<List<Product>> selectcategories = [
-    all, // Semua
+    all, // Semua produk
     shoes, // Sepatu
     beauty, // Kecantikan
     womenFashion, // Pakaian Wanita
@@ -40,14 +48,17 @@ class _HomeScreenState extends State<HomeScreen> {
     eletronik // Elektronik
   ];
 
+  // Metode untuk mencari produk berdasarkan query
   void _searchProduct(String query) {
     setState(() {
+      // Filter produk berdasarkan judul atau deskripsi yang cocok
       filteredProducts = all
           .where((product) =>
               product.title.toLowerCase().contains(query.toLowerCase()) ||
               product.description.toLowerCase().contains(query.toLowerCase()))
           .toList();
 
+      // Jika tidak ada produk ditemukan, coba cari berdasarkan kategori
       if (filteredProducts.isEmpty) {
         for (int i = 0; i < categoriesList.length; i++) {
           if (categoriesList[i]
@@ -63,10 +74,12 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  // Metode untuk menerapkan filter pada produk
   void _applyFilters(Map<String, dynamic> filters) {
     setState(() {
+      // Filter produk dengan kriteria yang kompleks
       filteredProducts = all.where((product) {
-        // Comprehensive Category Matching
+        // Pencocokan kategori yang komprehensif
         bool categoryMatch = filters['category'] == "Semua" ||
             product.category.toLowerCase() ==
                 filters['category'].toLowerCase() ||
@@ -77,13 +90,13 @@ class _HomeScreenState extends State<HomeScreen> {
             (filters['category'] == "Elektronik" &&
                 product.category.toLowerCase().contains("electronics"));
 
-        // Shipping Filter with More Detailed Options
+        // Filter pengiriman dengan opsi detail
         bool shippingMatch = filters['shipping'] == "Semua" ||
             (filters['shipping'] == "Gratis Ongkir" && product.freeShipping) ||
             (filters['shipping'] == "Pengembalian 30 Hari" &&
                 product.returns30Days);
 
-        // Features Filter with Enhanced Logic
+        // Filter fitur dengan logika yang disempurnakan
         bool featuresMatch = filters['features'] == null ||
             filters['features'].isEmpty ||
             filters['features'].every((feature) {
@@ -97,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             });
 
-        // Price Range Filter with Null Safety
+        // Filter rentang harga dengan keamanan null
         bool priceMatch = (filters['minPrice'] == null ||
                 product.price >= (filters['minPrice'] ?? 0)) &&
             (filters['maxPrice'] == null ||
@@ -106,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return categoryMatch && shippingMatch && featuresMatch && priceMatch;
       }).toList();
 
-      // Update selected filters for UI
+      // Perbarui filter yang dipilih untuk antarmuka pengguna
       selectedCategory = filters['category'] ?? "Semua";
       selectedShipping = filters['shipping'] ?? "Semua";
       selectedFeatures = filters['features'] ?? [];
@@ -118,12 +131,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Warna latar belakang ringan untuk tema aplikasi
       backgroundColor: Colors.grey[50],
       body: SafeArea(
         child: RefreshIndicator(
+          // Fungsi refresh untuk menyegarkan halaman
           onRefresh: () async {
             await Future.delayed(const Duration(seconds: 1));
             setState(() {
+              // Kembalikan ke kondisi awal
               filteredProducts = all;
               selectedIndex = 0;
               selectedCategory = "Semua";
@@ -136,14 +152,17 @@ class _HomeScreenState extends State<HomeScreen> {
           child: CustomScrollView(
             controller: _scrollController,
             slivers: [
+              // Bagian atas layar dengan elemen-elemen statis
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // AppBar kustom
                       const CustomAppBar(),
                       const SizedBox(height: 20),
+                      // Bilah pencarian dengan fitur filter
                       MySearchBAR(
                         onSearch: _searchProduct,
                         onApplyFilters: _applyFilters,
@@ -156,6 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       ),
                       const SizedBox(height: 20),
+                      // Slider gambar promosi
                       ImageSlider(
                         currentSlide: currentSlider,
                         onChange: (value) {
@@ -165,14 +185,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       ),
                       const SizedBox(height: 25),
+                      // Bagian kategori produk
                       _buildCategorySection(),
                       const SizedBox(height: 25),
+                      // Header spesial untuk kategori utama
                       if (selectedIndex == 0) _buildSpecialHeader(),
                       const SizedBox(height: 15),
                     ],
                   ),
                 ),
               ),
+              // Tampilan produk kosong jika tidak ada produk
               if (filteredProducts.isEmpty)
                 const SliverFillRemaining(
                   child: Center(
@@ -195,25 +218,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 )
               else
+                // Grid untuk menampilkan produk
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   sliver: SliverGrid(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.54,
+                      crossAxisCount: 2, // Dua kolom
+                      childAspectRatio: 0.54, // Rasio tinggi-lebar
                       crossAxisSpacing: 15,
                       mainAxisSpacing: 15,
                     ),
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final product = filteredProducts[index];
+                        // Format harga dalam mata uang Rupiah
                         final formattedPrice = NumberFormat.currency(
                           locale: 'id',
                           symbol: 'Rp. ',
                           decimalDigits: 0,
                         ).format(product.price);
 
+                        // Kartu produk untuk setiap item
                         return ProductCard(
                           product: product,
                           priceFormatted: formattedPrice,
@@ -230,10 +256,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // Widget untuk header spesial di bagian atas
   Widget _buildSpecialHeader() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        // Judul bagian spesial
         const Text(
           "Spesial untukmu",
           style: TextStyle(
@@ -241,9 +269,10 @@ class _HomeScreenState extends State<HomeScreen> {
             fontWeight: FontWeight.w800,
           ),
         ),
+        // Tombol untuk melihat semua produk
         TextButton(
           onPressed: () {
-            // Implement see all functionality
+            // TODO: Implementasikan fungsi melihat semua produk
           },
           child: const Text(
             "Lihat Semua",
@@ -258,6 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // Widget untuk menampilkan kategori produk
   Widget _buildCategorySection() {
     return SizedBox(
       height: 130,
@@ -269,6 +299,7 @@ class _HomeScreenState extends State<HomeScreen> {
           return Padding(
             padding: const EdgeInsets.only(right: 15),
             child: GestureDetector(
+              // Aksi saat kategori dipilih
               onTap: () {
                 setState(() {
                   selectedIndex = index;
@@ -279,6 +310,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 duration: const Duration(milliseconds: 200),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
+                  // Desain container kategori dengan animasi
                   borderRadius: BorderRadius.circular(20),
                   color: selectedIndex == index
                       ? kprimaryColor.withOpacity(0.1)
@@ -293,6 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // Gambar ikon kategori
                     Container(
                       height: 60,
                       width: 60,
@@ -312,6 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
+                    // Teks nama kategori
                     Text(
                       categoriesList[index].title,
                       style: TextStyle(

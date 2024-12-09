@@ -7,16 +7,19 @@ import 'security_screen.dart';
 import 'notifications_screen.dart';
 import 'help_center_screen.dart';
 import 'chat_screen.dart';
-import 'package:ecommerce_mobile_app/screens/login_screen.dart'; // Add this import
+import 'package:ecommerce_mobile_app/screens/login_screen.dart';
 import 'package:ecommerce_mobile_app/constants.dart';
 import 'dart:io';
 
+// Widget Profile - Menampilkan halaman profil pengguna
 class Profile extends StatelessWidget {
   const Profile({Key? key}) : super(key: key);
 
+  // Fungsi untuk menangani proses logout
   void _handleLogout(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
+    // Menampilkan dialog konfirmasi logout
     bool? confirm = await showDialog<bool>(
       context: context,
       barrierDismissible: true,
@@ -42,9 +45,11 @@ class Profile extends StatelessWidget {
                 ),
               ],
             ),
+            // Konten dialog konfirmasi logout
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Icon logout
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -58,6 +63,7 @@ class Profile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
+                // Judul dialog
                 const Text(
                   'Keluar Dari Akun',
                   style: TextStyle(
@@ -66,6 +72,7 @@ class Profile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
+                // Pesan konfirmasi
                 const Text(
                   'Apakah Anda yakin ingin keluar dari Akun?',
                   textAlign: TextAlign.center,
@@ -75,8 +82,10 @@ class Profile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
+                // Tombol aksi
                 Row(
                   children: [
+                    // Tombol Batal
                     Expanded(
                       child: TextButton(
                         onPressed: () => Navigator.of(context).pop(false),
@@ -100,6 +109,7 @@ class Profile extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
+                    // Tombol Keluar
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () => Navigator.of(context).pop(true),
@@ -130,12 +140,13 @@ class Profile extends StatelessWidget {
       },
     );
 
+    // Jika user mengkonfirmasi logout
     if (confirm == true) {
-      // Clear all providers that store user data
+      // Hapus data user dari providers
       authProvider.logout();
       Provider.of<UserProvider>(context, listen: false).clearUserData();
 
-      // Navigate to login screen and remove all previous routes
+      // Navigasi ke halaman login dan hapus semua rute sebelumnya
       if (!context.mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -149,6 +160,7 @@ class Profile extends StatelessWidget {
     final userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
+      // App Bar
       appBar: AppBar(
         backgroundColor: kprimaryColor,
         elevation: 0,
@@ -162,6 +174,7 @@ class Profile extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
+          // Tombol Pengaturan
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.white),
             onPressed: () {
@@ -173,6 +186,7 @@ class Profile extends StatelessWidget {
               );
             },
           ),
+          // Tombol Chat
           IconButton(
             icon: const Icon(Icons.chat_bubble_outline, color: Colors.white),
             onPressed: () {
@@ -186,16 +200,18 @@ class Profile extends StatelessWidget {
           ),
         ],
       ),
+      // Body
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Profil
+            // Header Profil dengan foto dan info user
             Container(
               padding: const EdgeInsets.all(16),
               color: kprimaryColor,
               child: Row(
                 children: [
+                  // Foto profil dengan tombol edit
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -240,6 +256,7 @@ class Profile extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 16),
+                  // Informasi user
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -272,7 +289,7 @@ class Profile extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Salam
+            // Salam untuk user
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
@@ -290,6 +307,7 @@ class Profile extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
+                  // Menu Pengaturan Profil
                   ProfileMenuItem(
                     icon: Icons.person,
                     text: "Pengaturan Profil",
@@ -303,6 +321,7 @@ class Profile extends StatelessWidget {
                       );
                     },
                   ),
+                  // Menu Keamanan
                   ProfileMenuItem(
                     icon: Icons.lock,
                     text: "Keamanan",
@@ -316,6 +335,7 @@ class Profile extends StatelessWidget {
                       );
                     },
                   ),
+                  // Menu Notifikasi
                   ProfileMenuItem(
                     icon: Icons.notifications,
                     text: "Notifikasi",
@@ -348,6 +368,7 @@ class Profile extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
+                  // Menu Pusat Bantuan
                   ProfileMenuItem(
                     icon: Icons.help_outline,
                     text: "Pusat Bantuan",
@@ -361,6 +382,7 @@ class Profile extends StatelessWidget {
                       );
                     },
                   ),
+                  // Menu Chat
                   ProfileMenuItem(
                     icon: Icons.chat,
                     text: "Chat Dengan JenShop",
@@ -394,6 +416,7 @@ class Profile extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
+                  // Menu Logout
                   ProfileMenuItem(
                     icon: Icons.logout,
                     text: "Keluar",
@@ -411,6 +434,7 @@ class Profile extends StatelessWidget {
   }
 }
 
+// Widget ProfileMenuItem - Komponen untuk menampilkan item menu profil
 class ProfileMenuItem extends StatelessWidget {
   final IconData icon;
   final String text;

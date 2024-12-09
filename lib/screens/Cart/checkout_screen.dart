@@ -7,7 +7,9 @@ import 'package:ecommerce_mobile_app/screens/Payment/mandiri_virtual_account_scr
 import '../../constants.dart';
 import 'package:intl/intl.dart';
 
+// StatefulWidget untuk layar checkout
 class CheckoutScreen extends StatefulWidget {
+  // Parameter konstruktor untuk subtotal, status diskon, dan total harga
   final double subtotal;
   final bool discountApplied;
   final double total;
@@ -24,10 +26,12 @@ class CheckoutScreen extends StatefulWidget {
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
+  // Controller untuk input teks nama, alamat, dan nomor telepon
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
+  // Variabel untuk menyimpan metode pembayaran dan detail terkait
   String _selectedPaymentMethod = 'cod';
   String? _selectedBank;
   bool _showBankOptions = false;
@@ -35,6 +39,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   DateTime? _paymentDueDate;
   final _formKey = GlobalKey<FormState>();
 
+  // Fungsi untuk memformat mata uang dalam Rupiah
   String formatCurrency(double amount) {
     final formatter = NumberFormat.currency(
       locale: 'id_ID',
@@ -44,10 +49,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return formatter.format(amount);
   }
 
+  // Fungsi untuk memformat tanggal jatuh tempo
   String formatDueDate(DateTime date) {
     return DateFormat('HH:mm, d MMM yyyy').format(date);
   }
 
+  // Metode untuk menangani perubahan metode pembayaran
   void _handlePaymentMethodChange(String? value) {
     if (value != null) {
       setState(() {
@@ -66,6 +73,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
   }
 
+  // Metode untuk menangani pilihan bank virtual account
   void _handleBankSelection(String bank, double totalAmount) {
     final String vaNumber = generateVirtualAccountNumber();
     final DateTime dueDate = DateTime.now().add(const Duration(hours: 24));
@@ -76,8 +84,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       _paymentDueDate = dueDate;
     });
 
+    // Generate nomor pesanan unik
     String orderNumber = 'ORD${DateTime.now().millisecondsSinceEpoch}';
 
+    // Navigasi ke layar virtual account sesuai bank yang dipilih
     if (bank == 'bri') {
       Navigator.push(
         context,
@@ -103,6 +113,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
   }
 
+  // Metode untuk menangani keberhasilan pembayaran
   void _handlePaymentSuccess(double totalAmount) {
     Navigator.push(
       context,
@@ -123,15 +134,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  // Fungsi untuk menghasilkan nomor virtual account (sementara/dummy)
   String generateVirtualAccountNumber() {
     return '8810 7000 1282 4775 2';
   }
 
+  // Widget untuk membuat judul section dengan aksen warna
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Row(
         children: [
+          // Aksen garis warna utama di samping judul
           Container(
             width: 4,
             height: 24,
@@ -154,6 +168,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  // Widget untuk membangun pilihan metode pembayaran
   Widget _buildPaymentMethodSelector() {
     double totalAmount =
         widget.discountApplied ? widget.total : widget.subtotal;
@@ -166,6 +181,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Header metode pembayaran
             Row(
               children: [
                 Icon(Icons.payment, color: kprimaryColor),
@@ -177,18 +193,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ],
             ),
             const Divider(height: 24),
+            // Opsi pembayaran COD
             _buildPaymentOption(
               'cod',
               'Bayar di tempat',
               Icons.local_shipping,
               Colors.green,
             ),
+            // Opsi transfer virtual account
             _buildPaymentOption(
               'virtual_account',
               'Transfer Akun Virtual',
               Icons.account_balance,
               Colors.blue,
             ),
+            // Pilihan bank jika virtual account dipilih
             if (_showBankOptions) ...[
               const SizedBox(height: 16),
               Container(
@@ -221,6 +240,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  // Widget untuk membuat opsi pembayaran (radio button)
   Widget _buildPaymentOption(
       String value, String title, IconData icon, Color iconColor) {
     return Container(
@@ -253,6 +273,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  // Widget untuk membuat pilihan bank virtual account
   Widget _buildBankOption(
       String bank, String title, String imagePath, double totalAmount) {
     bool isSelected = _selectedBank == bank;
@@ -285,6 +306,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  // Widget untuk ringkasan pesanan
   Widget _buildOrderSummary(
       List<Product> cartItems, CartProvider cartProvider) {
     return Card(
@@ -295,7 +317,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Daftar item dalam keranjang
             ...cartItems.map((item) {
+              // Hitung diskon per produk
               double productDiscount = widget.discountApplied
                   ? item.price * (item.discountPercentage ?? 0) / 100
                   : 0;
@@ -312,6 +336,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Nama produk
                     Text(
                       item.title,
                       style: const TextStyle(
@@ -323,11 +348,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        // Harga dan kuantitas
                         Text(
                           '${formatCurrency(item.price)} x ${item.quantity}',
                           style:
                               TextStyle(color: Colors.grey[600], fontSize: 14),
                         ),
+                        // Total harga produk
                         Text(
                           formatCurrency(totalPrice),
                           style: const TextStyle(
@@ -337,6 +364,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         ),
                       ],
                     ),
+                    // Tampilkan diskon jika ada
                     if (widget.discountApplied && productDiscount > 0) ...[
                       const SizedBox(height: 4),
                       Row(
@@ -361,6 +389,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               );
             }).toList(),
             const Divider(thickness: 1),
+            // Bagian total
             _buildTotalSection(),
           ],
         ),
@@ -368,6 +397,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  // Widget untuk bagian total pembayaran
   Widget _buildTotalSection() {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -377,6 +407,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       ),
       child: Column(
         children: [
+          // Subtotal
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -384,6 +415,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               Text(formatCurrency(widget.subtotal)),
             ],
           ),
+          // Total diskon jika ada
           if (widget.discountApplied) ...[
             const SizedBox(height: 8),
             Row(
@@ -404,6 +436,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
           ],
           const Divider(height: 16),
+           // Total pembayaran akhir
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -430,6 +463,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  // Widget untuk informasi pengiriman dengan form input
   Widget _buildShippingInfo() {
     return Card(
       elevation: 2,
@@ -440,6 +474,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           key: _formKey,
           child: Column(
             children: [
+              // TextField untuk nama lengkap
               _buildTextField(
                 controller: _nameController,
                 label: 'Nama Lengkap',
@@ -452,6 +487,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 },
               ),
               const SizedBox(height: 16),
+              // TextField untuk alamat lengkap
               _buildTextField(
                 controller: _addressController,
                 label: 'Alamat Lengkap',
@@ -465,6 +501,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 },
               ),
               const SizedBox(height: 16),
+              // TextField untuk nomor telepon
               _buildTextField(
                 controller: _phoneController,
                 label: 'Nomor Telepon',
@@ -484,6 +521,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  // Widget untuk membuat TextField kustom dengan validasi
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
@@ -497,6 +535,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: kprimaryColor),
+        // Berbagai konfigurasi border untuk state berbeda
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -524,6 +563,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  // Widget untuk tombol checkout di bagian bawah layar
   Widget _buildCheckoutButton(BuildContext context, CartProvider cartProvider,
       double totalWithDiscount) {
     return Container(
@@ -542,6 +582,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Baris total pembayaran
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -563,6 +604,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ],
           ),
           const SizedBox(height: 16),
+          // Tombol untuk melanjutkan ke pengiriman atau pembayaran
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: kprimaryColor,
@@ -573,6 +615,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               elevation: 2,
             ),
             onPressed: () {
+              // Validasi form sebelum melanjutkan
               if (!_formKey.currentState!.validate()) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -603,6 +646,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 return;
               }
 
+              // Navigasi ke layar pengiriman untuk metode COD
               if (_selectedPaymentMethod == 'cod') {
                 Navigator.push(
                   context,
@@ -623,6 +667,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // Ikon dan teks disesuaikan dengan metode pembayaran
                 Icon(
                   _selectedPaymentMethod == 'cod'
                       ? Icons.local_shipping
@@ -648,6 +693,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  // Method build untuk membangun seluruh tampilan layar checkout
   @override
   Widget build(BuildContext context) {
     final cartProvider = CartProvider.of(context);
@@ -656,6 +702,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     double totalWithDiscount = widget.discountApplied ? widget.total : subtotal;
 
     return Scaffold(
+      // AppBar dengan judul dan jumlah produk
       appBar: AppBar(
         elevation: 0,
         title: const Text(
@@ -683,6 +730,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
         ],
       ),
+      // Body dengan stack untuk tombol checkout di bawah
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -690,16 +738,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Section-section utama checkout
                 _buildSectionTitle('Detail Pesanan'),
                 _buildOrderSummary(cartItems, cartProvider),
                 _buildSectionTitle('Informasi Pengiriman'),
                 _buildShippingInfo(),
                 _buildSectionTitle('Metode Pembayaran'),
                 _buildPaymentMethodSelector(),
-                const SizedBox(height: 100), // Space for bottom button
+                const SizedBox(height: 100), // Spasi untuk tombol bawah
               ],
             ),
           ),
+          // Posisi tombol checkout di bawah layar
           Positioned(
             bottom: 0,
             left: 0,
